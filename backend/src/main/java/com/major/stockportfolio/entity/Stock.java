@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class Stock {
 
     @Id
@@ -29,4 +30,9 @@ public class Stock {
     private BigDecimal currentPrice;
 
     private LocalDateTime lastUpdated;
+
+        @PrePersist
+        public void prePersist() {
+        this.lastUpdated = LocalDateTime.now();
+}
 }

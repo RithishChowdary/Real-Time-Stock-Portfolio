@@ -14,7 +14,9 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+
 public class PortfolioService {
+
 
     private final PortfolioRepository portfolioRepository;
     private final UserRepository userRepository;
@@ -30,6 +32,7 @@ public class PortfolioService {
         Portfolio saved = portfolioRepository.save(portfolio);
         return mapToResponse(saved);
     }
+    
   public List<PortfolioResponse> getMyPortfolios() {
     User user = getCurrentUser();
 
@@ -82,6 +85,7 @@ public class PortfolioService {
                 .portfolioName(portfolio.getPortfolioName())
                 .createdAt(portfolio.getCreatedAt())
                 .build();
+                
     }
 }
 
