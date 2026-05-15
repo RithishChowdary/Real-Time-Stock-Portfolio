@@ -1,4 +1,5 @@
 package com.major.stockportfolio.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class User {
 
     @Id
@@ -24,7 +26,8 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String email;
-
+    
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 

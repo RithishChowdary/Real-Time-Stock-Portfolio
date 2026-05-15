@@ -2,6 +2,7 @@ package com.major.stockportfolio.service;
 
 import com.major.stockportfolio.dto.PortfolioRequest;
 import com.major.stockportfolio.dto.PortfolioResponse;
+import com.major.stockportfolio.dto.UserSummaryResponse;
 import com.major.stockportfolio.entity.Portfolio;
 import com.major.stockportfolio.entity.User;
 import com.major.stockportfolio.repository.PortfolioRepository;
@@ -78,14 +79,18 @@ public class PortfolioService {
 
     return portfolio;
 }
+private PortfolioResponse mapToResponse(Portfolio portfolio) {
+    return PortfolioResponse.builder()
+            .id(portfolio.getId())
+            .portfolioName(portfolio.getPortfolioName())
+            .createdAt(portfolio.getCreatedAt())
+            .user(UserSummaryResponse.builder()
+                    .id(portfolio.getUser().getId())
+                    .name(portfolio.getUser().getName())
+                    .email(portfolio.getUser().getEmail())
+                    .build())
+            .build();
 
-    private PortfolioResponse mapToResponse(Portfolio portfolio) {
-        return PortfolioResponse.builder()
-                .id(portfolio.getId())
-                .portfolioName(portfolio.getPortfolioName())
-                .createdAt(portfolio.getCreatedAt())
-                .build();
-                
     }
 }
 

@@ -43,8 +43,8 @@ public class StockService {
    public IndianStockPriceResponse getLivePrice(String symbol) {
     IndianStockPriceResponse response = new IndianStockPriceResponse();
     response.setSymbol(symbol);
-    response.setCompanyName("Tata Consultancy Services");
-    response.setCurrentPrice(2246.75);
+    response.setCompanyName("Gokaldas ExportsTata Consultancy Services");
+    response.setCurrentPrice(695.6);
     return response;
 }
 

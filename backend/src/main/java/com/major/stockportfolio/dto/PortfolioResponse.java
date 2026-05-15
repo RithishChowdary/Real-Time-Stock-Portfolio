@@ -16,4 +16,5 @@ public class PortfolioResponse {
     private Long id;
     private String portfolioName;
     private LocalDateTime createdAt;
+    private UserSummaryResponse user;
 }

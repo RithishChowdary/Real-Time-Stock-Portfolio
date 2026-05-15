@@ -31,7 +31,7 @@ public class Transaction {
     private Integer quantity;
 
     @Column(nullable = false, precision = 15, scale = 2)
-    private BigDecimal buyPrice;
+     private BigDecimal price;;
 
     @Column(nullable = false)
     private String transactionType;
