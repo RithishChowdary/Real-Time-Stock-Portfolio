@@ -6,4 +6,5 @@ import java.util.*;
 public interface TransactionRepository extends JpaRepository<Transaction, Long>
  {
     List<Transaction> findByPortfolioId(Long portfolioId);
+    
 }

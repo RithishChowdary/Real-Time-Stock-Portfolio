@@ -40,8 +40,7 @@ public class StockController {
     @PutMapping("/refresh/{symbol}")
     public ResponseEntity<Stock> refreshPrice(
             @PathVariable String symbol) {
-        return ResponseEntity.ok(
-                stockService.refreshAndSavePrice(symbol)
+        return ResponseEntity.ok(stockService.refreshAndSavePrice(symbol)
         );
     }
 }

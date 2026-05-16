@@ -17,6 +17,10 @@ public class TransactionController {
 
     private final TransactionService transactionService;
 
+ @GetMapping
+public ResponseEntity<List<Transaction>> getAllTransactions() {
+    return ResponseEntity.ok(transactionService.getAllTransactions());
+}
     @PostMapping("/buy")
     public ResponseEntity<TransactionResponse> buyStock(
             @RequestBody BuyStockRequest request) {

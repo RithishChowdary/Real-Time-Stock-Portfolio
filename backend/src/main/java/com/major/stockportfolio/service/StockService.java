@@ -3,9 +3,9 @@ package com.major.stockportfolio.service;
 import com.major.stockportfolio.dto.IndianStockPriceResponse;
 import com.major.stockportfolio.entity.Stock;
 import com.major.stockportfolio.repository.StockRepository;
+import com.major.stockportfolio.websocket.StockPricePublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StockService {
 
+    private final StockPricePublisher stockPricePublisher;
     private final StockRepository stockRepository;
     private final RestTemplate restTemplate;
 
@@ -26,49 +27,65 @@ public class StockService {
     @Value("${indian.api.base.url}")
     private String baseUrl;
 
+    // CREATE STOCK
     public Stock createStock(Stock stock) {
-    System.out.println("Saving stock: " + stock);
-    return stockRepository.save(stock);
-}
+        System.out.println("Saving stock: " + stock);
+        return stockRepository.save(stock);
+    }
 
+    // GET ALL STOCKS
     public List<Stock> getAllStocks() {
         return stockRepository.findAll();
     }
 
+    // GET STOCK BY SYMBOL
     public Stock getStockBySymbol(String symbol) {
         return stockRepository.findBySymbol(symbol)
                 .orElseThrow(() -> new RuntimeException("Stock not found"));
     }
 
-   public IndianStockPriceResponse getLivePrice(String symbol) {
-    IndianStockPriceResponse response = new IndianStockPriceResponse();
-    response.setSymbol(symbol);
-    response.setCompanyName("Gokaldas ExportsTata Consultancy Services");
-    response.setCurrentPrice(695.6);
-    return response;
-}
+    // GET LIVE PRICE (Dummy response for now)
+    public IndianStockPriceResponse getLivePrice(String symbol) {
+        IndianStockPriceResponse response = new IndianStockPriceResponse();
+        response.setSymbol(symbol);
+        response.setCompanyName("Infosy");
+        response.setCurrentPrice(1119.00);
+        return response;
+    }
 
+    // REFRESH PRICE + SAVE + PUBLISH VIA WEBSOCKET
     public Stock refreshAndSavePrice(String symbol) {
-    Stock stock = getStockBySymbol(symbol);
+        // 1. Get stock from DB
+        Stock stock = getStockBySymbol(symbol);
 
-    IndianStockPriceResponse livePrice = getLivePrice(symbol);
+        // 2. Fetch latest price
+        IndianStockPriceResponse livePrice = getLivePrice(symbol);
 
-    System.out.println("Live Price Response: " + livePrice);
+        System.out.println("Live Price Response: " + livePrice);
 
-    if (livePrice == null) {
-        throw new RuntimeException("API returned null response");
+        // 3. Validate response
+        if (livePrice == null) {
+            throw new RuntimeException("API returned null response");
+        }
+
+        if (livePrice.getCurrentPrice() == null) {
+            throw new RuntimeException("Current price is null. Check DTO mapping.");
+        }
+
+        // 4. Update stock fields
+        stock.setCurrentPrice(
+                BigDecimal.valueOf(livePrice.getCurrentPrice())
+        );
+        stock.setCompanyName(livePrice.getCompanyName());
+        stock.setLastUpdated(LocalDateTime.now());
+
+        // 5. Save updated stock
+        Stock savedStock = stockRepository.save(stock);
+
+        // 6. Publish update to WebSocket subscribers
+        stockPricePublisher.publishStockUpdate(savedStock);
+
+        // 7. Return updated stock
+        return savedStock;
     }
-
-    if (livePrice.getCurrentPrice() == null) {
-        throw new RuntimeException("Current price is null. Check DTO mapping.");
-    }
-
-    stock.setCurrentPrice(
-            BigDecimal.valueOf(livePrice.getCurrentPrice())
-    );
-    stock.setCompanyName(livePrice.getCompanyName());
-    stock.setLastUpdated(LocalDateTime.now());
-
-    return stockRepository.save(stock);
-}
 }

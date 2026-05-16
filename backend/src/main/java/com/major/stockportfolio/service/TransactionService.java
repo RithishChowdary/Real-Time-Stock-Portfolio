@@ -30,6 +30,10 @@ public class TransactionService {
     private final PortfolioRepository portfolioRepository;
     private final StockRepository stockRepository;
 
+    // Return All Transactions
+    public List<Transaction> getAllTransactions() {
+    return transactionRepository.findAll();
+}
     // =====================================================
     // BUY STOCK
     // =====================================================
