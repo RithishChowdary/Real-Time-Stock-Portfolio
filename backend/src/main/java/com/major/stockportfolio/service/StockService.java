@@ -49,7 +49,7 @@ public class StockService {
         IndianStockPriceResponse response = new IndianStockPriceResponse();
         response.setSymbol(symbol);
         response.setCompanyName("Infosy");
-        response.setCurrentPrice(1119.00);
+        response.setCurrentPrice(1129.00);
         return response;
     }
 
