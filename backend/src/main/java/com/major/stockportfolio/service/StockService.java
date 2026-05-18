@@ -20,6 +20,7 @@ public class StockService {
     private final StockPricePublisher stockPricePublisher;
     private final StockRepository stockRepository;
     private final RestTemplate restTemplate;
+    private final AlertService alertService;   
 
     @Value("${indian.api.key}")
     private String apiKey;
@@ -48,13 +49,14 @@ public class StockService {
     public IndianStockPriceResponse getLivePrice(String symbol) {
         IndianStockPriceResponse response = new IndianStockPriceResponse();
         response.setSymbol(symbol);
-        response.setCompanyName("Infosy");
-        response.setCurrentPrice(1129.00);
+        response.setCompanyName("Gokaldas Exports Ltd");
+        response.setCurrentPrice(673.00);
         return response;
     }
 
-    // REFRESH PRICE + SAVE + PUBLISH VIA WEBSOCKET
+    // REFRESH PRICE + SAVE + PUBLISH VIA WEBSOCKET + CHECK ALERTS
     public Stock refreshAndSavePrice(String symbol) {
+
         // 1. Get stock from DB
         Stock stock = getStockBySymbol(symbol);
 
@@ -82,10 +84,13 @@ public class StockService {
         // 5. Save updated stock
         Stock savedStock = stockRepository.save(stock);
 
-        // 6. Publish update to WebSocket subscribers
+        // 6. Publish stock update via WebSocket
         stockPricePublisher.publishStockUpdate(savedStock);
 
-        // 7. Return updated stock
+        // 7. Check if any alerts are triggered
+        alertService.checkAlerts(savedStock);
+
+        // 8. Return updated stock
         return savedStock;
     }
 }

@@ -1,5 +1,6 @@
 package com.major.stockportfolio.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,6 +16,12 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 
+@JsonIgnoreProperties({
+        "portfolios",
+        "transactions",
+        "alerts",
+        "notifications"
+})
 public class User {
 
     @Id
