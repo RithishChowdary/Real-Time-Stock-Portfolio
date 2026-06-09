@@ -1,0 +1,29 @@
+services:
+
+  mysql:
+    image: mysql:8
+    container_name: stock-mysql
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: stock_portfolio
+
+    ports:
+      - "3307:3306"
+
+  backend:
+    image: stock-backend
+    container_name: stock-backend
+
+    depends_on:
+      - mysql
+
+    environment:
+      DB_PASSWORD: root
+      JWT_SECRET: your_jwt_secret
+      TWELVEDATA_API_KEY: your_api_key
+      GOOGLE_CLIENT_ID: your_google_client_id
+      GOOGLE_CLIENT_SECRET: your_google_client_secret
+
+    ports:
+      - "8080:8080"
