@@ -11,8 +11,11 @@ services:
     ports:
       - "3307:3306"
 
+    volumes:
+      - mysql_data:/var/lib/mysql
+
   backend:
-    image: stock-backend
+    build: ./backend
     container_name: stock-backend
 
     depends_on:
@@ -27,3 +30,16 @@ services:
 
     ports:
       - "8080:8080"
+
+  frontend:
+    build: ./frontend
+    container_name: stock-frontend
+
+    depends_on:
+      - backend
+
+    ports:
+      - "5173:5173"
+
+volumes:
+  mysql_data:
