@@ -175,7 +175,7 @@ export default function TransactionsPage() {
         <Card>
           <h2 className="text-lg font-semibold">No portfolios found</h2>
           <p className="mt-1 text-sm text-slate-500">
-            Create a portfolio first before buying or selling stocks.
+            Create a portfolio before Buying or Selling stocks.
           </p>
         </Card>
       ) : (
