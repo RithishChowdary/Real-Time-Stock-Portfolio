@@ -46,7 +46,7 @@ axiosClient.interceptors.response.use(
         return axiosClient(originalRequest);
       } catch {
         localStorage.clear();
-        return Promise.reject(error);
+        window.location.href = "/login";
       }
     }
 

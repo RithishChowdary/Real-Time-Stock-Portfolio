@@ -50,8 +50,7 @@ localStorage.removeItem("email");
       portfolioId: null,
     });
 
-   // window.location.href = "/login";
-   
+    window.location.href = "/login";
   };
 
   const value = useMemo(
