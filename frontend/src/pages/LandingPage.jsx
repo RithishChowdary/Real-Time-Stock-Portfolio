@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
+import { FaWallet } from "react-icons/fa";
 import {
   FaBell,
   FaChartLine,
   FaHeadset,
   FaShieldAlt,
-  FaWallet,
 } from "react-icons/fa";
+import logo from "../assets/logo.png";
 
 const tickerItems = [
   ["NIFTY 50", "22,812.30", "+0.85%"],
@@ -13,7 +14,7 @@ const tickerItems = [
   ["BANKNIFTY", "48,252.15", "-0.18%"],
   ["TCS", "2,263.02", "+1.24%"],
   ["INFY", "1,222.20", "+0.60%"],
-  ["GOKEX", "692.58", "+1.32%"],
+  ["GOKEX", "692.58", "+1.32%"],  
   ["HCLTECH", "1,246.60", "+2.57%"],
   ["SBIN", "1,193.82", "+0.50%"],
 ];
@@ -140,7 +141,7 @@ export default function LandingPage() {
       <header className="landing-nav">
         <Link to="/" className="landing-brand">
           <span className="brand-mark">
-            <FaWallet />
+            <img src={logo} alt="Logo" className="h-8 w-auto object-contain" />
           </span>
           <span>
             <strong>InvestIND</strong>
@@ -252,7 +253,7 @@ export default function LandingPage() {
         <div className="footer-brand">
           <div className="landing-brand">
             <span className="brand-mark">
-              <FaWallet />
+              <img src={logo} alt="Logo" className="h-6 w-auto object-contain" />
             </span>
             <span>
               <strong>InvestIND</strong>

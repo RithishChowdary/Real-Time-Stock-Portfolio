@@ -1,6 +1,6 @@
 import { useContext } from "react";
-import { RealtimeContext } from "../context/RealtimeContext";
+import { RealTimeContext } from "../context/RealTimeContext";
 
 export function useRealtime() {
-  return useContext(RealtimeContext);
+  return useContext(RealTimeContext);
 }

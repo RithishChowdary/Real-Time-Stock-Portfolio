@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import { AuthProvider } from "./context/AuthContext";
-import { RealtimeProvider } from "./context/RealtimeContext";
+import { RealtimeProvider } from "./context/RealTimeContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import "./index.css";
 
