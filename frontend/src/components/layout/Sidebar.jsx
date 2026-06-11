@@ -9,6 +9,7 @@ import {
   X,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import logo from "../../assets/logo.png";
 
 const links = [
   { to: "/dashboard", label: "Dashboard", icon: BarChart3 },
@@ -34,8 +35,8 @@ export default function Sidebar({ open = false, onClose }) {
     >
       <div className="flex h-16 items-center justify-between border-b border-slate-200 px-5 dark:border-slate-800">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white">
-            <Wallet size={18} />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg">
+            <img src={logo} alt="Logo" className="h-full w-full object-contain" />
           </div>
 
           <div>

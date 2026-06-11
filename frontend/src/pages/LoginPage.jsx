@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 
 import { AuthContext } from "../context/AuthContext";
 import { loginUser } from "../services/authService";
+import logo from "../assets/logo.png";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -71,9 +72,12 @@ const LoginPage = () => {
 
           {/* Logo */}
           <div className="mb-6 text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-600 text-2xl font-bold shadow-lg shadow-blue-900/50">
-              IND
-            </div>
+                        <img
+              src={logo}
+              alt="IND"
+              className="mx-auto mb-4 h-24 w-auto object-contain drop-shadow-2xl"
+            />
+
 
             <h1 className="text-4xl font-bold text-white">
               Welcome Back
