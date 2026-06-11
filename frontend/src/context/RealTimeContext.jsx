@@ -2,7 +2,7 @@ import { createContext, useEffect, useMemo, useState } from "react";
 import { createWebSocketClient } from "../services/websocketService";
 import { useAuth } from "../hooks/useAuth";
 
-export const RealtimeContext = createContext(null);
+export const RealTimeContext = createContext(null);
 
 export function RealtimeProvider({ children }) {
   const { isAuthenticated } = useAuth();
@@ -43,8 +43,8 @@ export function RealtimeProvider({ children }) {
   );
 
   return (
-    <RealtimeContext.Provider value={value}>
+    <RealTimeContext.Provider value={value}>
       {children}
-    </RealtimeContext.Provider>
+    </RealTimeContext.Provider>
   );
 }
