@@ -54,7 +54,7 @@ const LoginPage = () => {
 
   const handleGoogleLogin = () => {
     window.location.href =
-      "http://localhost:8080/oauth2/authorization/google";
+      "https://real-time-stock-portfolio.onrender.com/oauth2/authorization/google";
   };
 
   return (

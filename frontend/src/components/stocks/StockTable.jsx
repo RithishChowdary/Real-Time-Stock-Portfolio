@@ -130,7 +130,7 @@ export default function StockTable({
                     0 && (
 
                     <a
-                      href={`http://localhost:8080/api/research/download/${researchMap[stock.id][0].pdfUrl}`}
+                      href={`https://real-time-stock-portfolio.onrender.com/api/research/download/${researchMap[stock.id][0].pdfUrl}`}
                       target="_blank"
                       rel="noreferrer"
                       className="mt-1 block text-xs font-medium text-blue-500 hover:underline"
