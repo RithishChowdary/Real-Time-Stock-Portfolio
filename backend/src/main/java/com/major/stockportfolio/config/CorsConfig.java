@@ -16,8 +16,9 @@ public class CorsConfig {
 
         config.setAllowCredentials(true);
 
-        config.addAllowedOrigin("https://real-time-stock-portfolio.onrender.com");
+        // Frontend URLs
         config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedOrigin("https://stock-portfolio-frontend-omn1.onrender.com");
 
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
