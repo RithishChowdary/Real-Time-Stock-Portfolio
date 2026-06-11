@@ -70,8 +70,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         String token = jwtUtil.generateToken(user.getEmail());
 
-        response.sendRedirect(
-                "http://localhost:5173/oauth-success?token=" + token
+       response.sendRedirect(
+    "https://stock-portfolio-frontend-omn1.onrender.com/oauth-success?token=" + token
         );
     }
 }
