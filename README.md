@@ -10,13 +10,13 @@
 
 The project combines a Spring Boot REST API backend, React frontend, MySQL persistence, JWT security, Google OAuth login, WebSocket-based live updates, scheduled stock price refresh, and Swagger API documentation.
 
-## Live Links
+## 🔗 Live Links
 
-| Resource | Link |
-|---|---|
-| Live Demo | [Open InvestIND](https://stock-portfolio-frontend-omn1.onrender.com) |
-| Swagger API Documentation | [View API Docs](https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html) |
-| GitHub Repository | [Source Code](https://github.com/RithishChowdary/Real-Time-Stock-Portfolio) |
+<p align="center">
+  <a href="https://stock-portfolio-frontend-omn1.onrender.com"><b>🚀 Live Demo</b></a> |
+  <a href="https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html"><b>📄 API Docs</b></a> |
+  <a href="https://github.com/RithishChowdary/Real-Time-Stock-Portfolio"><b>💻 GitHub</b></a>
+</p>
 
 ## Table of Contents
 
