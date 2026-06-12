@@ -6,10 +6,10 @@
 [![JWT](https://img.shields.io/badge/JWT-Auth-FF6F00?style=for-the-badge&logo=jsonwebtokens&logoColor=white)](https://jwt.io)
 [![Docker](https://img.shields.io/badge/Docker-Ready-0db7ed?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com)
 
-**InvestIND** is a full-stack real-time stock portfolio management platform built for tracking Indian stock investments, portfolio performance, transactions, alerts, notifications, and research insights from a modern web dashboard.
+**InvestIND** is a full-stack real-time stock portfolio management platform built for tracking Indian stock investments, portfolio performance, transactions, alerts, notifications, and research insights from a modern web dashboard. 
 
 The project combines a Spring Boot REST API backend, React frontend, MySQL persistence, JWT security, Google OAuth login, WebSocket-based live updates, scheduled stock price refresh, and Swagger API documentation.
-
+ 
 ## 🔗 Live Links
 
 <p align="center">
