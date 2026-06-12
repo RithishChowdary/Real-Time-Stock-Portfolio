@@ -8,6 +8,7 @@ import com.major.stockportfolio.interfaces.StockResearchService;
 import com.major.stockportfolio.repository.StockRepository;
 import com.major.stockportfolio.repository.StockResearchRepository;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,8 +26,8 @@ public class StockResearchServiceImpl implements StockResearchService {
     private final StockResearchRepository repository;
     private final StockRepository stockRepository;
 
-    private static final String UPLOAD_DIR =
-            "uploads/research/";
+    @Value("${app.upload.research-dir:uploads/research}")
+    private String researchUploadDir;
 
     public StockResearchServiceImpl(
             StockResearchRepository repository,
@@ -80,14 +81,26 @@ public class StockResearchServiceImpl implements StockResearchService {
                     "PDF Name = "
                             + pdf.getOriginalFilename());
 
+            String originalFileName =
+                    Path.of(
+                                    pdf.getOriginalFilename() == null
+                                            ? "research.pdf"
+                                            : pdf.getOriginalFilename()
+                            )
+                            .getFileName()
+                            .toString();
+
             String fileName =
                     UUID.randomUUID()
                             + "_"
-                            + pdf.getOriginalFilename();
+                            + originalFileName;
 
             Path path =
-                    Paths.get(
-                            UPLOAD_DIR + fileName);
+                    Paths.get(researchUploadDir)
+                            .toAbsolutePath()
+                            .normalize()
+                            .resolve(fileName)
+                            .normalize();
 
             Files.createDirectories(
                     path.getParent());

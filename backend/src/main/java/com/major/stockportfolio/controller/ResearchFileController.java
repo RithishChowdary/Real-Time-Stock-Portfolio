@@ -1,37 +1,95 @@
 package com.major.stockportfolio.controller;
 
-import org.springframework.core.io.UrlResource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
-import java.nio.file.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @RestController
 @RequestMapping("/api/research")
+public class ResearchFileController {
 
-public class ResearchFileController
- {
-    @GetMapping("/download/{fileName}")
-public ResponseEntity<Resource> download(
-        @PathVariable String fileName)
-        throws Exception {
+    @Value("${app.upload.research-dir:uploads/research}")
+    private String researchUploadDir;
 
-    Path path =
-            Paths.get("uploads/research/")
-                    .resolve(fileName);
+    @GetMapping("/download/{fileName:.+}")
+    public ResponseEntity<Resource> download(
+            @PathVariable String fileName
+    ) throws IOException {
 
-    Resource resource =
-            new UrlResource(path.toUri());
+        String safeFileName =
+                Paths.get(fileName)
+                        .getFileName()
+                        .toString();
 
-    return ResponseEntity.ok()
-            .header(
-                    HttpHeaders.CONTENT_DISPOSITION,
-                    "attachment; filename="
-                            + fileName)
-            .body(resource);
-}
+        Path uploadRoot =
+                Paths.get(researchUploadDir)
+                        .toAbsolutePath()
+                        .normalize();
+
+        Path filePath =
+                uploadRoot
+                        .resolve(safeFileName)
+                        .normalize();
+
+        if (!filePath.startsWith(uploadRoot)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Invalid research file name"
+            );
+        }
+
+        if (!Files.exists(filePath)
+                || !Files.isRegularFile(filePath)
+                || !Files.isReadable(filePath)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Research PDF not found. Please upload the research report again."
+            );
+        }
+
+        Resource resource =
+                new FileSystemResource(
+                        filePath
+                );
+
+        String contentType =
+                Files.probeContentType(filePath);
+
+        if (contentType == null) {
+            contentType =
+                    MediaType.APPLICATION_PDF_VALUE;
+        }
+
+        return ResponseEntity.ok()
+                .contentType(
+                        MediaType.parseMediaType(contentType)
+                )
+                .contentLength(
+                        Files.size(filePath)
+                )
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        ContentDisposition
+                                .attachment()
+                                .filename(safeFileName)
+                                .build()
+                                .toString()
+                )
+                .body(resource);
+    }
 }
