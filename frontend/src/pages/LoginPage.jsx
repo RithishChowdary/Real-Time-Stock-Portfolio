@@ -53,10 +53,24 @@ const LoginPage = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
+  toast.loading("Starting server... Please wait");
+
+  try {
+    await fetch(
+      "https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html",
+      {
+        method: "GET",
+        mode: "no-cors",
+      }
+    );
+  } catch {}
+
+  setTimeout(() => {
     window.location.href =
       "https://real-time-stock-portfolio.onrender.com/oauth2/authorization/google";
-  };
+  }, 5000);
+};
 
   return (
     <>
