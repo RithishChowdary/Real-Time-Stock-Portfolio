@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import com.major.stockportfolio.dto.UserProfileResponse;
 import com.major.stockportfolio.entity.User;
-import com.major.stockportfolio.repository.UserRepository;
 
 import java.time.LocalDateTime;
 
