@@ -10,7 +10,10 @@ import {
   formatDateTime,
 } from "../../utils/formatters";
 
-import { getResearchByStock } from "../../services/researchService";
+import {
+  getResearchByStock,
+  getResearchDownloadUrl,
+} from "../../services/researchService";
 
 export default function StockTable({
   stocks,
@@ -130,12 +133,14 @@ export default function StockTable({
                     0 && (
 
                     <a
-                      href={`https://real-time-stock-portfolio.onrender.com/api/research/download/${researchMap[stock.id][0].pdfUrl}`}
+                      href={getResearchDownloadUrl(
+                        researchMap[stock.id][0].pdfUrl
+                      )}
                       target="_blank"
                       rel="noreferrer"
                       className="mt-1 block text-xs font-medium text-blue-500 hover:underline"
                     >
-                      📄 Download Research
+                      Download Research
                     </a>
 
                   )}
