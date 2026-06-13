@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
-import { RefreshCcw } from "lucide-react";
+import {
+  Download,
+  ExternalLink,
+  FileText,
+  RefreshCcw,
+} from "lucide-react";
 
 import Button from "../ui/Button";
 import Card from "../ui/Card";
 import EmptyState from "../ui/EmptyState";
+import Skeleton from "../ui/Skeleton";
 
 import {
   formatCurrency,
@@ -23,41 +29,53 @@ export default function StockTable({
 
   const [researchMap, setResearchMap] =
     useState({});
+  const [researchLoading, setResearchLoading] =
+    useState(false);
 
   useEffect(() => {
 
     async function loadResearch() {
 
-      const map = {};
+      setResearchLoading(true);
 
-      for (const stock of stocks || []) {
+      const entries =
+        await Promise.all(
+          (stocks || []).map(async (stock) => {
+            try {
+              const research =
+                await getResearchByStock(
+                  stock.id
+                );
 
-        try {
+              return [
+                stock.id,
+                research,
+              ];
+            } catch (error) {
+              console.error(
+                "Failed loading research:",
+                stock.id,
+                error
+              );
 
-          const research =
-            await getResearchByStock(
-              stock.id
-            );
+              return [
+                stock.id,
+                [],
+              ];
+            }
+          })
+        );
 
-          map[stock.id] = research;
-
-        } catch (error) {
-
-          console.error(
-            "Failed loading research:",
-            stock.id,
-            error
-          );
-
-          map[stock.id] = [];
-        }
-      }
-
-      setResearchMap(map);
+      setResearchMap(
+        Object.fromEntries(entries)
+      );
+      setResearchLoading(false);
     }
 
     if (stocks?.length) {
       loadResearch();
+    } else {
+      setResearchMap({});
     }
 
   }, [stocks]);
@@ -66,8 +84,8 @@ export default function StockTable({
 
     return (
       <EmptyState
-        title="No stocks found"
-        message="Create stocks as admin before users can buy or sell."
+        title="No stocks available yet"
+        message="Add master stock records from the admin side so investors can track prices, create alerts, and place buy or sell transactions."
       />
     );
   }
@@ -80,8 +98,8 @@ export default function StockTable({
           Available Stocks
         </h2>
 
-        <p className="text-sm text-slate-500">
-          Master list of stocks available for trading.
+        <p className="text-sm text-slate-500 dark:text-slate-400">
+          Monitor listed equities, refresh market prices, and review attached research reports.
         </p>
       </div>
 
@@ -129,19 +147,71 @@ export default function StockTable({
                     {stock.companyName}
                   </div>
 
-                  {researchMap[stock.id]?.length >
-                    0 && (
+                  {researchLoading && (
+                    <div className="mt-3 max-w-md space-y-2">
+                      <Skeleton className="h-4 w-48" />
+                      <Skeleton className="h-3 w-72" />
+                    </div>
+                  )}
 
-                    <a
-                      href={getResearchDownloadUrl(
-                        researchMap[stock.id][0].pdfUrl
-                      )}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="mt-1 block text-xs font-medium text-blue-500 hover:underline"
-                    >
-                      Download Research
-                    </a>
+                  {!researchLoading &&
+                    researchMap[stock.id]?.length >
+                      0 && (
+
+                    <div className="mt-3 max-w-xl rounded-lg border border-blue-100 bg-blue-50/80 p-3 dark:border-blue-900/50 dark:bg-blue-950/20">
+                      <div className="flex items-start gap-3">
+                        <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-blue-600 dark:bg-slate-900 dark:text-blue-400">
+                          <FileText size={16} />
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">
+                            {researchMap[stock.id][0].title ||
+                              "Research report"}
+                          </p>
+
+                          {researchMap[stock.id][0].summary && (
+                            <p className="mt-1 max-h-10 overflow-hidden text-xs leading-5 text-slate-600 dark:text-slate-400">
+                              {researchMap[stock.id][0].summary}
+                            </p>
+                          )}
+
+                          <div className="mt-3 flex flex-wrap items-center gap-3">
+                            <a
+                              href={getResearchDownloadUrl(
+                                researchMap[stock.id][0].pdfUrl
+                              )}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400"
+                            >
+                              <Download size={14} />
+                              Download PDF
+                            </a>
+
+                            {researchMap[stock.id][0].sourceUrl && (
+                              <a
+                                href={researchMap[stock.id][0].sourceUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:underline dark:text-slate-400 dark:hover:text-white"
+                              >
+                                <ExternalLink size={14} />
+                                Source
+                              </a>
+                            )}
+
+                            {researchMap[stock.id][0].createdAt && (
+                              <span className="text-xs text-slate-500 dark:text-slate-500">
+                                {formatDateTime(
+                                  researchMap[stock.id][0].createdAt
+                                )}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
                   )}
 

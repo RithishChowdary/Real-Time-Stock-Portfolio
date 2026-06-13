@@ -1,9 +1,11 @@
 import {
   Bell,
+  CheckCircle2,
   LogOut,
   Menu,
   Moon,
   Search,
+  Shield,
   Sun,
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
@@ -24,7 +26,6 @@ const [searchResults, setSearchResults] = useState([]);
 const [showSearch, setShowSearch] = useState(false);
 const [unreadCount, setUnreadCount] = useState(0);
   const { logout, auth } = useAuth();
-  console.log("AUTH =", auth);
   const realtime = useRealtime();
   const { isDark, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -220,31 +221,61 @@ const [unreadCount, setUnreadCount] = useState(0);
             </button>
 
             {profileOpen && (
-              <div className="absolute right-0 top-12 w-64 rounded-lg border border-slate-200 bg-white shadow-md dark:border-slate-800 dark:bg-slate-900">
+              <div className="absolute right-0 top-12 w-72 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl shadow-slate-200/60 dark:border-slate-800 dark:bg-slate-900 dark:shadow-black/30">
 
                 <div className="border-b border-slate-200 p-4 dark:border-slate-800">
-                  <h3 className="font-medium text-slate-900 dark:text-white">
-                    {auth?.name}
-                  </h3>
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-600 text-base font-semibold text-white">
+                      {auth?.name
+                        ?.charAt(0)
+                        ?.toUpperCase() || "U"}
+                    </div>
 
-                  <p className="text-sm text-slate-500">
-                    {auth?.email}
-                  </p>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="truncate font-semibold text-slate-900 dark:text-white">
+                        {auth?.name || "InvestIND User"}
+                      </h3>
+
+                      <p className="truncate text-sm text-slate-500 dark:text-slate-400">
+                        {auth?.email || "No email available"}
+                      </p>
+
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700 dark:bg-green-950/40 dark:text-green-400">
+                          <CheckCircle2 size={12} />
+                          Active
+                        </span>
+
+                        {auth?.role && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                            <Shield size={12} />
+                            {auth.role}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <button
                   onClick={toggleTheme}
-                  className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-800"
+                  className="flex w-full items-center justify-between px-4 py-3 text-left text-sm hover:bg-slate-100 dark:hover:bg-slate-800"
                 >
-                  {isDark ? (
-                    <Sun size={16} />
-                  ) : (
-                    <Moon size={16} />
-                  )}
+                  <span className="flex items-center gap-3">
+                    {isDark ? (
+                      <Sun size={16} />
+                    ) : (
+                      <Moon size={16} />
+                    )}
 
-                  {isDark
-                    ? "Light Mode"
-                    : "Dark Mode"}
+                    {isDark
+                      ? "Switch to light mode"
+                      : "Switch to dark mode"}
+                  </span>
+
+                  <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+                    {isDark ? "Dark" : "Light"}
+                  </span>
                 </button>
 
                 <button

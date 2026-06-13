@@ -4,6 +4,7 @@ import PortfolioSummaryCards from "../components/transactions/PortfolioSummaryCa
 import TransactionTable from "../components/transactions/TransactionTable";
 import HoldingsTable from "../components/dashboard/HoldingsTable";
 import Card from "../components/ui/Card";
+import EmptyState from "../components/ui/EmptyState";
 import Loader from "../components/ui/Loader";
 import Button from "../components/ui/Button";
 import { getPortfolios } from "../services/portfolioService";
@@ -172,12 +173,20 @@ export default function TransactionsPage() {
       )}
 
       {!portfolios.length ? (
-        <Card>
-          <h2 className="text-lg font-semibold">No portfolios found</h2>
-          <p className="mt-1 text-sm text-slate-500">
-            Create a portfolio before Buying or Selling stocks.
-          </p>
-        </Card>
+        <EmptyState
+          title="No active portfolio"
+          message="Create a portfolio first, then record buy and sell transactions against your selected holdings."
+          action={
+            <Button
+              onClick={() => {
+                window.location.href = "/portfolios";
+              }}
+              variant="secondary"
+            >
+              Go to Portfolios
+            </Button>
+          }
+        />
       ) : (
         <>
           <PortfolioSummaryCards summary={summary} />
