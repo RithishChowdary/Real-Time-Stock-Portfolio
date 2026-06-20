@@ -130,8 +130,17 @@ export default function PortfoliosPage() {
 
       {!portfolios.length ? (
         <EmptyState
-          title="No portfolios found"
-          message="Create your first portfolio to start tracking stocks."
+          title="No portfolios created"
+          message="Create a portfolio to start tracking holdings, transactions, investment value, and returns."
+          action={
+            <Button
+              onClick={() => setShowCreate(true)}
+              className="bg-green-500/20 text-green-600 hover:bg-green-500/25 border border-green-500/20 dark:text-green-400"
+            >
+              <Plus size={16} />
+              Create Portfolio
+            </Button>
+          }
         />
       ) : (
         <div className="grid gap-6 lg:grid-cols-2">

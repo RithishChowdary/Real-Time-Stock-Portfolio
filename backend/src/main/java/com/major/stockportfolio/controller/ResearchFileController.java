@@ -12,7 +12,8 @@ import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.server.ResponseStatusException;
+import com.major.stockportfolio.exception.BadRequestException;
+import com.major.stockportfolio.exception.ResourceNotFoundException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -47,19 +48,13 @@ public class ResearchFileController {
                         .normalize();
 
         if (!filePath.startsWith(uploadRoot)) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Invalid research file name"
-            );
+            throw new BadRequestException("Invalid research file name");
         }
 
         if (!Files.exists(filePath)
                 || !Files.isRegularFile(filePath)
                 || !Files.isReadable(filePath)) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Research PDF not found. Please upload the research report again."
-            );
+            throw new ResourceNotFoundException("Research PDF not found. Please upload the research report again.");
         }
 
         Resource resource =
