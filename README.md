@@ -508,10 +508,13 @@ http://localhost:8080/swagger-ui/index.html
 ```
 
 Hosted Swagger:
+
+
 <img width="642" height="1280" alt="WhatsApp Image 2026-06-29 at 2 33 51 PM" src="https://github.com/user-attachments/assets/f73e06f8-c1cb-40a8-a2e5-21cf487476bf" />
 
 
-<img width="642" height="1280" alt="WhatsApp Image 2026-06-29 at 2 33 51 PM" src="https://github.com/user-attachments/assets/9af43c97-9c0e-489c-8f6b-cf91e0a8387e" />
+<img width="639" height="1280" alt="WhatsApp Image 2026-06-29 at 2 33 51 PM (1)" src="https://github.com/user-attachments/assets/e1cbde76-ced7-45c9-825b-923405a49f6a" />
+
 
 
 [https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html](https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html)
