@@ -26,7 +26,7 @@ The project combines a Spring Boot REST API backend, React frontend, MySQL persi
 - [Architecture](#architecture)
 - [Screenshots](#screenshots)
 - [Core Modules](#core-modules)
-- [Backend API Modules](#backend-api-modules)
+- [API Modules](#backend-api-modules)
 - [Database Design](#database-design)
 - [Real-Time Functionality](#real-time-functionality)
 - [Security](#security)
@@ -508,6 +508,11 @@ http://localhost:8080/swagger-ui/index.html
 ```
 
 Hosted Swagger:
+<img width="642" height="1280" alt="WhatsApp Image 2026-06-29 at 2 33 51 PM" src="https://github.com/user-attachments/assets/f73e06f8-c1cb-40a8-a2e5-21cf487476bf" />
+
+
+<img width="642" height="1280" alt="WhatsApp Image 2026-06-29 at 2 33 51 PM" src="https://github.com/user-attachments/assets/9af43c97-9c0e-489c-8f6b-cf91e0a8387e" />
+
 
 [https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html](https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html)
 
