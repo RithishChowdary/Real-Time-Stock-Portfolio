@@ -535,16 +535,16 @@ Hosted Swagger:
 
 ## Future Enhancements
 
-- Add real broker API integration
+- Add Backtesting with TA4J
 - Add candlestick charts and advanced technical indicators
 - Add watchlists
 - Add portfolio comparison reports
 - Add downloadable portfolio statements
 - Add email/SMS alert delivery
-- Add role-based admin dashboard
+- Add Email-Validation
 - Add unit and integration test coverage
-- Add CI/CD pipeline
-- Improve Docker Compose environment variable configuration
+- Add AWS Ec2 Deployment
+- Add DevOps Architect 
 
 ## Conclusion
 
