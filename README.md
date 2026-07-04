@@ -118,34 +118,34 @@ The system is designed as a major full-stack project with strong emphasis on:
 | Render | Cloud deployment for frontend and backend |
 | Twelve Data API | External stock price source |
 
-## Architecture
+ ## Architecture
 
-```text
-React Frontend
-  - Landing page
-  - Auth pages
-  - Protected dashboard
-  - Portfolio, stocks, transactions, alerts, notifications
-        |
-        | HTTPS REST API + JWT
-        |
-Spring Boot Backend
-  - Controllers
-  - Services
-  - Repositories
-  - Security filters
-  - WebSocket publishers
-  - Scheduler
-        |
-        | JPA / Hibernate
-        |
-MySQL Database
+              ┌──────────────────────┐
+              │  React SPA (Vite)    │
+              │  - protected routes  │
+              │  - STOMP subscriber  │
+              └──────────┬───────────┘
+                         │  HTTPS / JWT (Bearer)
+                         ▼
+      ┌──────────────────────────────────────────┐
+      │  Spring Boot                             │
+      │  ┌──────────┐  ┌──────────┐  ┌─────────┐  │
+      │  │ REST API │  │ Security │  │  WS /   │  │
+      │  │ (Ctrl→Svc│  │  Filter  │  │  STOMP  │  │
+      │  │  →Repo)  │  │  Chain  │  │ Broker  │  │
+      │  └────┬─────┘  └────┬─────┘  └────┬────┘  │
+      │       │             │             │       │
+      │       │   @Scheduled price tick (60s)    │
+      │       │             │             │       │
+      │  ┌────▼─────────────▼─────────────▼────┐  │
+      │  │  PriceService / AlertEngine / Cache │  │
+      │  └────┬────────────────────────────────┘  │
+      └───────┼───────────────────────────────────┘
+              │  JPA / Hibernate
+              ▼
+          MySQL 8
 
-External Integrations:
-  - Twelve Data API for stock prices
-  - Google OAuth for login
-  - WebSocket topics for live updates
-```
+      External: Twelve Data REST, Google OAuth2
 
 ## Screenshots
 
@@ -195,57 +195,56 @@ Login page:
 
 <img width="1919" height="951" alt="InvestIND Alerts Page" src="https://github.com/user-attachments/assets/3cbe85c1-2235-4335-a822-9489a6471519" />
 
-## Core Modules
 
-### 1. Landing Page
+ ## REST API
 
-The landing page introduces InvestIND with a modern UI, project highlights, and navigation to authentication screens. It communicates the platform's purpose: portfolio tracking, stock monitoring, and investment visibility.
+  All routes under `/api`. Auth routes are public; everything else requires a
+  `Bearer` access token. Refresh via `/api/auth/refresh`.
 
-### 2. Authentication
+  | Method | Path                              | Purpose                                |
+  |--------|-----------------------------------|----------------------------------------|
+  | POST   | `/api/auth/register`              | Register local user                    |
+  | POST   | `/api/auth/login`                 | Local login → access + refresh         |
+  | POST   | `/api/auth/refresh`               | Rotate access token                    |
+  | GET    | `/api/auth/me`                    | Current user profile                   |
+  | GET    | `/api/auth/oauth2/**`             | Google OAuth entrypoint / callback     |
+  | GET    | `/api/dashboard/summary`          | Aggregate portfolio metrics            |
+  | GET    | `/api/dashboard/holdings`         | Holdings across portfolios             |
+  | GET    | `/api/dashboard/recent`           | Recent transactions                    |
+  | GET    | `/api/dashboard/performance`      | Time-series for charts                 |
+  | GET    | `/api/portfolios`                 | List user portfolios                   |
+  | POST   | `/api/portfolios`                 | Create portfolio                       |
+  | GET    | `/api/portfolios/{id}`            | Portfolio detail + holdings            |
+  | PUT    | `/api/portfolios/{id}`            | Update portfolio                       |
+  | DELETE | `/api/portfolios/{id}`            | Delete portfolio                       |
+  | GET    | `/api/stocks`                     | List stocks (paginated)                |
+  | POST   | `/api/stocks`                     | Create stock                           |
+  | GET    | `/api/stocks/{symbol}`            | Get stock by symbol                    |
+  | POST   | `/api/stocks/{symbol}/refresh`    | Force refresh from Twelve Data         |
+  | POST   | `/api/transactions`               | Record buy/sell                        |
+  | GET    | `/api/transactions`               | List transactions                      |
+  | GET    | `/api/transactions/holdings`      | Computed holdings w/ P&L               |
+  | GET    | `/api/alerts`                     | List user's alerts                     |
+  | POST   | `/api/alerts`                     | Create price alert                     |
+  | DELETE | `/api/alerts/{id}`                | Delete alert                           |
+  | GET    | `/api/notifications`              | List notifications                     |
+  | PATCH  | `/api/notifications/{id}/read`    | Mark as read                           |
+  | POST   | `/api/research`                   | Admin: upload research + PDF           |
+  | GET    | `/api/research/{symbol}`          | Fetch research for a symbol            |
+  | GET    | `/api/research/{id}/file`         | Download research PDF                  |
 
-Users can register, log in, and access protected pages. The backend uses Spring Security, BCrypt password hashing, JWT authentication, refresh tokens, and Google OAuth support.
+Hosted Swagger:
 
-### 3. Dashboard
 
-The dashboard provides a quick overview of portfolio performance, holdings, market movement, recent transactions, notifications, and visual analytics.
+<img width="642" height="1280" alt="WhatsApp Image 2026-06-29 at 2 33 51 PM" src="https://github.com/user-attachments/assets/f73e06f8-c1cb-40a8-a2e5-21cf487476bf" />
 
-### 4. Portfolio Management
 
-Users can create and manage multiple portfolios. Each portfolio belongs to a user and contains transactions connected to stocks.
+<img width="639" height="1280" alt="WhatsApp Image 2026-06-29 at 2 33 51 PM (1)" src="https://github.com/user-attachments/assets/e1cbde76-ced7-45c9-825b-923405a49f6a" />
 
-### 5. Stock Management
 
-The stock module stores stock symbols, company names, current prices, and update timestamps. Stock prices can be refreshed from the Twelve Data API.
 
-### 6. Transactions
+[https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html](https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html)
 
-The transactions module handles buy and sell operations. It calculates net holdings, average buy price, invested value, current value, profit/loss, and return percentage.
-
-### 7. Alerts
-
-Users can create target price and stop-loss alerts. When a stock crosses the configured price level, the system creates a notification and publishes a real-time alert event.
-
-### 8. Notifications
-
-Notifications are generated for important events such as triggered stock alerts. Users can view notifications and mark them as read.
-
-### 9. Research Management
-
-Admin users can upload stock research data and PDF files. Users can access research information for supported stocks.
-
-## Backend API Modules
-
-| Module | Base Path | Purpose |
-|---|---|---|
-| Authentication | `/api/auth` | Register, login, refresh token, current user |
-| Dashboard | `/api/dashboard` | Summary, holdings, recent transactions, performance |
-| Portfolios | `/api/portfolios` | Portfolio CRUD operations |
-| Stocks | `/api/stocks` | Create stocks, list stocks, get symbol, refresh price |
-| Transactions | `/api/transactions` | Buy, sell, holdings, summary, transaction history |
-| Alerts | `/api/alerts` | Create alerts and view user alerts |
-| Notifications | `/api/notifications` | View notifications and mark as read |
-| Research | `/api/research` | Upload and download stock research |
-| Swagger | `/swagger-ui/index.html` | API documentation |
 
 ## Database Design
 
@@ -507,17 +506,6 @@ Swagger documentation is available at:
 http://localhost:8080/swagger-ui/index.html
 ```
 
-Hosted Swagger:
-
-
-<img width="642" height="1280" alt="WhatsApp Image 2026-06-29 at 2 33 51 PM" src="https://github.com/user-attachments/assets/f73e06f8-c1cb-40a8-a2e5-21cf487476bf" />
-
-
-<img width="639" height="1280" alt="WhatsApp Image 2026-06-29 at 2 33 51 PM (1)" src="https://github.com/user-attachments/assets/e1cbde76-ced7-45c9-825b-923405a49f6a" />
-
-
-
-[https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html](https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html)
 
 ## Major Learning Outcomes
 
