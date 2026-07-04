@@ -18,6 +18,8 @@ const LoginPage = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [particles, setParticles] = useState([]);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -54,34 +56,86 @@ const LoginPage = () => {
   };
 
   const handleGoogleLogin = async () => {
-  toast.loading("Starting server... Please wait");
+    toast.loading("Starting server... Please wait");
 
-  try {
-    await fetch(
-      "https://real-time-stock-portfolio-production.up.railway.app/swagger-ui/index.html",
-      {
-        method: "GET",
-        mode: "no-cors",
-      }
-    );
-  } catch {}
+    try {
+      await fetch(
+        "https://real-time-stock-portfolio-production.up.railway.app/swagger-ui/index.html",
+        {
+          method: "GET",
+          mode: "no-cors",
+        }
+      );
+    } catch {}
 
-  setTimeout(() => {
-    window.location.href =
-      "https://real-time-stock-portfolio-production.up.railway.app/oauth2/authorization/google";
-  }, 5000);
-};
+    setTimeout(() => {
+      window.location.href =
+        "https://real-time-stock-portfolio-production.up.railway.app/oauth2/authorization/google";
+    }, 5000);
+  };
+
+  // Handle mouse movement
+  const handleMouseMove = (e) => {
+    const { clientX, clientY } = e;
+    setMousePos({ x: clientX, y: clientY });
+
+    // Create particles on mouse move
+    const newParticle = {
+      id: Date.now() + Math.random(),
+      x: clientX,
+      y: clientY,
+      radius: Math.random() * 3 + 1,
+      opacity: Math.random() * 0.5 + 0.3,
+      speedX: (Math.random() - 0.5) * 0.5,
+      speedY: (Math.random() - 0.5) * 0.5,
+      life: Math.random() * 60 + 40, // frames to live
+    };
+
+    setParticles(prev => [...prev, newParticle].slice(-50)); // Keep max 50 particles
+  };
 
   return (
     <>
-      <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#020617] px-4 text-white">
+      <div
+        className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#020617] px-4 text-white"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={(e) => setMousePos({ x: e.clientX, y: e.clientY })}
+      >
+        {/* Interactive Background Particles */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {/* Background gradient that responds to mouse */}
+          <div className="absolute inset-0" style={{
+            background: `radial-gradient(circle at ${mousePos.x}px ${mousePos.y}px, rgba(30, 64, 175, 0.15) 0%, transparent 50%),
+                         radial-gradient(circle at ${100 - mousePos.x}px ${100 - mousePos.y}px, rgba(79, 70, 229, 0.1) 0%, transparent 50%)`,
+            pointerEvents: 'none'
+          }}></div>
 
-        {/* Background Glow */}
-        <div className="absolute -left-32 top-0 h-[500px] w-[500px] rounded-full bg-blue-600/20 blur-[150px]" />
+          {/* Floating particles */}
+          <div className="absolute inset-0 pointer-events-none">
+            {particles.map(p => (
+              <div
+                key={p.id}
+                className="absolute"
+                style={{
+                  left: `${p.x}px`,
+                  top: `${p.y}px`,
+                  width: `${p.radius * 2}px`,
+                  height: `${p.radius * 2}px`,
+                  background: `radial-gradient(circle, rgba(59, 130, 246, ${p.opacity}) 0%, transparent 70%)`,
+                  borderRadius: '50%',
+                  opacity: p.life > 0 ? p.life / 100 : 0,
+                  pointerEvents: 'none'
+                }}
+              />
+            ))}
+          </div>
 
-        <div className="absolute -right-32 bottom-0 h-[500px] w-[500px] rounded-full bg-indigo-600/20 blur-[150px]" />
+          {/* Original background glows (kept for familiarity) */}
+          <div className="absolute -left-32 top-0 h-[500px] w-[500px] rounded-full bg-blue-600/20 blur-[150px]" />
+          <div className="absolute -right-32 bottom-0 h-[500px] w-[500px] rounded-full bg-indigo-600/20 blur-[150px]" />
+        </div>
 
-        {/* Login Card */}
+        {/* Login Card - EXACTLY AS BEFORE - UNCHANGED */}
         <div className="relative z-10 w-full max-w-md rounded-3xl border border-slate-800 bg-slate-900/80 p-8 shadow-2xl shadow-blue-950/30 backdrop-blur-xl">
 
           {/* Logo */}

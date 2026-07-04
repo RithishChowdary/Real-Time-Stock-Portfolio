@@ -22,6 +22,8 @@ services:
       - mysql
 
     environment:
+      DB_URL: jdbc:mysql://mysql:3306/stock_portfolio
+      DB_USERNAME: root
       DB_PASSWORD: root
       JWT_SECRET: your_jwt_secret
       TWELVEDATA_API_KEY: your_api_key
