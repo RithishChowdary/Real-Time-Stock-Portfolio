@@ -14,7 +14,7 @@ The project combines a Spring Boot REST API backend, React frontend, MySQL persi
 
 <p align="center">
   <a href="https://stock-portfolio-frontend-omn1.onrender.com"><b>🚀 Live Demo</b></a> |
-  <a href="https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html"><b>📄 API Docs</b></a> |
+  <a href="https://real-time-stock-portfolio-production.up.railway.app/swagger-ui/index.html"><b>📄 API Docs</b></a> |
   <a href="https://github.com/RithishChowdary/Real-Time-Stock-Portfolio"><b>💻 GitHub</b></a>
 </p>
 
@@ -26,7 +26,7 @@ The project combines a Spring Boot REST API backend, React frontend, MySQL persi
 - [Architecture](#architecture)
 - [Screenshots](#screenshots)
 - [Core Modules](#core-modules)
-- [Backend API Modules](#backend-api-modules)
+- [API Modules](#backend-api-modules)
 - [Database Design](#database-design)
 - [Real-Time Functionality](#real-time-functionality)
 - [Security](#security)
@@ -509,6 +509,14 @@ http://localhost:8080/swagger-ui/index.html
 
 Hosted Swagger:
 
+
+<img width="642" height="1280" alt="WhatsApp Image 2026-06-29 at 2 33 51 PM" src="https://github.com/user-attachments/assets/f73e06f8-c1cb-40a8-a2e5-21cf487476bf" />
+
+
+<img width="639" height="1280" alt="WhatsApp Image 2026-06-29 at 2 33 51 PM (1)" src="https://github.com/user-attachments/assets/e1cbde76-ced7-45c9-825b-923405a49f6a" />
+
+
+
 [https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html](https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html)
 
 ## Major Learning Outcomes
@@ -527,16 +535,16 @@ Hosted Swagger:
 
 ## Future Enhancements
 
-- Add real broker API integration
+- Add Backtesting with TA4J
 - Add candlestick charts and advanced technical indicators
 - Add watchlists
 - Add portfolio comparison reports
 - Add downloadable portfolio statements
 - Add email/SMS alert delivery
-- Add role-based admin dashboard
+- Add Email-Validation
 - Add unit and integration test coverage
-- Add CI/CD pipeline
-- Improve Docker Compose environment variable configuration
+- Add AWS Ec2 Deployment
+- Add DevOps Architect 
 
 ## Conclusion
 
