@@ -22,14 +22,14 @@ services:
       - mysql
 
     environment:
-      DB_URL: jdbc:mysql://mysql:3306/stock_portfolio
-      DB_USERNAME: root
-      DB_PASSWORD: root
-      JWT_SECRET: your_jwt_secret
-      TWELVEDATA_API_KEY: your_api_key
-      GOOGLE_CLIENT_ID: your_google_client_id
-      GOOGLE_CLIENT_SECRET: your_google_client_secret
-      RESEARCH_UPLOAD_DIR: /app/uploads/research
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      TWELVEDATA_API_KEY: ${TWELVEDATA_API_KEY}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      RESEARCH_UPLOAD_DIR: ${RESEARCH_UPLOAD_DIR}
 
     ports:
       - "8080:8080"
