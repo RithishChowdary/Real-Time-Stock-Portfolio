@@ -1,0 +1,35 @@
+services:
+
+  mysql:
+    image: mysql:8
+    container_name: stock-mysql
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: stock_portfolio
+
+    ports:
+      - "3307:3306"
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build: ./backend
+    container_name: stock-backend
+
+    depends_on:
+      - mysql
+
+    env_file:
+      - .env
+
+    ports:
+      - "8080:8080"
+
+    volumes:
+      - research_uploads:/app/uploads/research
+
+volumes:
+  mysql_data:
+  research_uploads:
