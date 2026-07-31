@@ -52,6 +52,57 @@ The system is designed as a major full-stack project with strong emphasis on:
 - API documentation using Swagger
 - Deployment-ready configuration with Docker and Render
 
+## Screenshots
+
+### Landing Page
+
+<img width="1899" height="950" alt="Screenshot 2026-07-31 085442" src="https://github.com/user-attachments/assets/3a35c8f6-3a80-48c2-be54-b79faa404c05" />
+
+<img width="1897" height="953" alt="Screenshot 2026-07-31 085505" src="https://github.com/user-attachments/assets/b4d98d98-edbc-4196-bb9e-25b12a776240" />
+
+
+### Authentication
+
+Registration page:
+
+<img width="1902" height="941" alt="image" src="https://github.com/user-attachments/assets/33f8ab8b-a78e-468f-88ff-cf854f6c4d6f" />
+
+Login page:
+
+<img width="1880" height="949" alt="image" src="https://github.com/user-attachments/assets/819d9051-d6fa-4e45-a188-6caffb2d9156" />
+
+
+### Dashboard
+
+<img width="1889" height="946" alt="image" src="https://github.com/user-attachments/assets/cd19eb64-7604-4641-b5aa-5c1b3eaa4851" />
+
+<img width="1893" height="946" alt="image" src="https://github.com/user-attachments/assets/d0ef5308-1404-4553-9f33-c88d55a867f3" />
+
+<img width="1891" height="948" alt="image" src="https://github.com/user-attachments/assets/c5782e33-f12b-4bda-822f-206adf4f10b6" />
+
+### Portfolios
+
+<img width="1919" height="937" alt="image" src="https://github.com/user-attachments/assets/b9b8b81d-f111-4736-9a68-accdbfd0e1ad" />
+
+<img width="1898" height="949" alt="image" src="https://github.com/user-attachments/assets/3dffc7d4-4944-4c0c-ab51-8ac6de2e602d" />
+
+### Stocks
+
+<img width="1898" height="952" alt="image" src="https://github.com/user-attachments/assets/5be8eade-4d7e-47ba-9dac-db272cfe23e8" />
+
+### Transactions
+
+<img width="1898" height="946" alt="image" src="https://github.com/user-attachments/assets/f0994732-fa40-4e1f-8a44-abefdc72a047" />
+
+### Notifications
+
+<img width="1916" height="947" alt="image" src="https://github.com/user-attachments/assets/42581528-7e33-463d-8514-f090c4c7fa5c" />
+
+### Alerts
+
+<img width="1898" height="945" alt="image" src="https://github.com/user-attachments/assets/4c754a29-07dc-4dcb-b2e6-69707ff391a5" />
+
+
 ## Key Features
 
 - User registration and login
@@ -149,57 +200,7 @@ The system is designed as a major full-stack project with strong emphasis on:
 
       External: Twelve Data REST, Google OAuth2
 
-## Screenshots
-
-### Landing Page
-
-<img width="1899" height="950" alt="Screenshot 2026-07-31 085442" src="https://github.com/user-attachments/assets/3a35c8f6-3a80-48c2-be54-b79faa404c05" />
-
-<img width="1897" height="953" alt="Screenshot 2026-07-31 085505" src="https://github.com/user-attachments/assets/b4d98d98-edbc-4196-bb9e-25b12a776240" />
-
-
-### Authentication
-
-Registration page:
-
-<img width="1902" height="941" alt="image" src="https://github.com/user-attachments/assets/33f8ab8b-a78e-468f-88ff-cf854f6c4d6f" />
-
-Login page:
-
-<img width="1880" height="949" alt="image" src="https://github.com/user-attachments/assets/819d9051-d6fa-4e45-a188-6caffb2d9156" />
-
-
-### Dashboard
-
-<img width="1889" height="946" alt="image" src="https://github.com/user-attachments/assets/cd19eb64-7604-4641-b5aa-5c1b3eaa4851" />
-
-<img width="1893" height="946" alt="image" src="https://github.com/user-attachments/assets/d0ef5308-1404-4553-9f33-c88d55a867f3" />
-
-<img width="1891" height="948" alt="image" src="https://github.com/user-attachments/assets/c5782e33-f12b-4bda-822f-206adf4f10b6" />
-
-### Portfolios
-
-<img width="1919" height="937" alt="image" src="https://github.com/user-attachments/assets/b9b8b81d-f111-4736-9a68-accdbfd0e1ad" />
-
-<img width="1898" height="949" alt="image" src="https://github.com/user-attachments/assets/3dffc7d4-4944-4c0c-ab51-8ac6de2e602d" />
-
-### Stocks
-
-<img width="1898" height="952" alt="image" src="https://github.com/user-attachments/assets/5be8eade-4d7e-47ba-9dac-db272cfe23e8" />
-
-### Transactions
-
-<img width="1898" height="946" alt="image" src="https://github.com/user-attachments/assets/f0994732-fa40-4e1f-8a44-abefdc72a047" />
-
-### Notifications
-
-<img width="1916" height="947" alt="image" src="https://github.com/user-attachments/assets/42581528-7e33-463d-8514-f090c4c7fa5c" />
-
-### Alerts
-
-<img width="1898" height="945" alt="image" src="https://github.com/user-attachments/assets/4c754a29-07dc-4dcb-b2e6-69707ff391a5" />
-
-
+      
  ## REST API
 
   All routes under `/api`. Auth routes are public; everything else requires a
