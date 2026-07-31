@@ -153,49 +153,51 @@ The system is designed as a major full-stack project with strong emphasis on:
 
 ### Landing Page
 
-<img width="1919" height="1077" alt="InvestIND Landing Page" src="https://github.com/user-attachments/assets/52caaca2-ec96-4741-bb0d-dbab396043be" />
+<img width="1899" height="950" alt="Screenshot 2026-07-31 085442" src="https://github.com/user-attachments/assets/3a35c8f6-3a80-48c2-be54-b79faa404c05" />
 
-<img width="1917" height="1069" alt="InvestIND Landing Page Features" src="https://github.com/user-attachments/assets/04fca131-d2ee-447c-978a-4aa2c9fef0dd" />
+<img width="1897" height="953" alt="Screenshot 2026-07-31 085505" src="https://github.com/user-attachments/assets/b4d98d98-edbc-4196-bb9e-25b12a776240" />
+
 
 ### Authentication
 
 Registration page:
 
-<img width="1919" height="1079" alt="InvestIND Registration Page" src="https://github.com/user-attachments/assets/2c782cc5-594c-4f0b-8737-045c021b04ac" />
+<img width="1902" height="941" alt="image" src="https://github.com/user-attachments/assets/33f8ab8b-a78e-468f-88ff-cf854f6c4d6f" />
 
 Login page:
 
-<img width="1919" height="1079" alt="InvestIND Login Page" src="https://github.com/user-attachments/assets/68783a80-58d7-44b5-b3d0-7baa0868b3e9" />
+<img width="1880" height="949" alt="image" src="https://github.com/user-attachments/assets/819d9051-d6fa-4e45-a188-6caffb2d9156" />
+
 
 ### Dashboard
 
-<img width="1919" height="947" alt="InvestIND Dashboard Overview" src="https://github.com/user-attachments/assets/35891e6e-2c50-464a-8bb2-a7ea441caef4" />
+<img width="1889" height="946" alt="image" src="https://github.com/user-attachments/assets/cd19eb64-7604-4641-b5aa-5c1b3eaa4851" />
 
-<img width="1911" height="1079" alt="InvestIND Dashboard Charts" src="https://github.com/user-attachments/assets/e286ec06-5319-4031-ab26-c7d48bb6f508" />
+<img width="1893" height="946" alt="image" src="https://github.com/user-attachments/assets/d0ef5308-1404-4553-9f33-c88d55a867f3" />
 
-<img width="1909" height="1079" alt="InvestIND Dashboard Holdings" src="https://github.com/user-attachments/assets/0d21d9f3-f7aa-4eb9-b104-e177ed0d08f3" />
+<img width="1891" height="948" alt="image" src="https://github.com/user-attachments/assets/c5782e33-f12b-4bda-822f-206adf4f10b6" />
 
 ### Portfolios
 
-<img width="1919" height="1079" alt="InvestIND Portfolio List" src="https://github.com/user-attachments/assets/06413667-fa48-44cb-bb0e-e1c1b0d7723f" />
+<img width="1919" height="937" alt="image" src="https://github.com/user-attachments/assets/b9b8b81d-f111-4736-9a68-accdbfd0e1ad" />
 
-<img width="1898" height="1079" alt="InvestIND Portfolio Details" src="https://github.com/user-attachments/assets/e38a3b40-e7b1-4de6-8a04-d96e85a84748" />
+<img width="1898" height="949" alt="image" src="https://github.com/user-attachments/assets/3dffc7d4-4944-4c0c-ab51-8ac6de2e602d" />
 
 ### Stocks
 
-<img width="1897" height="895" alt="InvestIND Stocks Page" src="https://github.com/user-attachments/assets/b86976ac-0461-49b6-9f80-9976b773e132" />
+<img width="1898" height="952" alt="image" src="https://github.com/user-attachments/assets/5be8eade-4d7e-47ba-9dac-db272cfe23e8" />
 
 ### Transactions
 
-<img width="1919" height="1070" alt="InvestIND Transactions Page" src="https://github.com/user-attachments/assets/409dedfc-71e3-4b4e-a65d-8c70d1b5243a" />
+<img width="1898" height="946" alt="image" src="https://github.com/user-attachments/assets/f0994732-fa40-4e1f-8a44-abefdc72a047" />
 
 ### Notifications
 
-<img width="1917" height="946" alt="InvestIND Notifications Page" src="https://github.com/user-attachments/assets/3fff5be1-fe5d-4d25-b1bb-01b3dd0f7df3" />
+<img width="1916" height="947" alt="image" src="https://github.com/user-attachments/assets/42581528-7e33-463d-8514-f090c4c7fa5c" />
 
 ### Alerts
 
-<img width="1919" height="951" alt="InvestIND Alerts Page" src="https://github.com/user-attachments/assets/3cbe85c1-2235-4335-a822-9489a6471519" />
+<img width="1898" height="945" alt="image" src="https://github.com/user-attachments/assets/4c754a29-07dc-4dcb-b2e6-69707ff391a5" />
 
 
  ## REST API
