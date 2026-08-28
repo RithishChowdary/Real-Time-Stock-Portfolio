@@ -70,7 +70,7 @@ const LoginPage = () => {
 
     setTimeout(() => {
       window.location.href =
-        "https://stock-portfolio-frontend-omn1.onrender.com/oauth2/authorization/google";
+        "https://real-time-stock-portfolio.onrender.com/oauth2/authorization/google";
     }, 5000);
   };
 
