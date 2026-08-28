@@ -17,7 +17,6 @@ The project combines a Spring Boot REST API backend, React frontend, MySQL persi
   <a href="https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html"><b>📄 API Docs</b></a> |
   <a href="https://github.com/RithishChowdary/Real-Time-Stock-Portfolio"><b>💻 GitHub</b></a>
 
-> **Note:** The Live Demo is temporarily unavailable as the previous Railway deployment has expired. The application is currently being migrated to **AWS EC2**, and the demo link will be updated once deployment is complete. 
 </p>
 
 ## Table of Contents
