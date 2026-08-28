@@ -60,7 +60,7 @@ const LoginPage = () => {
 
     try {
       await fetch(
-        "https://real-time-stock-portfolio-production.up.railway.app/swagger-ui/index.html",
+        "https://stock-portfolio-frontend-omn1.onrender.com/swagger-ui/index.html",
         {
           method: "GET",
           mode: "no-cors",
@@ -70,7 +70,7 @@ const LoginPage = () => {
 
     setTimeout(() => {
       window.location.href =
-        "https://real-time-stock-portfolio-production.up.railway.app/oauth2/authorization/google";
+        "https://stock-portfolio-frontend-omn1.onrender.com/oauth2/authorization/google";
     }, 5000);
   };
 
