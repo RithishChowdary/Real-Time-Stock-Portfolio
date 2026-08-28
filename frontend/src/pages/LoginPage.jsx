@@ -55,25 +55,10 @@ const LoginPage = () => {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    toast.loading("Starting server... Please wait");
-
-    try {
-      await fetch(
-        "https://stock-portfolio-frontend-omn1.onrender.com/swagger-ui/index.html",
-        {
-          method: "GET",
-          mode: "no-cors",
-        }
-      );
-    } catch {}
-
-    setTimeout(() => {
-      window.location.href =
-        "https://real-time-stock-portfolio.onrender.com/oauth2/authorization/google";
-    }, 5000);
-  };
-
+ const handleGoogleLogin = () => {
+  window.location.href =
+    "https://real-time-stock-portfolio.onrender.com/oauth2/authorization/google";
+};
   // Handle mouse movement
   const handleMouseMove = (e) => {
     const { clientX, clientY } = e;
