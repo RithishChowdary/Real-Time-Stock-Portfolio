@@ -1,553 +1,671 @@
-# InvestIND - Real-Time Stock Portfolio Management
+# InvestIND — Real-Time Stock Portfolio & Quantitative Analytics Platform
 
+[![Java](https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.5-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
-[![React](https://img.shields.io/badge/React-19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev)
+[![Spring Security](https://img.shields.io/badge/Spring%20Security-6-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white)](https://spring.io/projects/spring-security)
+[![TA4J](https://img.shields.io/badge/TA4J-0.18-00599C?style=for-the-badge)](https://github.com/ta4j/ta4j)
+[![React](https://img.shields.io/badge/React-18-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev)
+[![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![MySQL](https://img.shields.io/badge/MySQL-8-003B57?style=for-the-badge&logo=mysql&logoColor=F29111)](https://www.mysql.com)
-[![JWT](https://img.shields.io/badge/JWT-Auth-FF6F00?style=for-the-badge&logo=jsonwebtokens&logoColor=white)](https://jwt.io)
-[![Docker](https://img.shields.io/badge/Docker-Ready-0db7ed?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com)
+[![JWT](https://img.shields.io/badge/JWT-Stateless_Auth-FF6F00?style=for-the-badge&logo=jsonwebtokens&logoColor=white)](https://jwt.io)
 
-**InvestIND** is a full-stack real-time stock portfolio management platform built for tracking Indian stock investments, portfolio performance, transactions, alerts, notifications, and research insights from a modern web dashboard. 
+**InvestIND** is a full-stack Indian stock paper-trading, portfolio management, and quantitative analytics platform. It pairs a robust Spring Boot 3 backend and modern React 18 frontend with algorithmic backtesting powered by [TA4J](https://github.com/ta4j/ta4j), Walk-Forward out-of-sample optimization, and AI-assisted quantitative performance analysis.
 
-The project combines a Spring Boot REST API backend, React frontend, MySQL persistence, JWT security, Google OAuth login, WebSocket-based live updates, scheduled stock price refresh, and Swagger API documentation.
- 
-## 🔗 Live Links
+> [!IMPORTANT]
+> **Educational & Portfolio Purpose**: InvestIND is built for educational, quantitative research, and portfolio demonstration purposes. All backtest metrics and walk-forward analyses are historical simulations and do not represent financial advice or guarantee future returns. Paper-trading trades and cash balances are simulated.
 
-<p align="center">
-  <a href="https://stock-portfolio-frontend-omn1.onrender.com"><b>🚀 Live Demo</b></a> |
-  <a href="https://https://stock-portfolio-frontend-omn1.onrender.com/swagger-ui/index.html"><b>📄 API Docs</b></a> |
-  <a href="https://github.com/RithishChowdary/Real-Time-Stock-Portfolio"><b>💻 GitHub</b></a>
-</p>
+---
+
+## 🔗 Project Links
+
+- **Repository**: [GitHub Repository](https://github.com/RithishChowdary/Real-Time-Stock-Portfolio)
+- **Live Demo**: [InvestIND Web App](https://stock-portfolio-frontend-omn1.onrender.com)
+- **API Documentation**: [Swagger UI Docs](https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html)
+
+---
 
 ## Table of Contents
 
-- [Project Overview](#project-overview)
+- [Overview](#overview)
 - [Key Features](#key-features)
+- [System Architecture](#system-architecture)
+- [Quantitative Trading Engine & Strategy Lab](#quantitative-trading-engine--strategy-lab)
+- [AI Quantitative Analysis](#ai-quantitative-analysis)
+- [Portfolio & Paper Trading Engine](#portfolio--paper-trading-engine)
+- [Alerts & Notifications](#alerts--notifications)
+- [Research Management (Admin-Only)](#research-management-admin-only)
+- [Authentication & Security](#authentication--security)
 - [Technology Stack](#technology-stack)
-- [Architecture](#architecture)
-- [Screenshots](#screenshots)
-- [Core Modules](#core-modules)
-- [API Modules](#backend-api-modules)
-- [Database Design](#database-design)
-- [Real-Time Functionality](#real-time-functionality)
-- [Security](#security)
+- [API Overview](#api-overview)
+- [Environment Configuration](#environment-configuration)
+- [Local Setup & Installation](#local-setup--installation)
+- [Testing & Verification](#testing--verification)
 - [Project Structure](#project-structure)
-- [Environment Variables](#environment-variables)
-- [Local Setup](#local-setup)
-- [Docker Setup](#docker-setup)
+- [Screenshots](#screenshots)
+- [Project Status](#project-status)
+- [Limitations & Responsible Use](#limitations--responsible-use)
 - [Future Enhancements](#future-enhancements)
+- [Disclaimer](#disclaimer)
 
-## Project Overview
+---
 
-InvestIND helps users manage stock portfolios in a centralized dashboard. Users can register, log in, create portfolios, add stocks, record buy/sell transactions, track holdings, monitor profit and loss, create price alerts, receive notifications, and access stock research files.
+## Overview
 
-The system is designed as a major full-stack project with strong emphasis on:
+InvestIND provides a unified environment for stock market tracking, simulated trading execution, and algorithmic strategy validation:
 
-- Backend API design using Spring Boot
-- Secure authentication and authorization
-- Real-time stock price updates
-- Database-driven portfolio and transaction management
-- Clean React dashboard UI
-- API documentation using Swagger
-- Deployment-ready configuration with Docker and Render
+1. **Portfolio & Paper-Trading Account**: Every user receives a backend-managed paper-trading cash account seeded with ₹1,00,000 initial capital. Buy/Sell transactions execute with pessimistic database locking and authoritative balance validation.
+2. **Strategy Lab & TA4J Backtesting**: Run quantitative algorithmic strategies (`EMA + RSI Momentum` and `EMA Dual Crossover`) against historical daily OHLCV market datasets with full trade statistics (Win Rate, Total Earnings, Profit Factor, Max Drawdown).
+3. **Walk-Forward Optimization**: Evaluate strategy robustness across rolling in-sample parameter optimization and out-of-sample testing windows to reduce overfitting.
+4. **AI-Assisted Quantitative Interpretation**: Grounded AI analysis interprets verifiable TA4J metrics (strengths, risk factors, market regime suitability) through a backend provider architecture without hallucinating trades or prices.
+5. **Admin Research Portal**: Dedicated administrative portal for publishing and managing stock research reports, executive summaries, and PDF filings with role-based route protection.
+
+---
 
 ## Key Features
 
-- User registration and login
-- Google OAuth authentication support
-- JWT access token and refresh token flow
-- Protected dashboard routes
-- Portfolio creation and management
-- Stock listing with pagination
-- Live stock price fetch using Twelve Data API
-- Fallback simulated price generation when live data is unavailable
-- Buy and sell transaction management
-- Holdings calculation with average price, current value, investment value, profit/loss, and return percentage
-- Dashboard summary cards and performance visualization
-- Recent transaction history
-- Price alerts with target price and stop-loss support
-- Notification system for triggered alerts
-- WebSocket updates for live stock and alert events
-- Scheduled stock refresh every 60 seconds
-- Admin stock research upload with PDF support
-- Swagger UI for API testing
-- MySQL relational database
-- Docker support for frontend, backend, and database
+- **Authoritative Cash & Position Management**:
+  - `PaperTradingAccount` is the single source of truth for cash balances.
+  - Pessimistic write locking prevents race conditions and balance discrepancies.
+  - Insufficient funds strictly reject BUY orders; insufficient holdings reject SELL orders.
+  - Authoritative calculation of invested value, holdings value, realized P/L, and return percentage.
+- **Quantitative Strategy Lab**:
+  - Discrete execution of selectable algorithms (`EMA_RSI` and `EMA_CROSSOVER`).
+  - True multi-metric backtest evaluation (Total Trades, Winning/Losing Trades, Win Rate, Profit Factor, Drawdown).
+  - Isolated side-by-side strategy comparison.
+  - Walk-Forward rolling train/test evaluation for out-of-sample validation.
+- **AI-Powered Quantitative Reporting**:
+  - Grounded interpretation using Google Gemini through an extensible backend provider abstraction (`AIAnalysisProvider`).
+  - Generates structured executive summaries, risk breakdowns, and market regime analysis based exclusively on actual TA4J backtest outputs.
+- **Stock Analytics & Market Data Fallback**:
+  - Searchable Indian equity database.
+  - Hybrid historical market data loader: fetches from Alpha Vantage and automatically falls back to bundled classpath CSV historical datasets (`TCS`, `INFY`, `RELIANCE`, `HDFCBANK`) with thread-safe in-memory caching.
+- **Configurable Price & Percentage Alerts**:
+  - Set target price, stop-loss, profit percentage, and loss percentage thresholds.
+  - Authoritative backend and responsive frontend input validation.
+  - Real-time notification feed for triggered events.
+- **Role-Based Research Management**:
+  - Admin-only PDF research document uploads (max 10MB) with stock linking.
+  - Full CRUD management with secure file streaming and deletion.
+  - Strict route protection (`AdminRoute`) and method-level `@PreAuthorize("hasRole('ADMIN')")`.
+- **Stateless Security**:
+  - JWT access tokens (7-day validity) and refresh tokens (30-day validity).
+  - Google OAuth2 Single Sign-On.
+  - BCrypt password hashing and user isolation.
+
+---
+
+## System Architecture
+
+### High-Level Application Architecture
+
+```text
+                     +---------------------------------------+
+                     |         React 18 + Vite Client        |
+                     |  Tailwind CSS | Lucide Icons | Axios  |
+                     +---------------------------------------+
+                                         |
+                                         | HTTPS REST / JWT
+                                         v
+                     +---------------------------------------+
+                     |        Spring Boot 3.2 Backend        |
+                     |         Spring Security 6             |
+                     +---------------------------------------+
+                         |               |               |
+         +---------------+               |               +---------------+
+         |                               |                               |
+         v                               v                               v
++------------------+           +-------------------+           +-------------------+
+|  Business Core   |           | Quantitative Lab  |           | AI Provider Layer |
+|  - AuthService   |           |  - MarketDataLoader|          |  - AIAnalysisServ |
+|  - AccountService|           |  - TA4J Engine    |           |  - GeminiAIProvider|
+|  - TransactServ  |           |  - Walk-Forward   |           +-------------------+
+|  - ResearchServ  |           +-------------------+                     |
++------------------+                     |                               |
+         |                               v                               v
+         |                     +-------------------+           +-------------------+
+         |                     | Historical Market |           | Google Gemini API |
+         |                     | Data (API / CSV)  |           | (Backend-only key)|
+         v                     +-------------------+           +-------------------+
++------------------+
+| MySQL 8 Database |
+| (InnoDB / Locks) |
++------------------+
+```
+
+### Quantitative Engine Architecture
+
+```text
+Historical Market Data (Alpha Vantage / CSV Fallback)
+         |
+         v
+FallbackMarketDataLoader (In-Memory ConcurrentHashMap Cache)
+         |
+         v
+TA4J BarSeries (Daily OHLCV Candles)
+         |
+         +---------------------------------------+
+         |                                       |
+         v                                       v
+EMA + RSI Strategy                     EMA Dual Crossover Strategy
+(Short EMA, Long EMA, RSI)             (Fast EMA, Slow EMA)
+         |                                       |
+         +-------------------+-------------------+
+                             |
+                             v
+                    BacktestEngine (TA4J)
+                             |
+                             v
+                 PerformanceMetrics DTO
+  (Win Rate, Total Trades, Profit Factor, Max Drawdown)
+                             |
+              +--------------+--------------+
+              |                             |
+              v                             v
+   Strategy Comparison /          AI Quantitative Analysis
+   Walk-Forward Optimization      (AIAnalysisProvider -> Gemini)
+```
+
+---
+
+## Quantitative Trading Engine & Strategy Lab
+
+The Strategy Lab provides automated strategy evaluation on Indian equities using real historical OHLCV bar series.
+
+### 1. Implemented Strategies
+- **EMA + RSI Momentum (`EMA_RSI`)**: Combines Exponential Moving Averages (trend direction) with the Relative Strength Index (overbought/oversold momentum triggers).
+- **EMA Dual Crossover (`EMA_CROSSOVER`)**: Generates buy signals when a fast EMA crosses above a slow EMA and sell signals on downward crosses.
+
+### 2. Strategy Execution & Discrete Routing
+The frontend sends the explicitly selected strategy in the backtest payload:
+
+```json
+POST /api/backtest
+{
+  "symbol": "INFY",
+  "strategy": "EMA_CROSSOVER"
+}
+```
+
+If omitted, the backend defaults to `EMA_RSI` for backward compatibility.
+
+### 3. Quantitative Backtest Metrics
+The engine calculates comprehensive trading statistics via TA4J:
+- **Total Earnings**: Net profit/loss in currency.
+- **Win Rate**: Percentage of profitable trades.
+- **Total Trades / Winning Trades / Losing Trades**: Absolute trade counts.
+- **Average Profit**: Mean return per closed position.
+- **Maximum Drawdown**: Largest peak-to-trough portfolio equity drop during the test period.
+- **Profit Factor**: Ratio of gross profits to gross losses.
+
+> [!NOTE]
+> **Zero-Trade Backtest Outcomes**: A backtest returning 0 trades (e.g., EMA + RSI over a non-trending consolidation dataset) is a **valid quantitative result** indicating no signal conditions were met. It represents realistic quantitative evaluation, not an application error.
+
+### 4. Independent Strategy Comparison
+- Comparison metrics are populated exclusively for the strategy that was executed.
+- Unexecuted strategies display `--`.
+- Changing the selected stock automatically resets comparison metrics to prevent cross-asset data pollution.
+
+### 5. Walk-Forward Optimization
+Walk-forward analysis tests whether strategy parameters retain predictive value outside their training window.
+
+```json
+POST /api/backtest/walk-forward
+{
+  "symbol": "TCS"
+}
+```
+
+The system splits historical bars into sequential training (in-sample optimization) and testing (out-of-sample validation) windows. The UI displays:
+- Window number
+- Training & testing bar counts
+- Optimized indicator parameters
+- Number of out-of-sample trades
+- Testing window profit
+- Cumulative out-of-sample profit
+
+---
+
+## AI Quantitative Analysis
+
+InvestIND includes a backend-grounded AI analysis engine that transforms raw TA4J backtest statistics into structured financial explanations.
+
+### Provider Architecture
+```text
+BacktestController ──> AIAnalysisService ──> AIAnalysisProvider (Interface)
+                                                    │
+                                                    ▼
+                                            GeminiAIProvider
+                                                    │
+                                                    ▼
+                                            Google Gemini API
+```
+
+- **Loose Coupling**: The `AIAnalysisProvider` interface allows swapping underlying LLM providers (e.g., Anthropic, OpenAI, or local models) without modifying the quantitative core.
+- **Strict Grounding**: The AI is supplied with authoritative TA4J `performanceMetrics` (trades, win rate, profit factor, drawdown) and strictly instructed to interpret the numbers without inventing trades, returns, or stock prices.
+- **Structured Sections**:
+  - **Executive Summary**: High-level strategy outcome.
+  - **Performance Breakdown**: Trade distribution, expectancy, and win rate analysis.
+  - **Strategy Strengths & Weaknesses**: Edge characteristics and execution friction.
+  - **Risk Observations**: Maximum drawdown exposure and risk of ruin.
+  - **Market Regime Suitability**: Performance in trending vs ranging markets.
+  - **Quantitative Takeaway**: Practical algorithmic insights.
+
+### Backend-Only Configuration
+The Gemini API key is configured **exclusively on the backend** through environment variables:
+
+```properties
+ai.provider=${AI_PROVIDER:gemini}
+ai.gemini.api-key=${GEMINI_API_KEY:}
+ai.gemini.model=${GEMINI_MODEL:gemini-1.5-flash}
+ai.gemini.base-url=${GEMINI_BASE_URL:https://generativelanguage.googleapis.com/v1beta/models/}
+```
+
+If `GEMINI_API_KEY` is not set, the application returns a clean advisory notice without crashing or exposing stack traces.
+
+---
+
+## Portfolio & Paper Trading Engine
+
+### 1. Capital & Cash Authority
+- Fresh paper-trading accounts start with an initial cash balance of **₹1,00,000.00**.
+- The `PaperTradingAccount` database entity is the **sole source of truth** for available cash. Frontend balance states are never trusted for order execution.
+
+### 2. Transaction Atomicity & Concurrency Control
+- **Pessimistic Locking**: `PaperTradingAccountRepository` uses `@Lock(LockModeType.PESSIMISTIC_WRITE)` when reading account balances during buy and sell transactions.
+- **BUY Order Flow**:
+  1. Validates quantity $> 0$ and price $> 0$.
+  2. Acquires pessimistic lock on `PaperTradingAccount`.
+  3. Verifies `availableCash >= totalCost`. If insufficient, throws `BadRequestException("Insufficient funds")`.
+  4. Deducts `totalCost` from cash balance, updates holdings, and records a `BUY` transaction.
+- **SELL Order Flow**:
+  1. Validates quantity $> 0$ and price $> 0$.
+  2. Verifies current net holding quantity $\ge$ sell quantity. If insufficient, throws `BadRequestException("Insufficient holdings")`.
+  3. Acquires pessimistic lock on `PaperTradingAccount`.
+  4. Credits `proceeds` to cash balance, updates/closes position, and records a `SELL` transaction.
+- **Negative Cash Prevention**: Enforces database and service invariants ensuring cash balances cannot become negative.
+
+---
+
+## Alerts & Notifications
+
+- **Price & Percentage Trigger Rules**:
+  - Target price (upper threshold)
+  - Stop-loss (lower threshold)
+  - Profit percentage gain
+  - Loss percentage drop
+- **Input Validation**:
+  - Rejects zero and negative price/percentage inputs.
+  - Requires at least one valid trigger condition per alert.
+- **Lifecycle & Notifications**:
+  - Evaluated against incoming stock price updates.
+  - Creates persistent notification records when triggered.
+  - Provides mark-as-read state management.
+
+---
+
+## Research Management (Admin-Only)
+
+InvestIND includes a dedicated research document publication system restricted strictly to platform administrators (`ROLE_ADMIN`).
+
+- **Capabilities**:
+  - Upload fundamental research and institutional PDF documents (up to 10MB).
+  - Searchable stock autocomplete linking reports to specific assets.
+  - Structured metadata (Title, Summary, Source Reference URL).
+  - Secure file streaming download and document deletion.
+- **Security & Authorization**:
+  - Backend: Endpoints protected with `@PreAuthorize("hasRole('ADMIN')")`.
+  - Frontend: `AdminRoute` guard automatically redirects non-admin users attempting to access `/admin/research`.
+  - Navigation: Sidebar dynamically filters out the Research Management link for normal `USER` accounts.
+
+---
+
+## Authentication & Security
+
+- **Stateless JWT**: Access tokens and refresh tokens signed with HMAC-SHA256 (`JWT_SECRET`).
+- **Role-Based Access Control (RBAC)**: Supports `ROLE_USER` and `ROLE_ADMIN` mapped via `CustomUserDetailsService`.
+- **Google OAuth2 Single Sign-On**: Automated account provisioning and OAuth success handling with JWT issuance.
+- **Password Security**: BCrypt password hashing.
+- **Centralized Exception Handling**: `@RestControllerAdvice` (`GlobalExceptionHandler`) returns uniform API error responses.
+
+---
 
 ## Technology Stack
 
-### Frontend
-
-| Technology | Usage |
-|---|---|
-| React 19 | User interface development |
-| Vite | Frontend build tool and dev server |
-| React Router | Application routing and protected routes |
-| Axios | API communication |
-| Tailwind CSS | Responsive styling |
-| Recharts | Charts and dashboard visualization |
-| STOMP.js + SockJS | WebSocket client support |
-| Lucide React / React Icons | UI icons |
-| Framer Motion | UI animations |
-| React Hot Toast | Toast notifications |
-
-### Backend
-
-| Technology | Usage |
-|---|---|
-| Java 21 | Backend runtime |
-| Spring Boot 3.2.5 | Main backend framework |
-| Spring Web | REST API development |
-| Spring Data JPA | ORM and database access |
-| Spring Security | Authentication and route protection |
-| OAuth2 Client | Google login integration |
-| JWT | Stateless access and refresh token security |
-| Spring WebSocket | Real-time stock and alert updates |
-| Spring Validation | Request validation |
-| Spring Cache + Caffeine | Caching support |
-| Lombok | Boilerplate reduction |
-| Springdoc OpenAPI | Swagger documentation |
-| MySQL Connector/J | MySQL database connectivity |
-
-### Database and Deployment
-
-| Technology | Usage |
-|---|---|
-| MySQL 8 | Relational database |
-| Docker | Containerized setup |
-| Docker Compose | Multi-service local deployment |
-| Render | Cloud deployment for frontend and backend |
-| Twelve Data API | External stock price source |
-
-## Architecture
-
-```text
-React Frontend
-  - Landing page
-  - Auth pages
-  - Protected dashboard
-  - Portfolio, stocks, transactions, alerts, notifications
-        |
-        | HTTPS REST API + JWT
-        |
-Spring Boot Backend
-  - Controllers
-  - Services
-  - Repositories
-  - Security filters
-  - WebSocket publishers
-  - Scheduler
-        |
-        | JPA / Hibernate
-        |
-MySQL Database
-
-External Integrations:
-  - Twelve Data API for stock prices
-  - Google OAuth for login
-  - WebSocket topics for live updates
-```
-
-## Screenshots
-
-### Landing Page
-
-<img width="1919" height="1077" alt="InvestIND Landing Page" src="https://github.com/user-attachments/assets/52caaca2-ec96-4741-bb0d-dbab396043be" />
-
-<img width="1917" height="1069" alt="InvestIND Landing Page Features" src="https://github.com/user-attachments/assets/04fca131-d2ee-447c-978a-4aa2c9fef0dd" />
-
-### Authentication
-
-Registration page:
-
-<img width="1919" height="1079" alt="InvestIND Registration Page" src="https://github.com/user-attachments/assets/2c782cc5-594c-4f0b-8737-045c021b04ac" />
-
-Login page:
-
-<img width="1919" height="1079" alt="InvestIND Login Page" src="https://github.com/user-attachments/assets/68783a80-58d7-44b5-b3d0-7baa0868b3e9" />
-
-### Dashboard
-
-<img width="1919" height="947" alt="InvestIND Dashboard Overview" src="https://github.com/user-attachments/assets/35891e6e-2c50-464a-8bb2-a7ea441caef4" />
-
-<img width="1911" height="1079" alt="InvestIND Dashboard Charts" src="https://github.com/user-attachments/assets/e286ec06-5319-4031-ab26-c7d48bb6f508" />
-
-<img width="1909" height="1079" alt="InvestIND Dashboard Holdings" src="https://github.com/user-attachments/assets/0d21d9f3-f7aa-4eb9-b104-e177ed0d08f3" />
-
-### Portfolios
-
-<img width="1919" height="1079" alt="InvestIND Portfolio List" src="https://github.com/user-attachments/assets/06413667-fa48-44cb-bb0e-e1c1b0d7723f" />
-
-<img width="1898" height="1079" alt="InvestIND Portfolio Details" src="https://github.com/user-attachments/assets/e38a3b40-e7b1-4de6-8a04-d96e85a84748" />
-
-### Stocks
-
-<img width="1897" height="895" alt="InvestIND Stocks Page" src="https://github.com/user-attachments/assets/b86976ac-0461-49b6-9f80-9976b773e132" />
-
-### Transactions
-
-<img width="1919" height="1070" alt="InvestIND Transactions Page" src="https://github.com/user-attachments/assets/409dedfc-71e3-4b4e-a65d-8c70d1b5243a" />
-
-### Notifications
-
-<img width="1917" height="946" alt="InvestIND Notifications Page" src="https://github.com/user-attachments/assets/3fff5be1-fe5d-4d25-b1bb-01b3dd0f7df3" />
-
-### Alerts
-
-<img width="1919" height="951" alt="InvestIND Alerts Page" src="https://github.com/user-attachments/assets/3cbe85c1-2235-4335-a822-9489a6471519" />
-
-## Core Modules
-
-### 1. Landing Page
-
-The landing page introduces InvestIND with a modern UI, project highlights, and navigation to authentication screens. It communicates the platform's purpose: portfolio tracking, stock monitoring, and investment visibility.
-
-### 2. Authentication
-
-Users can register, log in, and access protected pages. The backend uses Spring Security, BCrypt password hashing, JWT authentication, refresh tokens, and Google OAuth support.
-
-### 3. Dashboard
-
-The dashboard provides a quick overview of portfolio performance, holdings, market movement, recent transactions, notifications, and visual analytics.
-
-### 4. Portfolio Management
-
-Users can create and manage multiple portfolios. Each portfolio belongs to a user and contains transactions connected to stocks.
-
-### 5. Stock Management
-
-The stock module stores stock symbols, company names, current prices, and update timestamps. Stock prices can be refreshed from the Twelve Data API.
-
-### 6. Transactions
-
-The transactions module handles buy and sell operations. It calculates net holdings, average buy price, invested value, current value, profit/loss, and return percentage.
-
-### 7. Alerts
-
-Users can create target price and stop-loss alerts. When a stock crosses the configured price level, the system creates a notification and publishes a real-time alert event.
-
-### 8. Notifications
-
-Notifications are generated for important events such as triggered stock alerts. Users can view notifications and mark them as read.
-
-### 9. Research Management
-
-Admin users can upload stock research data and PDF files. Users can access research information for supported stocks.
-
-## Backend API Modules
-
-| Module | Base Path | Purpose |
+| Layer | Technology | Version / Details |
 |---|---|---|
-| Authentication | `/api/auth` | Register, login, refresh token, current user |
-| Dashboard | `/api/dashboard` | Summary, holdings, recent transactions, performance |
-| Portfolios | `/api/portfolios` | Portfolio CRUD operations |
-| Stocks | `/api/stocks` | Create stocks, list stocks, get symbol, refresh price |
-| Transactions | `/api/transactions` | Buy, sell, holdings, summary, transaction history |
-| Alerts | `/api/alerts` | Create alerts and view user alerts |
-| Notifications | `/api/notifications` | View notifications and mark as read |
-| Research | `/api/research` | Upload and download stock research |
-| Swagger | `/swagger-ui/index.html` | API documentation |
+| **Backend Runtime** | Java | OpenJDK 21 |
+| **Backend Framework** | Spring Boot | 3.2.5 |
+| **Security** | Spring Security & JWT | Spring Security 6, JJWT 0.11.5 |
+| **OAuth2** | Spring Security OAuth2 Client | Google OAuth2 Login |
+| **Quantitative Engine** | TA4J | 0.18 (BarSeries, Indicators, Rules, TradingRecord) |
+| **Database & ORM** | MySQL & Spring Data JPA | MySQL 8, Hibernate (Pessimistic Locking) |
+| **HTTP Client** | Java 11+ HttpClient | Asynchronous / Synchronous JSON communication |
+| **AI Integration** | Google Gemini API | `gemini-1.5-flash` via REST endpoint |
+| **Frontend Framework** | React | 18 |
+| **Build Tool** | Vite | 8 |
+| **Routing** | React Router | 6 (ProtectedRoute, AdminRoute) |
+| **Styling** | Tailwind CSS | 3.4 (Responsive Light/Dark theme support) |
+| **Icons & UI** | Lucide React | Modern vector icon suite |
+| **HTTP Client** | Axios | Interceptors for JWT authorization headers |
 
-## Database Design
+---
 
-The application uses a MySQL database named:
+## API Overview
 
-```text
-stock_portfolio
-```
+### Authentication (`/api/auth`)
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `POST` | `/api/auth/register` | Register new user account | Public |
+| `POST` | `/api/auth/login` | Login with email and password | Public |
+| `POST` | `/api/auth/refresh` | Refresh expired access token | Public |
+| `GET` | `/api/auth/me` | Fetch authenticated user profile | User / Admin |
 
-Main database tables:
+### Dashboard & Portfolio (`/api/dashboard`, `/api/portfolios`)
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `GET` | `/api/dashboard/summary` | Portfolio summary (cash, holdings, P/L, return %) | User / Admin |
+| `GET` | `/api/dashboard/holdings` | Current active stock holdings | User / Admin |
+| `GET` | `/api/dashboard/recent-transactions` | Recent transaction history | User / Admin |
+| `GET` | `/api/dashboard/performance` | Historical performance breakdown | User / Admin |
+| `GET` | `/api/portfolios` | List user portfolios | User / Admin |
+| `POST` | `/api/portfolios` | Create portfolio | User / Admin |
 
-| Table | Purpose |
-|---|---|
-| `users` | Stores user profile, credentials, role, and creation date |
-| `portfolios` | Stores user-created portfolios |
-| `stocks` | Stores stock symbol, company name, current price, and last update time |
-| `transactions` | Stores buy/sell transaction history |
-| `alerts` | Stores target price and stop-loss alerts |
-| `notifications` | Stores user notifications |
-| `stock_research` | Stores research title, summary, source URL, and PDF reference |
+### Transactions (`/api/transactions`)
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `POST` | `/api/transactions/buy` | Execute BUY order with cash deduction | User / Admin |
+| `POST` | `/api/transactions/sell` | Execute SELL order with proceeds credit | User / Admin |
+| `GET` | `/api/transactions/history` | Complete transaction audit trail | User / Admin |
+| `GET` | `/api/transactions/summary` | Portfolio valuation summary | User / Admin |
+| `GET` | `/api/transactions/holdings` | Aggregated positions | User / Admin |
 
-Database scripts are available in:
+### Strategy Lab & Quantitative Backtesting (`/api/backtest`)
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `POST` | `/api/backtest` | Run TA4J backtest (`symbol`, `strategy`) | User / Admin |
+| `POST` | `/api/backtest/walk-forward` | Execute rolling Walk-Forward optimization | User / Admin |
+| `POST` | `/api/backtest/ai-analysis` | Generate AI interpretation of metrics | User / Admin |
 
-```text
-database/queries.sql
-database/seedData.sql
-```
+### Alerts & Notifications (`/api/alerts`, `/api/notifications`)
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `POST` | `/api/alerts` | Create price/percentage alert | User / Admin |
+| `GET` | `/api/alerts` | List active alerts for user | User / Admin |
+| `DELETE` | `/api/alerts/{id}` | Delete alert rule | User / Admin |
+| `GET` | `/api/notifications` | Get user notifications | User / Admin |
+| `PUT` | `/api/notifications/{id}/read` | Mark notification as read | User / Admin |
 
-ER diagram:
+### Research Management (`/api/research`)
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `GET` | `/api/research` | List all research reports | User / Admin |
+| `GET` | `/api/research/stock/{stockId}` | List research reports by stock | User / Admin |
+| `GET` | `/api/research/download/{file}` | Download research PDF | User / Admin |
+| `POST` | `/api/research` | Upload research document & metadata | **Admin Only** |
+| `DELETE` | `/api/research/{id}` | Delete research report & PDF | **Admin Only** |
 
-![InvestIND ER Diagram](docs/ER%20Diagram.png)
+---
 
-## Real-Time Functionality
+## Environment Configuration
 
-InvestIND uses Spring WebSocket with STOMP messaging for real-time updates.
+Create configuration files for backend and frontend. **Never commit actual API keys or credentials to version control.**
 
-| Topic | Purpose |
-|---|---|
-| `/topic/stocks` | Publishes stock price updates |
-| `/topic/alerts` | Publishes triggered alert events |
-
-The backend scheduler refreshes stock prices every 60 seconds:
-
-```text
-@Scheduled(fixedRate = 60000)
-```
-
-When prices change, the system:
-
-1. Fetches the latest stock price from Twelve Data.
-2. Falls back to simulated pricing if external data is unavailable.
-3. Saves the updated price in MySQL.
-4. Publishes the update through WebSocket.
-5. Checks active alerts.
-6. Creates notifications for triggered alerts.
-
-## Security
-
-Security is handled using Spring Security and JWT.
-
-Important security features:
-
-- BCrypt password encoding
-- Stateless JWT authentication
-- Refresh token support
-- Google OAuth login support
-- Protected API routes
-- Protected React routes
-- User-owned portfolio validation
-- Global exception handling
-- Request validation
-- Role-based access support for admin research upload
-
-## Exception Handling
-
-The backend includes a centralized `GlobalExceptionHandler` using `@RestControllerAdvice`.
-
-Handled exception types include:
-
-- Resource not found
-- Bad request
-- Unauthorized access
-- Duplicate resource
-- Validation errors
-- Unsupported media type
-- Global server errors
-
-This improves API reliability and returns consistent error responses for frontend handling.
-
-## Project Structure
-
-```text
-Real-Time-Stock-Portfolio-main/
-|-- README.md
-|-- docker-compose.yml
-|-- database/
-|   |-- queries.sql
-|   |-- seedData.sql
-|-- docs/
-|   |-- ER Diagram.png
-|-- backend/
-|   |-- Dockerfile
-|   |-- pom.xml
-|   |-- src/main/java/com/major/stockportfolio/
-|       |-- config/
-|       |-- controller/
-|       |-- dto/
-|       |-- entity/
-|       |-- exception/
-|       |-- repository/
-|       |-- security/
-|       |-- service/
-|       |-- util/
-|       |-- websocket/
-|-- frontend/
-|   |-- Dockerfile
-|   |-- package.json
-|   |-- vite.config.js
-|   |-- src/
-|       |-- api/
-|       |-- components/
-|       |-- context/
-|       |-- hooks/
-|       |-- pages/
-|       |-- routes/
-|       |-- services/
-|       |-- utils/
-```
-
-## Environment Variables
-
-### Backend
-
-Create backend environment variables for database, JWT, Twelve Data, and Google OAuth.
+### Backend (`application.properties` or Environment Variables)
 
 ```env
-DB_URL=jdbc:mysql://localhost:3306/stock_portfolio
-DB_USERNAME=root
-DB_PASSWORD=your_mysql_password
-JWT_SECRET=your_secure_jwt_secret
+# Database
+DB_URL=jdbc:mysql://localhost:3306/stock_portfolio?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false
+DB_USERNAME=your_db_username
+DB_PASSWORD=your_db_password
+
+# JWT Security
+JWT_SECRET=your_base64_encoded_256bit_jwt_secret_key
+
+# External Market Data (Optional)
+ALPHA_VANTAGE_API_KEY=your_alpha_vantage_api_key
 TWELVEDATA_API_KEY=your_twelvedata_api_key
+
+# Google OAuth2 (Optional for SSO)
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# AI Quantitative Analysis (Google Gemini)
+AI_PROVIDER=gemini
+GEMINI_API_KEY=your_gemini_api_key
+GEMINI_MODEL=gemini-1.5-flash
 ```
 
-For Docker Compose, the database host should be the MySQL service name:
+### Frontend (`.env`)
 
 ```env
-DB_URL=jdbc:mysql://mysql:3306/stock_portfolio
-DB_USERNAME=root
-DB_PASSWORD=root
+VITE_API_URL=http://localhost:8080/api
 ```
 
-### Frontend
+---
 
-Create a frontend environment file:
-
-```env
-VITE_API_BASE_URL=http://localhost:8080/api
-```
-
-For deployed frontend, set this to the hosted backend API URL.
-
-## Local Setup
+## Local Setup & Installation
 
 ### Prerequisites
-
-- Java 21
-- Maven
-- Node.js 22 or compatible version
-- MySQL 8
-- Twelve Data API key
-- Google OAuth credentials
+- **Java 21 JDK**
+- **Maven 3.8+**
+- **Node.js 18+ & npm**
+- **MySQL 8.0+**
 
 ### 1. Clone the Repository
-
 ```bash
 git clone https://github.com/RithishChowdary/Real-Time-Stock-Portfolio.git
 cd Real-Time-Stock-Portfolio
 ```
 
-### 2. Set Up the Database
-
-Create the database:
-
+### 2. Configure Database
+Start MySQL and create the database:
 ```sql
 CREATE DATABASE stock_portfolio;
 ```
 
-Run the SQL scripts:
-
-```text
-database/queries.sql
-database/seedData.sql
+Seed base equity data using the provided scripts:
+```bash
+# Optional initial seeds
+mysql -u your_user -p stock_portfolio < database/queries.sql
+mysql -u your_user -p stock_portfolio < database/seedData.sql
 ```
 
-### 3. Run the Backend
-
+### 3. Build and Run the Backend
 ```bash
 cd backend
-./mvnw spring-boot:run
+
+# Set Gemini API Key (optional for AI analysis)
+# On Windows PowerShell:
+$env:GEMINI_API_KEY="your_api_key_here"
+
+# On Linux/macOS:
+export GEMINI_API_KEY="your_api_key_here"
+
+# Run tests
+mvn clean test
+
+# Launch backend server
+mvn spring-boot:run
 ```
+*Backend runs on `http://localhost:8080` (Swagger UI: `http://localhost:8080/swagger-ui/index.html`).*
 
-On Windows:
-
+### 4. Build and Run the Frontend
 ```bash
-mvnw.cmd spring-boot:run
-```
+cd ../frontend
 
-Backend runs on:
-
-```text
-http://localhost:8080
-```
-
-Swagger UI:
-
-```text
-http://localhost:8080/swagger-ui/index.html
-```
-
-### 4. Run the Frontend
-
-```bash
-cd frontend
+# Install dependencies
 npm install
+
+# Run Vite development server
 npm run dev
+
+# Or build for production
+npm run build
+```
+*Frontend runs on `http://localhost:5173`.*
+
+---
+
+## Testing & Verification
+
+The project includes an automated test suite covering quantitative analysis, backtest routing, cash atomicity, alert validation, and administrative research.
+
+### Automated Test Suite Status
+```text
+Results:
+Tests run: 44, Failures: 0, Errors: 0, Skipped: 1
+
+Breakdown:
+- StockResearchServiceTest:          8 passed
+- TransactionServiceTest:           13 passed
+- AlertServiceTest:                  8 passed
+- AIAnalysisServiceTest:             7 passed
+- PaperTradingAccountServiceTest:    3 passed
+- BacktestApiServiceTest:            3 passed
+- DashboardServiceTest:              1 passed
+- StockportfolioApplicationTests:    1 skipped (live database bootstrap test intentionally disabled)
+
+Status: BUILD SUCCESS (mvn clean test)
 ```
 
-Frontend runs on:
+### Frontend Production Build
+```text
+vite v8.0.14 building client environment for production...
+transforming... 1936 modules transformed.
+rendering chunks...
+dist/index.html                     0.50 kB
+dist/assets/index-CsLffLE3.css     50.85 kB
+dist/assets/index-DaMfnwU9.js     512.35 kB
+built in 3.00s (0 errors)
+```
+
+---
+
+## Project Structure
 
 ```text
-http://localhost:5173
+Real-Time-Stock-Portfolio/
+├── backend/
+│   ├── src/main/java/com/major/stockportfolio/
+│   │   ├── config/              # Security, Web & Swagger configurations
+│   │   ├── controller/          # REST Controllers (Auth, Dashboard, Portfolio, Research, Transact)
+│   │   ├── dto/                 # Request/Response Data Transfer Objects
+│   │   ├── entity/              # JPA Entities (User, Portfolio, Account, Stock, Transaction)
+│   │   ├── exception/           # Global Exception Handler & Custom Exceptions
+│   │   ├── interfaces/          # Business Service Contracts
+│   │   ├── quantitative/        # Quantitative Algorithmic Backtesting Core
+│   │   │   ├── ai/              # AI Quantitative Analysis (Contracts, Service, GeminiProvider)
+│   │   │   ├── config/          # Quantitative Properties
+│   │   │   ├── contracts/       # Engine & Loader Interfaces
+│   │   │   ├── dto/             # Backtest Requests, Responses, Metrics
+│   │   │   ├── engine/          # TA4J Backtest Execution Engine
+│   │   │   ├── exceptions/      # Quantitative domain exceptions
+│   │   │   ├── indicator/       # TA4J Technical Indicator Helpers
+│   │   │   ├── loader/          # FallbackMarketDataLoader, CsvMarketDataLoader, AlphaVantage
+│   │   │   ├── optimizer/       # Walk-Forward & Strategy Parameter Optimizers
+│   │   │   ├── service/         # BacktestApiService & Downloader Services
+│   │   │   └── strategy/        # EMA_RSI & EMA_CROSSOVER Strategy Definitions
+│   │   ├── repository/          # Spring Data JPA Repositories with Pessimistic Locks
+│   │   ├── security/            # JWT Utils, Filters, CustomUserDetailsService, OAuth2 Handlers
+│   │   └── service/             # Transaction, Account, Alert, Notification, Research Services
+│   ├── src/main/resources/
+│   │   ├── application.properties
+│   │   └── historical/NSE/      # Bundled Historical Daily Datasets (TCS, INFY, RELIANCE, HDFCBANK)
+│   └── pom.xml
+├── frontend/
+│   ├── src/
+│   │   ├── api/                 # Axios Client & Interceptors
+│   │   ├── components/          # Reusable UI & Layout Components (Sidebar, Navbar, Card, Modal)
+│   │   ├── context/             # AuthContext (Role, Tokens, Session)
+│   │   ├── hooks/               # Custom React Hooks
+│   │   ├── pages/               # Dashboard, StrategyLab, Portfolios, Transactions, Research, Alerts
+│   │   ├── routes/              # AppRoutes, ProtectedRoute, AdminRoute
+│   │   ├── services/            # API Services (Backtest, Auth, Stock, Research, Alerts)
+│   │   └── utils/               # Formatters, Validation & Metric Utilities
+│   ├── package.json
+│   └── vite.config.js
+├── database/
+│   ├── queries.sql              # Database Schema Definitions
+│   └── seedData.sql             # Base Stock Seeds
+├── docs/                        # Architectural Diagrams & Schemas
+└── PROJECT_PROGRESS.md          # Complete Phase & Milestone Verification Tracking
 ```
 
-## Docker Setup
+---
 
-The project includes Dockerfiles for frontend and backend, plus a root `docker-compose.yml`.
+## Screenshots
 
-Run all services:
+### Dashboard & Analytics
+<p align="center">
+  <img width="900" alt="InvestIND Dashboard Overview" src="https://github.com/user-attachments/assets/35891e6e-2c50-464a-8bb2-a7ea441caef4" />
+</p>
+<p align="center">
+  <img width="900" alt="InvestIND Dashboard Charts" src="https://github.com/user-attachments/assets/e286ec06-5319-4031-ab26-c7d48bb6f508" />
+</p>
 
-```bash
-docker compose up --build
-```
+### Portfolios & Paper Trading
+<p align="center">
+  <img width="900" alt="InvestIND Portfolio List" src="https://github.com/user-attachments/assets/06413667-fa48-44cb-bb0e-e1c1b0d7723f" />
+</p>
+<p align="center">
+  <img width="900" alt="InvestIND Transactions Page" src="https://github.com/user-attachments/assets/409dedfc-71e3-4b4e-a65d-8c70d1b5243a" />
+</p>
 
-Services:
+### Stocks & Price Alerts
+<p align="center">
+  <img width="900" alt="InvestIND Stocks Page" src="https://github.com/user-attachments/assets/b86976ac-0461-49b6-9f80-9976b773e132" />
+</p>
+<p align="center">
+  <img width="900" alt="InvestIND Alerts Page" src="https://github.com/user-attachments/assets/3cbe85c1-2235-4335-a822-9489a6471519" />
+</p>
 
-| Service | Port |
-|---|---|
-| Frontend | `5173` |
-| Backend | `8080` |
-| MySQL | `3307:3306` |
+### Authentication
+<p align="center">
+  <img width="900" alt="InvestIND Login Page" src="https://github.com/user-attachments/assets/68783a80-58d7-44b5-b3d0-7baa0868b3e9" />
+</p>
 
-## API Documentation
+---
 
-Swagger documentation is available at:
+## Project Status
 
-```text
-http://localhost:8080/swagger-ui/index.html
-```
+The project has completed all architectural and stabilization phases:
 
-Hosted Swagger:
+| Phase | Milestone | Status |
+|---|---|---|
+| **Phase A** | Full Architecture Inspection & Analysis | **Completed** |
+| **Phase B** | Paper-Trading Account & Cash Management (₹1,00,000 Initial Capital) | **Completed** |
+| **Phase C** | Buy/Sell Backend Validation, Atomicity & Pessimistic Locking | **Completed** |
+| **Phase D** | Transaction Interface Redesign & Validation | **Completed** |
+| **Phase E** | Portfolio & Dashboard Valuation Synchronization | **Completed** |
+| **Phase F** | Strategy Lab Frontend Polish | **Completed** |
+| **Phase G** | Strategy Lab Backend API Integration (`/api/backtest`) | **Completed** |
+| **Phase H** | Walk-Forward Optimization Integration (`/api/backtest/walk-forward`) | **Completed** |
+| **Phase I** | AI Quantitative Analysis Integration (`/api/backtest/ai-analysis`) | **Completed** |
+| **Phase J** | Final End-to-End Testing & Verification | **Completed** |
 
+---
 
-<img width="642" height="1280" alt="WhatsApp Image 2026-06-29 at 2 33 51 PM" src="https://github.com/user-attachments/assets/f73e06f8-c1cb-40a8-a2e5-21cf487476bf" />
+## Limitations & Responsible Use
 
+1. **Simulated Environment**: All trading executions, portfolios, and cash balances are simulated. No real financial orders are placed with brokers or exchanges.
+2. **Historical Backtest Simulation**: Past performance simulated by TA4J does not guarantee future results. Backtesting does not account for slippage, liquidity constraints, or live exchange order queues.
+3. **Valid Zero-Trade Outcomes**: Strategies that generate zero trades during a testing period reflect market conditions that did not trigger algorithm parameters, which is a standard quantitative outcome.
+4. **Market Data Quotas**: Live data relies on external third-party API quotas. Classpath CSV historical datasets are provided as fallbacks for supported Indian assets (`TCS`, `INFY`, `RELIANCE`, `HDFCBANK`).
+5. **AI Interpretation**: AI-generated reports are interpretive summaries of backtest statistics and must not be treated as automated trading signals or financial advice.
 
-<img width="639" height="1280" alt="WhatsApp Image 2026-06-29 at 2 33 51 PM (1)" src="https://github.com/user-attachments/assets/e1cbde76-ced7-45c9-825b-923405a49f6a" />
-
-
-
-[https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html](https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html)
-
-## Major Learning Outcomes
-
-- Designing a full-stack financial dashboard
-- Building secure REST APIs with Spring Boot
-- Implementing JWT authentication and refresh token flow
-- Integrating OAuth login
-- Managing relational data with MySQL and JPA
-- Building protected frontend routes with React
-- Using WebSockets for real-time updates
-- Scheduling background jobs in Spring Boot
-- Handling global exceptions consistently
-- Creating a Docker-ready deployment structure
-- Documenting APIs with Swagger
+---
 
 ## Future Enhancements
 
-- Add Backtesting with TA4J
-- Add candlestick charts and advanced technical indicators
-- Add watchlists
-- Add portfolio comparison reports
-- Add downloadable portfolio statements
-- Add email/SMS alert delivery
-- Add Email-Validation
-- Add unit and integration test coverage
-- Add AWS Ec2 Deployment
-- Add DevOps Architect 
+- **Slippage & Transaction Fee Modeling**: Incorporate brokerage commissions, STT, and slippage into backtest calculations.
+- **Advanced Position Sizing**: Support Kelly Criterion, fixed fractional, and volatility-adjusted position sizing.
+- **Additional Quantitative Strategies**: Introduce Bollinger Band Mean Reversion, Supertrend, and MACD Divergence algorithms.
+- **Portfolio-Level Quantitative Optimization**: Run multi-asset backtests with Modern Portfolio Theory (MPT) efficient frontier allocations.
+- **Alert Dispatch Channels**: Support automated email and webhook notifications for triggered price alerts.
 
-## Conclusion
+---
 
-InvestIND is a complete real-time stock portfolio management system that demonstrates a production-style full-stack architecture. It combines secure authentication, portfolio management, live stock price updates, transaction tracking, alert notifications, and dashboard analytics into a single responsive web application.
+## Disclaimer
 
-This project is suitable as a major academic project and a GitHub portfolio project because it highlights backend engineering, frontend development, database design, real-time communication, deployment readiness, and API documentation.
+This software is developed strictly for educational and portfolio demonstration purposes. It does not constitute financial, investment, or trading advice. The author and contributors assume no liability for financial decisions or simulated outcomes derived from this application.

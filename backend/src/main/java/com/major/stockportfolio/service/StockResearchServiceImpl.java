@@ -4,14 +4,17 @@ import com.major.stockportfolio.dto.StockResearchRequest;
 import com.major.stockportfolio.dto.StockResearchResponse;
 import com.major.stockportfolio.entity.Stock;
 import com.major.stockportfolio.entity.StockResearch;
+import com.major.stockportfolio.exception.BadRequestException;
+import com.major.stockportfolio.exception.ResourceNotFoundException;
 import com.major.stockportfolio.interfaces.StockResearchService;
 import com.major.stockportfolio.repository.StockRepository;
 import com.major.stockportfolio.repository.StockResearchRepository;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class StockResearchServiceImpl implements StockResearchService {
 
@@ -39,23 +43,19 @@ public class StockResearchServiceImpl implements StockResearchService {
 
     @Override
     public List<StockResearchResponse> getByStock(Long stockId) {
-
         return repository
                 .findByStockIdOrderByCreatedAtDesc(stockId)
                 .stream()
-                .map(research ->
-                        StockResearchResponse.builder()
-                                .id(research.getId())
-                                .title(research.getTitle())
-                                .summary(research.getSummary())
-                                .pdfUrl(research.getPdfUrl())
-                                .sourceUrl(research.getSourceUrl())
-                                .createdAt(research.getCreatedAt())
-                                .stockSymbol(
-                                        research.getStock()
-                                                .getSymbol())
-                                .build()
-                )
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
+    public List<StockResearchResponse> getAll() {
+        return repository
+                .findAllOrderByCreatedAtDesc()
+                .stream()
+                .map(this::mapToResponse)
                 .toList();
     }
 
@@ -64,121 +64,91 @@ public class StockResearchServiceImpl implements StockResearchService {
             StockResearchRequest request,
             MultipartFile pdf) {
 
+        if (request == null) {
+            throw new BadRequestException("Research request must not be null");
+        }
+
+        if (request.getStockId() == null) {
+            throw new BadRequestException("Stock selection is required");
+        }
+
+        if (request.getTitle() == null || request.getTitle().trim().isBlank()) {
+            throw new BadRequestException("Research title is required");
+        }
+
+        if (pdf == null || pdf.isEmpty()) {
+            throw new BadRequestException("Research PDF document is required");
+        }
+
+        String contentType = pdf.getContentType();
+        if (contentType != null && !contentType.equalsIgnoreCase("application/pdf") && !pdf.getOriginalFilename().toLowerCase().endsWith(".pdf")) {
+            throw new BadRequestException("Only PDF documents are supported for research reports");
+        }
+
         try {
+            String originalFileName = Path.of(
+                    pdf.getOriginalFilename() == null ? "research.pdf" : pdf.getOriginalFilename()
+            ).getFileName().toString();
 
-            System.out.println(
-                    "========== RESEARCH UPLOAD START ==========");
+            String fileName = UUID.randomUUID() + "_" + originalFileName;
 
-            System.out.println(
-                    "Stock ID Received = "
-                            + request.getStockId());
+            Path uploadRoot = Paths.get(researchUploadDir).toAbsolutePath().normalize();
+            Path targetPath = uploadRoot.resolve(fileName).normalize();
 
-            System.out.println(
-                    "Title = "
-                            + request.getTitle());
+            Files.createDirectories(targetPath.getParent());
+            Files.copy(pdf.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
 
-            System.out.println(
-                    "PDF Name = "
-                            + pdf.getOriginalFilename());
+            Stock stock = stockRepository.findById(request.getStockId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Stock not found with ID: " + request.getStockId()));
 
-            String originalFileName =
-                    Path.of(
-                                    pdf.getOriginalFilename() == null
-                                            ? "research.pdf"
-                                            : pdf.getOriginalFilename()
-                            )
-                            .getFileName()
-                            .toString();
-
-            String fileName =
-                    UUID.randomUUID()
-                            + "_"
-                            + originalFileName;
-
-            Path path =
-                    Paths.get(researchUploadDir)
-                            .toAbsolutePath()
-                            .normalize()
-                            .resolve(fileName)
-                            .normalize();
-
-            Files.createDirectories(
-                    path.getParent());
-
-            Files.copy(
-                    pdf.getInputStream(),
-                    path,
-                    StandardCopyOption.REPLACE_EXISTING
-            );
-
-            System.out.println(
-                    "PDF Saved Successfully");
-
-            System.out.println(
-                    "Saved Path = "
-                            + path.toAbsolutePath());
-
-            Stock stock =
-                    stockRepository.findById(
-                                    request.getStockId())
-                            .orElseThrow(() ->
-                                    new RuntimeException(
-                                            "Stock not found with ID: "
-                                                    + request.getStockId()));
-
-            System.out.println(
-                    "Stock Found = "
-                            + stock.getSymbol());
-
-            StockResearch research =
-                    StockResearch.builder()
-                            .title(request.getTitle())
-                            .summary(request.getSummary())
-                            .sourceUrl(
-                                    request.getSourceUrl())
-                            .pdfUrl(fileName)
-                            .createdAt(
-                                    LocalDateTime.now())
-                            .stock(stock)
-                            .build();
-
-            System.out.println(
-                    "Saving Research...");
-
-            repository.save(research);
-
-            System.out.println(
-                    "Research Saved Successfully");
-
-            System.out.println(
-                    "Research ID = "
-                            + research.getId());
-
-            System.out.println(
-                    "========== RESEARCH UPLOAD END ==========");
-
-            return StockResearchResponse.builder()
-                    .id(research.getId())
-                    .title(research.getTitle())
-                    .summary(research.getSummary())
-                    .pdfUrl(research.getPdfUrl())
-                    .sourceUrl(research.getSourceUrl())
-                    .createdAt(research.getCreatedAt())
-                    .stockSymbol(
-                            stock.getSymbol())
+            StockResearch research = StockResearch.builder()
+                    .title(request.getTitle().trim())
+                    .summary(request.getSummary() != null ? request.getSummary().trim() : "")
+                    .sourceUrl(request.getSourceUrl() != null ? request.getSourceUrl().trim() : "")
+                    .pdfUrl(fileName)
+                    .createdAt(LocalDateTime.now())
+                    .stock(stock)
                     .build();
 
-        } catch (Exception e) {
+            StockResearch saved = repository.save(research);
+            log.info("Research report uploaded successfully for stock: {}. ID: {}", stock.getSymbol(), saved.getId());
 
-            System.out.println(
-                    "========== ERROR ==========");
+            return mapToResponse(saved);
 
-            e.printStackTrace();
-
-            throw new RuntimeException(
-                    e.getMessage(),
-                    e
-            );
+        } catch (IOException e) {
+            log.error("Failed to store research file", e);
+            throw new BadRequestException("Failed to upload research document. Please check storage configuration.");
         }
+    }
+
+    @Override
+    public void delete(Long id) {
+        StockResearch research = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Research report not found with ID: " + id));
+
+        try {
+            if (research.getPdfUrl() != null && !research.getPdfUrl().isBlank()) {
+                Path uploadRoot = Paths.get(researchUploadDir).toAbsolutePath().normalize();
+                Path targetPath = uploadRoot.resolve(research.getPdfUrl()).normalize();
+                Files.deleteIfExists(targetPath);
+            }
+        } catch (Exception e) {
+            log.warn("Failed to delete physical research PDF file: {}", research.getPdfUrl(), e);
+        }
+
+        repository.delete(research);
+        log.info("Research report deleted successfully. ID: {}", id);
+    }
+
+    private StockResearchResponse mapToResponse(StockResearch research) {
+        return StockResearchResponse.builder()
+                .id(research.getId())
+                .title(research.getTitle())
+                .summary(research.getSummary())
+                .pdfUrl(research.getPdfUrl())
+                .sourceUrl(research.getSourceUrl())
+                .createdAt(research.getCreatedAt())
+                .stockSymbol(research.getStock() != null ? research.getStock().getSymbol() : "")
+                .build();
     }
 }

@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 @Builder
 public class DashboardSummaryDto {
 
+    private BigDecimal availableCash;
+    private BigDecimal totalPortfolioValue;
     private BigDecimal totalInvestment;
     private BigDecimal currentValue;
     private BigDecimal totalProfitLoss;

@@ -5,6 +5,7 @@ import com.major.stockportfolio.dto.DashboardSummaryDto;
 import com.major.stockportfolio.dto.HoldingResponse;
 
 import com.major.stockportfolio.dto.RecentTransactionResponse;
+import com.major.stockportfolio.entity.PaperTradingAccount;
 import com.major.stockportfolio.entity.Portfolio;
 import com.major.stockportfolio.entity.Transaction;
 import com.major.stockportfolio.entity.User;
@@ -36,6 +37,7 @@ public class DashboardService {
     private final NotificationRepository notificationRepository;
     private final UserRepository userRepository;
     private final PortfolioRepository portfolioRepository;
+    private final PaperTradingAccountService paperTradingAccountService;
 
     // =========================================================
     // DASHBOARD SUMMARY API
@@ -43,7 +45,8 @@ public class DashboardService {
     @Transactional
     public DashboardSummaryDto getDashboardSummary() {
 
-        Long userId = getCurrentUser().getId();
+        User currentUser = getCurrentUser();
+        Long userId = currentUser.getId();
 
         List<Transaction> transactions =
                 transactionRepository.findByPortfolioUserId(userId);
@@ -154,8 +157,15 @@ for (Map.Entry<String, List<Transaction>> entry
                         !notification.getIsRead())
                 .count();
 
-        // 9. Return DTO
+        // 9. Account & Valuation
+        PaperTradingAccount account = paperTradingAccountService.getOrCreateAccountForUser(currentUser);
+        BigDecimal availableCash = account.getAvailableCash() != null ? account.getAvailableCash() : BigDecimal.ZERO;
+        BigDecimal totalPortfolioValue = availableCash.add(currentValue);
+
+        // 10. Return DTO
         return DashboardSummaryDto.builder()
+                .availableCash(availableCash)
+                .totalPortfolioValue(totalPortfolioValue)
                 .totalInvestment(totalInvestment)
                 .currentValue(currentValue)
                 .totalProfitLoss(totalProfitLoss)

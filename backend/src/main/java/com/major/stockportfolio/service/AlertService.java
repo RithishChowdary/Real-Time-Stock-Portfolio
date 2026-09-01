@@ -5,6 +5,7 @@ import com.major.stockportfolio.entity.Alert;
 import com.major.stockportfolio.entity.Notification;
 import com.major.stockportfolio.entity.Stock;
 import com.major.stockportfolio.entity.User;
+import com.major.stockportfolio.exception.BadRequestException;
 import com.major.stockportfolio.exception.ResourceNotFoundException;
 import com.major.stockportfolio.repository.AlertRepository;
 import com.major.stockportfolio.repository.NotificationRepository;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,6 +35,31 @@ public class AlertService {
 
     // CREATE ALERT
     public Alert createAlert(CreateAlertRequest request) {
+
+        if (request.getStockId() == null) {
+            throw new BadRequestException("Stock ID is required");
+        }
+
+        if (request.getTargetPrice() == null && request.getStopLoss() == null &&
+            request.getProfitPercentage() == null && request.getLossPercentage() == null) {
+            throw new BadRequestException("At least one alert condition (target price, stop loss, profit %, or loss %) must be specified");
+        }
+
+        if (request.getTargetPrice() != null && request.getTargetPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BadRequestException("Target price must be greater than 0");
+        }
+
+        if (request.getStopLoss() != null && request.getStopLoss().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BadRequestException("Stop loss must be greater than 0");
+        }
+
+        if (request.getProfitPercentage() != null && request.getProfitPercentage() <= 0) {
+            throw new BadRequestException("Profit percentage must be greater than 0");
+        }
+
+        if (request.getLossPercentage() != null && request.getLossPercentage() <= 0) {
+            throw new BadRequestException("Loss percentage must be greater than 0");
+        }
 
         User user = getCurrentUser();
 

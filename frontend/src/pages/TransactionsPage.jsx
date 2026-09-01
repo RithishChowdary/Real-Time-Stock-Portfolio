@@ -8,6 +8,7 @@ import EmptyState from "../components/ui/EmptyState";
 import Loader from "../components/ui/Loader";
 import Button from "../components/ui/Button";
 import { getPortfolios } from "../services/portfolioService";
+import { getAccount } from "../services/accountService";
 import {
   buyStock,
   getPortfolioHoldings,
@@ -19,6 +20,7 @@ import {
 export default function TransactionsPage() {
   const [portfolios, setPortfolios] = useState([]);
   const [selectedPortfolioId, setSelectedPortfolioId] = useState("");
+  const [availableCash, setAvailableCash] = useState(0);
   const [summary, setSummary] = useState(null);
   const [holdings, setHoldings] = useState([]);
   const [transactions, setTransactions] = useState([]);
@@ -30,15 +32,31 @@ export default function TransactionsPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  async function loadAccountData() {
+    try {
+      const accountData = await getAccount();
+      setAvailableCash(Number(accountData?.availableCash || 0));
+    } catch {
+      // Gracefully fallback
+    }
+  }
+
   async function loadInitialData() {
     setLoading(true);
     setError("");
 
     try {
-      const portfolioData = await getPortfolios();
-      setPortfolios(portfolioData);
+      const [portfolioData, accountData] = await Promise.all([
+        getPortfolios(),
+        getAccount().catch(() => null),
+      ]);
 
-      const firstPortfolioId = portfolioData[0]?.id || "";
+      setPortfolios(portfolioData || []);
+      if (accountData?.availableCash !== undefined) {
+        setAvailableCash(Number(accountData.availableCash));
+      }
+
+      const firstPortfolioId = portfolioData?.[0]?.id || "";
       setSelectedPortfolioId(firstPortfolioId);
 
       if (firstPortfolioId) {
@@ -65,8 +83,8 @@ export default function TransactionsPage() {
       ]);
 
       setSummary(summaryData);
-      setHoldings(holdingsData);
-      setTransactions(transactionsData.content || []);
+      setHoldings(holdingsData || []);
+      setTransactions(transactionsData?.content || []);
       setPageData(transactionsData);
       setPage(nextPage);
     } catch (err) {
@@ -92,10 +110,14 @@ export default function TransactionsPage() {
 
     try {
       await buyStock(payload);
-      setSuccess("Stock bought successfully");
-      await loadPortfolioData(payload.portfolioId, 0);
+      setSuccess(`BUY order for ${payload.quantity} ${payload.symbol} placed successfully.`);
+      await Promise.all([
+        loadAccountData(),
+        loadPortfolioData(payload.portfolioId, 0),
+      ]);
     } catch (err) {
-      setError(err.response?.data?.message || "Unable to buy stock");
+      setError(err.response?.data?.message || "Unable to execute BUY trade");
+      throw err; // Let form show inline error as well
     }
   }
 
@@ -105,10 +127,14 @@ export default function TransactionsPage() {
 
     try {
       await sellStock(payload);
-      setSuccess("Stock sold successfully");
-      await loadPortfolioData(payload.portfolioId, 0);
+      setSuccess(`SELL order for ${payload.quantity} ${payload.symbol} placed successfully.`);
+      await Promise.all([
+        loadAccountData(),
+        loadPortfolioData(payload.portfolioId, 0),
+      ]);
     } catch (err) {
-      setError(err.response?.data?.message || "Unable to sell stock");
+      setError(err.response?.data?.message || "Unable to execute SELL trade");
+      throw err;
     }
   }
 
@@ -128,46 +154,48 @@ export default function TransactionsPage() {
 
   return (
     <div className="space-y-6">
+      {/* Top Header */}
       <div className="flex flex-col justify-between gap-4 xl:flex-row xl:items-center">
         <div>
-      <div className="border-b border-slate-200 dark:border-slate-800 pb-1.5">
-    <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-    Transactions
-  </h1>
-</div>
-
-
-          <p className="mt-1 text-sm text-slate-500">
-            Buy, sell, and review portfolio activity.
+          <div className="border-b border-slate-200 dark:border-slate-800 pb-1.5">
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+              Transactions & Paper Trading
+            </h1>
+          </div>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            Execute paper orders with virtual capital and monitor live portfolio holdings.
           </p>
         </div>
 
-        <label className="block min-w-[260px]">
-          <span className="mb-1 block text-sm font-medium text-slate-700">
-            Active Portfolio
-          </span>
-          <select
-            value={selectedPortfolioId}
-            onChange={handlePortfolioChange}
-            className="w-full rounded-lg border border-slate-300 px-4 py-2.5 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
-          >
-            {portfolios.map((portfolio) => (
-              <option key={portfolio.id} value={portfolio.id}>
-                {portfolio.portfolioName}
-              </option>
-            ))}
-          </select>
-        </label>
+        {portfolios.length > 0 && (
+          <label className="block min-w-[260px]">
+            <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              Active Portfolio
+            </span>
+            <select
+              value={selectedPortfolioId}
+              onChange={handlePortfolioChange}
+              className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-sm text-slate-900 outline-none transition focus:border-blue-600 focus:ring-2 focus:ring-blue-100 dark:border-slate-700 dark:bg-slate-900 dark:text-white dark:focus:border-blue-500"
+            >
+              {portfolios.map((portfolio) => (
+                <option key={portfolio.id} value={portfolio.id}>
+                  {portfolio.portfolioName}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
       </div>
 
+      {/* Global Alerts */}
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-700">
+        <div className="rounded-xl border border-green-200 bg-green-50 p-4 text-sm font-medium text-green-700 dark:border-green-900/50 dark:bg-green-950/40 dark:text-green-300">
           {success}
         </div>
       )}
@@ -189,31 +217,45 @@ export default function TransactionsPage() {
         />
       ) : (
         <>
-          <PortfolioSummaryCards summary={summary} />
+          {/* Summary Cards with Cash Balance */}
+          <PortfolioSummaryCards summary={summary} availableCash={availableCash} />
 
-          <div className="grid gap-6 xl:grid-cols-[380px_1fr]">
-            <Card>
-              <div className="mb-4 grid grid-cols-2 gap-2 rounded-lg bg-slate-100 p-1">
+          <div className="grid gap-6 xl:grid-cols-[400px_1fr]">
+            {/* Trading Form Card */}
+            <Card className="h-fit">
+              <div className="mb-4">
+                <h2 className="text-base font-bold text-slate-900 dark:text-white">
+                  Place Paper Order
+                </h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Select BUY to accumulate or SELL to liquidate positions.
+                </p>
+              </div>
+
+              {/* Mode Switcher */}
+              <div className="mb-5 grid grid-cols-2 gap-2 rounded-lg bg-slate-100 p-1 dark:bg-slate-800">
                 <button
+                  type="button"
                   onClick={() => setMode("BUY")}
-                  className={`rounded-md px-4 py-2 text-sm font-semibold ${
+                  className={`rounded-md py-2 text-sm font-bold transition ${
                     mode === "BUY"
-                      ? "bg-white text-green-700 shadow-sm"
-                      : "text-slate-600"
+                      ? "bg-white text-green-600 shadow-sm dark:bg-slate-900 dark:text-green-400"
+                      : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                   }`}
                 >
-                  Buy
+                  BUY
                 </button>
 
                 <button
+                  type="button"
                   onClick={() => setMode("SELL")}
-                  className={`rounded-md px-4 py-2 text-sm font-semibold ${
+                  className={`rounded-md py-2 text-sm font-bold transition ${
                     mode === "SELL"
-                      ? "bg-white text-red-700 shadow-sm"
-                      : "text-slate-600"
+                      ? "bg-white text-red-600 shadow-sm dark:bg-slate-900 dark:text-red-400"
+                      : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                   }`}
                 >
-                  Sell
+                  SELL
                 </button>
               </div>
 
@@ -221,10 +263,13 @@ export default function TransactionsPage() {
                 portfolios={portfolios}
                 defaultPortfolioId={selectedPortfolioId}
                 mode={mode}
+                holdings={holdings}
+                availableCash={availableCash}
                 onSubmit={mode === "BUY" ? handleBuy : handleSell}
               />
             </Card>
 
+            {/* Holdings & Transaction History */}
             <div className="space-y-6">
               {sectionLoading ? (
                 <Loader />
@@ -233,37 +278,42 @@ export default function TransactionsPage() {
                   <HoldingsTable holdings={holdings} />
                   <TransactionTable transactions={transactions} />
 
-                  <Card className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-                    <p className="text-sm text-slate-600">
-                      Page <span className="font-semibold">{page + 1}</span>
-                      {pageData?.totalPages ? (
-                        <>
-                          {" "}of{" "}
-                          <span className="font-semibold">
-                            {pageData.totalPages}
-                          </span>
-                        </>
-                      ) : null}
-                    </p>
+                  {/* Pagination */}
+                  {transactions.length > 0 && (
+                    <Card className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Page <span className="font-bold text-slate-800 dark:text-slate-200">{page + 1}</span>
+                        {pageData?.totalPages ? (
+                          <>
+                            {" "}of{" "}
+                            <span className="font-bold text-slate-800 dark:text-slate-200">
+                              {pageData.totalPages}
+                            </span>
+                          </>
+                        ) : null}
+                      </p>
 
-                    <div className="flex gap-2">
-                      <Button
-                        variant="secondary"
-                        disabled={page <= 0}
-                        onClick={goToPreviousPage}
-                      >
-                        Previous
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="secondary"
+                          disabled={page <= 0}
+                          onClick={goToPreviousPage}
+                          className="py-1.5 text-xs"
+                        >
+                          Previous
+                        </Button>
 
-                      <Button
-                        variant="secondary"
-                        disabled={pageData?.last}
-                        onClick={goToNextPage}
-                      >
-                        Next
-                      </Button>
-                    </div>
-                  </Card>
+                        <Button
+                          variant="secondary"
+                          disabled={pageData?.last}
+                          onClick={goToNextPage}
+                          className="py-1.5 text-xs"
+                        >
+                          Next
+                        </Button>
+                      </div>
+                    </Card>
+                  )}
                 </>
               )}
             </div>

@@ -18,6 +18,7 @@ const LoginPage = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [particles, setParticles] = useState([]);
 
@@ -27,6 +28,7 @@ const LoginPage = () => {
   });
 
   const handleChange = (e) => {
+    setErrorMessage("");
     setFormData((current) => ({
       ...current,
       [e.target.name]: e.target.value,
@@ -35,6 +37,7 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
     setSubmitting(true);
 
     try {
@@ -46,19 +49,25 @@ const LoginPage = () => {
 
       navigate("/dashboard");
     } catch (error) {
-      toast.error(
-        error.response?.data?.message ||
-          "Invalid credentials"
-      );
+      const status = error.response?.status;
+      let msg = "Invalid email or password. Please check your credentials and try again.";
+      
+      if (status && status !== 401 && status !== 403 && error.response?.data?.message) {
+        msg = error.response.data.message;
+      }
+
+      setErrorMessage(msg);
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
   };
 
- const handleGoogleLogin = () => {
-  window.location.href =
-    "https://real-time-stock-portfolio.onrender.com/oauth2/authorization/google";
-};
+  const handleGoogleLogin = () => {
+    window.location.href =
+      "https://real-time-stock-portfolio.onrender.com/oauth2/authorization/google";
+  };
+
   // Handle mouse movement
   const handleMouseMove = (e) => {
     const { clientX, clientY } = e;
@@ -76,7 +85,7 @@ const LoginPage = () => {
       life: Math.random() * 60 + 40, // frames to live
     };
 
-    setParticles(prev => [...prev, newParticle].slice(-50)); // Keep max 50 particles
+    setParticles((prev) => [...prev, newParticle].slice(-50)); // Keep max 50 particles
   };
 
   return (
@@ -89,15 +98,18 @@ const LoginPage = () => {
         {/* Interactive Background Particles */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           {/* Background gradient that responds to mouse */}
-          <div className="absolute inset-0" style={{
-            background: `radial-gradient(circle at ${mousePos.x}px ${mousePos.y}px, rgba(30, 64, 175, 0.15) 0%, transparent 50%),
-                         radial-gradient(circle at ${100 - mousePos.x}px ${100 - mousePos.y}px, rgba(79, 70, 229, 0.1) 0%, transparent 50%)`,
-            pointerEvents: 'none'
-          }}></div>
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `radial-gradient(circle at ${mousePos.x}px ${mousePos.y}px, rgba(30, 64, 175, 0.15) 0%, transparent 50%),
+                           radial-gradient(circle at ${100 - mousePos.x}px ${100 - mousePos.y}px, rgba(79, 70, 229, 0.1) 0%, transparent 50%)`,
+              pointerEvents: "none",
+            }}
+          ></div>
 
           {/* Floating particles */}
           <div className="absolute inset-0 pointer-events-none">
-            {particles.map(p => (
+            {particles.map((p) => (
               <div
                 key={p.id}
                 className="absolute"
@@ -107,45 +119,45 @@ const LoginPage = () => {
                   width: `${p.radius * 2}px`,
                   height: `${p.radius * 2}px`,
                   background: `radial-gradient(circle, rgba(59, 130, 246, ${p.opacity}) 0%, transparent 70%)`,
-                  borderRadius: '50%',
+                  borderRadius: "50%",
                   opacity: p.life > 0 ? p.life / 100 : 0,
-                  pointerEvents: 'none'
+                  pointerEvents: "none",
                 }}
               />
             ))}
           </div>
 
-          {/* Original background glows (kept for familiarity) */}
+          {/* Original background glows */}
           <div className="absolute -left-32 top-0 h-[500px] w-[500px] rounded-full bg-blue-600/20 blur-[150px]" />
           <div className="absolute -right-32 bottom-0 h-[500px] w-[500px] rounded-full bg-indigo-600/20 blur-[150px]" />
         </div>
 
-        {/* Login Card - EXACTLY AS BEFORE - UNCHANGED */}
+        {/* Login Card */}
         <div className="relative z-10 w-full max-w-md rounded-3xl border border-slate-800 bg-slate-900/80 p-8 shadow-2xl shadow-blue-950/30 backdrop-blur-xl">
-
           {/* Logo */}
           <div className="mb-6 text-center">
-                        <img
+            <img
               src={logo}
               alt="IND"
               className="mx-auto mb-4 h-24 w-auto object-contain drop-shadow-2xl"
             />
 
-
-            <h1 className="text-4xl font-bold text-white">
-              Welcome Back
-            </h1>
+            <h1 className="text-4xl font-bold text-white">Welcome Back</h1>
 
             <p className="mt-2 text-slate-400">
               Sign in to access your portfolio dashboard
             </p>
           </div>
 
+          {/* Error Message Banner */}
+          {errorMessage && (
+            <div className="mb-5 rounded-xl border border-red-500/30 bg-red-950/50 p-3.5 text-center text-sm font-medium text-red-300">
+              {errorMessage}
+            </div>
+          )}
+
           {/* Login Form */}
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-5"
-          >
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div>
               <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-400">
@@ -185,11 +197,7 @@ const LoginPage = () => {
                 />
 
                 <input
-                  type={
-                    showPassword
-                      ? "text"
-                      : "password"
-                  }
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
@@ -202,16 +210,10 @@ const LoginPage = () => {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowPassword(!showPassword)
-                  }
+                  onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
                 >
-                  {showPassword ? (
-                    <FaEyeSlash size={18} />
-                  ) : (
-                    <FaEye size={18} />
-                  )}
+                  {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
                 </button>
               </div>
             </div>
@@ -246,10 +248,7 @@ const LoginPage = () => {
             onClick={handleGoogleLogin}
             className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-700 bg-slate-950 py-4 font-semibold transition hover:bg-slate-800"
           >
-            <svg
-              className="h-5 w-5"
-              viewBox="0 0 24 24"
-            >
+            <svg className="h-5 w-5" viewBox="0 0 24 24">
               <path
                 fill="#EA4335"
                 d="M5.266 9.765A7.077 7.077 0 0112 4.909c1.69 0 3.218.6 4.418 1.582l3.51-3.51C17.642 1.072 14.96 0 12 0 7.354 0 3.307 2.67 1.242 6.577l4.024 3.188z"
@@ -267,14 +266,12 @@ const LoginPage = () => {
                 d="M12 24c3.24 0 5.957-1.077 7.943-2.913l-3.882-3.01c-1.077.72-2.454 1.15-4.061 1.15-3.13 0-5.782-2.118-6.734-4.97L1.364 17.582C3.424 21.393 7.41 24 12 24z"
               />
             </svg>
-
             Continue with Google
           </button>
 
           {/* Register */}
           <p className="mt-8 text-center text-sm text-slate-400">
             Don't have an account?
-
             <Link
               to="/register"
               className="ml-2 font-semibold text-blue-400 hover:text-blue-300"

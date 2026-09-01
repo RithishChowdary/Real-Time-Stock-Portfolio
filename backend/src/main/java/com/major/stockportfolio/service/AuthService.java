@@ -28,6 +28,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PortfolioRepository portfolioRepository;
+    private final PaperTradingAccountService paperTradingAccountService;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
@@ -55,18 +56,19 @@ public class AuthService {
         String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
 
         Portfolio portfolio = getOrCreatePortfolioForUser(user);
+        paperTradingAccountService.getOrCreateAccountForUser(user);
 
         log.info("User registered successfully: {}", user.getEmail());
 
-        return new AuthResponse(
-                token,
-                refreshToken,
-                user.getId(),
-                portfolio.getId(),
-
-                user.getName(),
-                user.getEmail()
-        );
+        return AuthResponse.builder()
+                .token(token)
+                .refreshToken(refreshToken)
+                .userId(user.getId())
+                .portfolioId(portfolio.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .build();
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -94,18 +96,19 @@ public class AuthService {
         String refreshToken = jwtUtil.generateRefreshToken(request.getEmail());
 
         Portfolio portfolio = getOrCreatePortfolioForUser(user);
+        paperTradingAccountService.getOrCreateAccountForUser(user);
 
         log.info("User logged in successfully: {}", request.getEmail());
 
-        return new AuthResponse(
-                token,
-                refreshToken,
-                user.getId(),
-                portfolio.getId(),
-
-                user.getName(),
-                user.getEmail()
-        );
+        return AuthResponse.builder()
+                .token(token)
+                .refreshToken(refreshToken)
+                .userId(user.getId())
+                .portfolioId(portfolio.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .build();
     }
 
     public AuthResponse refreshToken(RefreshTokenRequest request) {
@@ -123,15 +126,15 @@ public class AuthService {
 
         Portfolio portfolio = getOrCreatePortfolioForUser(user);
 
-        return new AuthResponse(
-                jwtUtil.generateAccessToken(user.getEmail()),
-                jwtUtil.generateRefreshToken(user.getEmail()),
-                user.getId(),
-                portfolio.getId(),
-
-                user.getName(),
-                user.getEmail()
-        );
+        return AuthResponse.builder()
+                .token(jwtUtil.generateAccessToken(user.getEmail()))
+                .refreshToken(jwtUtil.generateRefreshToken(user.getEmail()))
+                .userId(user.getId())
+                .portfolioId(portfolio.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .build();
     }
 
     private Portfolio getOrCreatePortfolioForUser(User user) {
