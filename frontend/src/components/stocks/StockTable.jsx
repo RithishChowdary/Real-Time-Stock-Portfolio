@@ -26,49 +26,26 @@ export default function StockTable({
   refreshingSymbol,
   onRefresh,
 }) {
-
-  const [researchMap, setResearchMap] =
-    useState({});
-  const [researchLoading, setResearchLoading] =
-    useState(false);
+  const [researchMap, setResearchMap] = useState({});
+  const [researchLoading, setResearchLoading] = useState(false);
 
   useEffect(() => {
-
     async function loadResearch() {
-
       setResearchLoading(true);
 
-      const entries =
-        await Promise.all(
-          (stocks || []).map(async (stock) => {
-            try {
-              const research =
-                await getResearchByStock(
-                  stock.id
-                );
-
-              return [
-                stock.id,
-                research,
-              ];
-            } catch (error) {
-              console.error(
-                "Failed loading research:",
-                stock.id,
-                error
-              );
-
-              return [
-                stock.id,
-                [],
-              ];
-            }
-          })
-        );
-
-      setResearchMap(
-        Object.fromEntries(entries)
+      const entries = await Promise.all(
+        (stocks || []).map(async (stock) => {
+          try {
+            const research = await getResearchByStock(stock.id);
+            return [stock.id, research];
+          } catch (error) {
+            console.error("Failed loading research:", stock.id, error);
+            return [stock.id, []];
+          }
+        })
       );
+
+      setResearchMap(Object.fromEntries(entries));
       setResearchLoading(false);
     }
 
@@ -77,11 +54,9 @@ export default function StockTable({
     } else {
       setResearchMap({});
     }
-
   }, [stocks]);
 
   if (!stocks?.length) {
-
     return (
       <EmptyState
         title="No stocks available yet"
@@ -91,180 +66,143 @@ export default function StockTable({
   }
 
   return (
-    <Card>
-
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-          Available Stocks
-        </h2>
-
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Monitor listed equities, refresh market prices, and review attached research reports.
-        </p>
+    <Card className="overflow-hidden p-0 border border-slate-800/80 bg-slate-900/60">
+      <div className="border-b border-slate-800/80 px-5 py-3.5 flex items-center justify-between">
+        <div>
+          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200">
+            Market Equities Watchlist
+          </h2>
+          <p className="text-xs text-slate-400">
+            Live prices, exchange symbols, and attached institutional research
+          </p>
+        </div>
+        <span className="rounded bg-slate-800/90 border border-slate-700 px-2 py-0.5 font-mono text-xs text-slate-300">
+          {stocks.length} Listed
+        </span>
       </div>
 
       <div className="overflow-x-auto">
-
-        <table className="w-full min-w-[720px] text-left text-sm">
-
-          <thead className="border-b border-slate-200 text-xs uppercase text-slate-500 dark:border-slate-800">
-            <tr>
-              <th className="py-3">
-                Symbol
-              </th>
-
-              <th className="py-3">
-                Company
-              </th>
-
-              <th className="py-3">
-                Current Price
-              </th>
-
-              <th className="py-3">
-                Last Updated
-              </th>
-
-              <th className="py-3 text-right">
-                Action
-              </th>
+        <table className="w-full min-w-[780px] text-left text-sm border-collapse">
+          <thead>
+            <tr className="border-b border-slate-800 bg-slate-950/40 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              <th className="py-3 px-5">Equity</th>
+              <th className="py-3 px-4">Current Price</th>
+              <th className="py-3 px-4">Research & Notes</th>
+              <th className="py-3 px-4">Last Updated</th>
+              <th className="py-3 px-5 text-right">Action</th>
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+          <tbody className="divide-y divide-slate-800/60">
+            {stocks.map((stock) => {
+              const isRefreshing = refreshingSymbol === stock.symbol;
+              const researchList = researchMap[stock.id] || [];
+              const topResearch = researchList[0];
 
-            {stocks.map((stock) => (
-
-              <tr key={stock.id}>
-
-                <td className="py-4 font-semibold text-slate-900 dark:text-white">
-                  {stock.symbol}
-                </td>
-
-                <td className="py-4 text-slate-600 dark:text-slate-300">
-
-                  <div>
-                    {stock.companyName}
-                  </div>
-
-                  {researchLoading && (
-                    <div className="mt-3 max-w-md space-y-2">
-                      <Skeleton className="h-4 w-48" />
-                      <Skeleton className="h-3 w-72" />
+              return (
+                <tr
+                  key={stock.id}
+                  className="transition-colors hover:bg-slate-800/30 group"
+                >
+                  {/* Symbol & Company Name */}
+                  <td className="py-3.5 px-5">
+                    <div className="flex items-center gap-2.5">
+                      <span className="font-mono font-bold text-xs text-white bg-slate-800 border border-slate-700/80 px-2 py-0.5 rounded">
+                        {stock.symbol}
+                      </span>
+                      <div className="min-w-0">
+                        <span className="block text-xs font-medium text-slate-300 truncate max-w-[200px]">
+                          {stock.companyName}
+                        </span>
+                        <span className="text-[10px] text-slate-500">NSE / BSE</span>
+                      </div>
                     </div>
-                  )}
+                  </td>
 
-                  {!researchLoading &&
-                    researchMap[stock.id]?.length >
-                      0 && (
+                  {/* Current Price */}
+                  <td className="py-3.5 px-4 font-mono font-bold text-sm text-slate-100">
+                    {formatCurrency(stock.currentPrice)}
+                  </td>
 
-                    <div className="mt-3 max-w-xl rounded-lg border border-blue-100 bg-blue-50/80 p-3 dark:border-blue-900/50 dark:bg-blue-950/20">
-                      <div className="flex items-start gap-3">
-                        <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-blue-600 dark:bg-slate-900 dark:text-blue-400">
-                          <FileText size={16} />
-                        </div>
-
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">
-                            {researchMap[stock.id][0].title ||
-                              "Research report"}
-                          </p>
-
-                          {researchMap[stock.id][0].summary && (
-                            <p className="mt-1 max-h-10 overflow-hidden text-xs leading-5 text-slate-600 dark:text-slate-400">
-                              {researchMap[stock.id][0].summary}
+                  {/* Research Cards */}
+                  <td className="py-3.5 px-4">
+                    {researchLoading ? (
+                      <div className="space-y-1.5 max-w-xs">
+                        <Skeleton className="h-3.5 w-32" />
+                        <Skeleton className="h-3 w-48" />
+                      </div>
+                    ) : topResearch ? (
+                      <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-2 max-w-xs">
+                        <div className="flex items-start gap-2">
+                          <FileText
+                            size={14}
+                            className="mt-0.5 shrink-0 text-blue-400"
+                          />
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-xs font-semibold text-slate-200">
+                              {topResearch.title || "Research Note"}
                             </p>
-                          )}
-
-                          <div className="mt-3 flex flex-wrap items-center gap-3">
-                            <a
-                              href={getResearchDownloadUrl(
-                                researchMap[stock.id][0].pdfUrl
-                              )}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400"
-                            >
-                              <Download size={14} />
-                              Download PDF
-                            </a>
-
-                            {researchMap[stock.id][0].sourceUrl && (
+                            {topResearch.summary && (
+                              <p className="mt-0.5 truncate text-[11px] text-slate-400">
+                                {topResearch.summary}
+                              </p>
+                            )}
+                            <div className="mt-1.5 flex items-center gap-2.5">
                               <a
-                                href={researchMap[stock.id][0].sourceUrl}
+                                href={getResearchDownloadUrl(topResearch.pdfUrl)}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:underline dark:text-slate-400 dark:hover:text-white"
+                                className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-400 hover:text-blue-300 hover:underline"
                               >
-                                <ExternalLink size={14} />
-                                Source
+                                <Download size={12} />
+                                PDF
                               </a>
-                            )}
-
-                            {researchMap[stock.id][0].createdAt && (
-                              <span className="text-xs text-slate-500 dark:text-slate-500">
-                                {formatDateTime(
-                                  researchMap[stock.id][0].createdAt
-                                )}
-                              </span>
-                            )}
+                              {topResearch.sourceUrl && (
+                                <a
+                                  href={topResearch.sourceUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-slate-200"
+                                >
+                                  <ExternalLink size={11} />
+                                  Source
+                                </a>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
+                    ) : (
+                      <span className="text-xs text-slate-500 font-mono">—</span>
+                    )}
+                  </td>
 
-                  )}
+                  {/* Last Updated */}
+                  <td className="py-3.5 px-4 font-mono text-xs text-slate-400">
+                    {formatDateTime(stock.lastUpdated)}
+                  </td>
 
-                </td>
-
-                <td className="py-4 font-semibold">
-                  {formatCurrency(
-                    stock.currentPrice
-                  )}
-                </td>
-
-                <td className="py-4 text-slate-500">
-                  {formatDateTime(
-                    stock.lastUpdated
-                  )}
-                </td>
-
-                <td className="py-4 text-right">
-
-                  <Button
-                    variant="secondary"
-                    disabled={
-                      refreshingSymbol ===
-                      stock.symbol
-                    }
-                    onClick={() =>
-                      onRefresh(
-                        stock.symbol
-                      )
-                    }
-                  >
-
-                    <RefreshCcw size={15} />
-
-                    {refreshingSymbol ===
-                    stock.symbol
-                      ? "Refreshing..."
-                      : "Refresh"}
-
-                  </Button>
-
-                </td>
-
-              </tr>
-
-            ))}
-
+                  {/* Refresh Button */}
+                  <td className="py-3.5 px-5 text-right">
+                    <Button
+                      variant="secondary"
+                      disabled={isRefreshing}
+                      onClick={() => onRefresh(stock.symbol)}
+                      className="h-8 px-2.5 text-xs font-semibold"
+                    >
+                      <RefreshCcw
+                        size={13}
+                        className={isRefreshing ? "animate-spin text-blue-400" : ""}
+                      />
+                      <span>{isRefreshing ? "Refreshing..." : "Refresh"}</span>
+                    </Button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
-
         </table>
-
       </div>
-
     </Card>
   );
 }

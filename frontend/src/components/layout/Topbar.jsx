@@ -4,7 +4,6 @@ import {
   LogOut,
   Menu,
   Moon,
-  Search,
   Shield,
   Sun,
 } from "lucide-react";
@@ -13,7 +12,6 @@ import { useRealtime } from "../../hooks/useRealtime";
 import { useTheme } from "../../hooks/useTheme";
 import { formatCurrency } from "../../utils/formatters";
 import { useEffect, useRef, useState } from "react";
-import { searchStocks } from "../../services/stockService";
 import { useNavigate } from "react-router-dom";
 import { getDashboardNotifications } from "../../services/dashboardService";
 
@@ -21,10 +19,7 @@ export default function Topbar({ onMenuClick }) {
   const profileRef = useRef(null);
 
   const [profileOpen, setProfileOpen] = useState(false);
-const [searchTerm, setSearchTerm] = useState("");
-const [searchResults, setSearchResults] = useState([]);
-const [showSearch, setShowSearch] = useState(false);
-const [unreadCount, setUnreadCount] = useState(0);
+  const [unreadCount, setUnreadCount] = useState(0);
   const { logout, auth } = useAuth();
   const realtime = useRealtime();
   const { isDark, toggleTheme } = useTheme();
@@ -49,23 +44,6 @@ const [unreadCount, setUnreadCount] = useState(0);
       );
     };
   }, []);
-  useEffect(() => {
-  const timer = setTimeout(async () => {
-    if (searchTerm.trim().length < 1) {
-      setSearchResults([]);
-      return;
-    }
-
-    try {
-      const data = await searchStocks(searchTerm);
-      setSearchResults(data.slice(0, 5));
-    } catch {
-      setSearchResults([]);
-    }
-  }, 300);
-
-  return () => clearTimeout(timer);
-}, [searchTerm]);
 
   useEffect(() => {
 
@@ -119,51 +97,8 @@ const [unreadCount, setUnreadCount] = useState(0);
           </div>
         </div>
 
-       {/* Search */}
-<div className="hidden flex-1 justify-center px-6 lg:flex">
-  <div className="relative w-full max-w-sm">
-    <Search
-      size={16}
-      className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-    />
-
-    <input
-      type="text"
-      placeholder="Search stocks..."
-      value={searchTerm}
-      onFocus={() => setShowSearch(true)}
-      onChange={(e) => setSearchTerm(e.target.value)}
-      className="h-10 w-full rounded-lg border border-slate-300 bg-white pl-10 pr-3 text-sm outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
-    />
-
-    {showSearch && searchResults.length > 0 && (
-      <div className="absolute top-12 z-50 w-full rounded-lg border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-900">
-        {searchResults.map((stock) => (
-          <button
-            key={stock.id}
-            onClick={() => {
-              navigate(`/stocks?search=${stock.symbol}`);
-              setShowSearch(false);
-              setSearchTerm("");
-            }}
-            className="block w-full border-b border-slate-100 px-4 py-3 text-left hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800"
-          >
-            <div className="font-semibold">
-              {stock.symbol}
-            </div>
-
-            <div className="text-xs text-slate-500">
-              {stock.companyName}
-            </div>
-          </button>
-        ))}
-      </div>
-    )}
-  </div>
-</div>
-    
         {/* Right */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
 
           {realtime?.latestAlert && (
             <div className="hidden items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-700 dark:border-amber-800 dark:bg-amber-950 dark:text-amber-300 md:flex">
