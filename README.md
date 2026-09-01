@@ -19,9 +19,13 @@
 
 ## 🔗 Project Links
 
-- **Repository**: [GitHub Repository](https://github.com/RithishChowdary/Real-Time-Stock-Portfolio)
-- **Live Demo**: [InvestIND Web App](https://stock-portfolio-frontend-omn1.onrender.com)
-- **API Documentation**: [Swagger UI Docs](https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html)
+<p align="center">
+  <a href="https://stock-portfolio-frontend-omn1.onrender.com"><b>🚀 Live Demo</b></a> |
+  <a href="https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html"><b>📄 API Docs</b></a> |
+  <a href="https://github.com/RithishChowdary/Real-Time-Stock-Portfolio"><b>💻 GitHub</b></a>
+
+</p>
+
 
 ---
 
