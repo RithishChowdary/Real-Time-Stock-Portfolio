@@ -20,6 +20,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+    private final com.major.stockportfolio.service.PaperTradingAccountService paperTradingAccountService;
 
     // Replace with your Google email
     private static final String ADMIN_EMAIL = "rithishchowdary783@gmail.com";
@@ -67,6 +68,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
             user = userRepository.save(user);
         }
+
+        paperTradingAccountService.getOrCreateAccountForUser(user);
 
         String token = jwtUtil.generateToken(user.getEmail());
 

@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import ProtectedRoute from "./ProtectedRoute";
+import AdminRoute from "./AdminRoute";
 
 import DashboardLayout from "../components/layout/DashboardLayout";
 
@@ -13,6 +14,7 @@ import DashboardPage from "../pages/DashboardPage";
 import PortfoliosPage from "../pages/PortfoliosPage";
 import PortfolioDetailPage from "../pages/PortfolioDetailPage";
 import StocksPage from "../pages/StocksPage";
+import StrategyLabPage from "../pages/StrategyLabPage";
 import TransactionsPage from "../pages/TransactionsPage";
 import AlertsPage from "../pages/AlertsPage";
 import NotificationsPage from "../pages/NotificationsPage";
@@ -23,90 +25,34 @@ import NotFoundPage from "../pages/NotFoundPage";
 export default function AppRoutes() {
   return (
     <Routes>
-
       {/* Public Routes */}
-
       <Route path="/" element={<LandingPage />} />
+      <Route path="/LandingPage" element={<LandingPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/oauth-success" element={<OAuthSuccessPage />} />
 
-      <Route
-        path="/LandingPage"
-        element={<LandingPage />}
-      />
-
-      <Route
-        path="/login"
-        element={<LoginPage />}
-      />
-
-      <Route
-        path="/register"
-        element={<RegisterPage />}
-      />
-
-      <Route
-        path="/oauth-success"
-        element={<OAuthSuccessPage />}
-      />
-
-      {/* Protected Routes */}
-
+      {/* Protected User Routes */}
       <Route element={<ProtectedRoute />}>
-
         <Route element={<DashboardLayout />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/portfolios" element={<PortfoliosPage />} />
+          <Route path="/portfolios/:id" element={<PortfolioDetailPage />} />
+          <Route path="/stocks" element={<StocksPage />} />
+          <Route path="/strategy-lab" element={<StrategyLabPage />} />
+          <Route path="/transactions" element={<TransactionsPage />} />
+          <Route path="/alerts" element={<AlertsPage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
 
-          <Route
-            path="/dashboard"
-            element={<DashboardPage />}
-          />
-
-          <Route
-            path="/portfolios"
-            element={<PortfoliosPage />}
-          />
-
-          <Route
-            path="/portfolios/:id"
-            element={<PortfolioDetailPage />}
-          />
-
-          <Route
-            path="/stocks"
-            element={<StocksPage />}
-          />
-
-          <Route
-            path="/transactions"
-            element={<TransactionsPage />}
-          />
-
-          <Route
-            path="/alerts"
-            element={<AlertsPage />}
-          />
-
-          <Route
-            path="/notifications"
-            element={<NotificationsPage />}
-          />
-
-          {/* Research Page */}
-
-          <Route
-            path="/admin/research"
-            element={<ResearchManagementPage />}
-          />
-
+          {/* Admin-only Research Management Route */}
+          <Route element={<AdminRoute />}>
+            <Route path="/admin/research" element={<ResearchManagementPage />} />
+          </Route>
         </Route>
-
       </Route>
 
       {/* 404 */}
-
-      <Route
-        path="*"
-        element={<NotFoundPage />}
-      />
-
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }

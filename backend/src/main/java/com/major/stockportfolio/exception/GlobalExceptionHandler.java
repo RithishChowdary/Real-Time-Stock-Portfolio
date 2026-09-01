@@ -33,13 +33,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-    @ExceptionHandler(BadRequestException.class)
+    @ExceptionHandler({BadRequestException.class, IllegalArgumentException.class, IllegalStateException.class})
     public ResponseEntity<ErrorResponse> handleBadRequest(
-            BadRequestException ex,
+            Exception ex,
             HttpServletRequest request
     ) {
 
-        log.error("Bad request: {}", ex.getMessage());
+        log.error("Bad request / illegal state: {}", ex.getMessage());
 
         ErrorResponse error = ErrorResponse.builder()
                 .success(false)

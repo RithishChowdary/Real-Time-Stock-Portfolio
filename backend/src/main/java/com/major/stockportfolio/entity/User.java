@@ -20,7 +20,8 @@ import java.util.List;
         "portfolios",
         "transactions",
         "alerts",
-        "notifications"
+        "notifications",
+        "paperTradingAccount"
 })
 public class User {
     
@@ -54,6 +55,9 @@ public class User {
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Notification> notifications = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private PaperTradingAccount paperTradingAccount;
 
     @PrePersist
     public void prePersist() {

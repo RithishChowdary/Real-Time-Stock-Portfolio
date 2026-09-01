@@ -2,6 +2,7 @@ package com.major.stockportfolio.controller;
 
 import com.major.stockportfolio.dto.*;
 import com.major.stockportfolio.service.TransactionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +24,13 @@ public class TransactionController {
     }
     @PostMapping("/buy")
     public ResponseEntity<TransactionResponse> buyStock(
-            @RequestBody BuyStockRequest request) {
+            @Valid @RequestBody BuyStockRequest request) {
         return ResponseEntity.ok(transactionService.buyStock(request));
     }
 
     @PostMapping("/sell")
     public ResponseEntity<TransactionResponse> sellStock(
-            @RequestBody SellStockRequest request) {
+            @Valid @RequestBody SellStockRequest request) {
         return ResponseEntity.ok(transactionService.sellStock(request));
     }
 

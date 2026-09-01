@@ -4,29 +4,38 @@ import {
   Briefcase,
   LineChart,
   Repeat,
-  Wallet,
   FileText,
+  FlaskConical,
   X,
+  ShieldCheck,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import logo from "../../assets/logo.png";
+import { useAuth } from "../../hooks/useAuth";
 
-const links = [
+const baseLinks = [
   { to: "/dashboard", label: "Dashboard", icon: BarChart3 },
   { to: "/portfolios", label: "Portfolios", icon: Briefcase },
   { to: "/stocks", label: "Stocks", icon: LineChart },
+  {
+    to: "/strategy-lab",
+    label: "Strategy Lab",
+    icon: FlaskConical,
+  },
   { to: "/transactions", label: "Transactions", icon: Repeat },
   { to: "/alerts", label: "Alerts", icon: Bell },
   { to: "/notifications", label: "Notifications", icon: Bell },
-
-  {
-  to: "/admin/research",
-  label: "Research",
-  icon: FileText,
-},
 ];
 
 export default function Sidebar({ open = false, onClose }) {
+  const { auth } = useAuth();
+  const role = (localStorage.getItem("role") || auth?.role || "").toUpperCase();
+  const isAdmin = role === "ADMIN" || role === "ROLE_ADMIN";
+
+  const links = isAdmin
+    ? [...baseLinks, { to: "/admin/research", label: "Research Management", icon: FileText }]
+    : baseLinks;
+
   return (
     <aside
       className={`fixed inset-y-0 left-0 z-40 w-64 transform border-r border-slate-200 bg-white transition-transform duration-300 dark:border-slate-800 dark:bg-slate-950 lg:translate-x-0 ${
@@ -79,6 +88,15 @@ export default function Sidebar({ open = false, onClose }) {
           ))}
         </nav>
       </div>
+
+      {isAdmin && (
+        <div className="absolute bottom-4 left-3 right-3 rounded-lg border border-amber-200 bg-amber-50/50 p-2.5 text-xs text-amber-800 dark:border-amber-900/40 dark:bg-amber-950/20 dark:text-amber-300">
+          <div className="flex items-center gap-1.5 font-semibold">
+            <ShieldCheck size={14} />
+            <span>Admin Mode Active</span>
+          </div>
+        </div>
+      )}
     </aside>
   );
 }

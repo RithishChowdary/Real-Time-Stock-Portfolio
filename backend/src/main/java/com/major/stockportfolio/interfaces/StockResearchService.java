@@ -12,6 +12,9 @@ public interface StockResearchService {
             StockResearchRequest request,
             MultipartFile pdf);
 
-    List<StockResearchResponse>
-    getByStock(Long stockId);
+    List<StockResearchResponse> getByStock(Long stockId);
+
+    List<StockResearchResponse> getAll();
+
+    void delete(Long id);
 }
