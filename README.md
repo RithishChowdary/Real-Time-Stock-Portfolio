@@ -600,35 +600,53 @@ Real-Time-Stock-Portfolio/
 
 ## Screenshots
 
-### Dashboard & Analytics
+### Landing Page & Authentication
 <p align="center">
-  <img width="900" alt="InvestIND Dashboard Overview" src="https://github.com/user-attachments/assets/35891e6e-2c50-464a-8bb2-a7ea441caef4" />
-</p>
-<p align="center">
-  <img width="900" alt="InvestIND Dashboard Charts" src="https://github.com/user-attachments/assets/e286ec06-5319-4031-ab26-c7d48bb6f508" />
+  <img width="1898" height="941" alt="image" src="https://github.com/user-attachments/assets/bb0fd790-00a8-4a12-9198-f33f13cbb107" />
 </p>
 
-### Portfolios & Paper Trading
 <p align="center">
-  <img width="900" alt="InvestIND Portfolio List" src="https://github.com/user-attachments/assets/06413667-fa48-44cb-bb0e-e1c1b0d7723f" />
+  <img width="1919" height="945" alt="image" src="https://github.com/user-attachments/assets/799aa117-6a93-4d44-ad11-683b2fbf657e" />
+</p>
+
+### Dashboard & Analytics 
+<p align="center">
+ <img width="1891" height="944" alt="image" src="https://github.com/user-attachments/assets/634c51f8-05d2-461a-a94d-d567ed4aa83b" />
 </p>
 <p align="center">
-  <img width="900" alt="InvestIND Transactions Page" src="https://github.com/user-attachments/assets/409dedfc-71e3-4b4e-a65d-8c70d1b5243a" />
+ <img width="1903" height="948" alt="image" src="https://github.com/user-attachments/assets/4c33cde2-d595-46af-95e1-ba858dc39725" />
+</p>
+</p>
+<p align="center">
+<img width="1888" height="945" alt="image" src="https://github.com/user-attachments/assets/50f2e385-57b9-4b4a-a5c0-09dba1a46587" />
+</p>
+
+### Portfolios & Paper Trading 
+<p align="center">
+ <img width="1890" height="945" alt="image" src="https://github.com/user-attachments/assets/0f6f694b-01fb-4232-8dc9-30edadbdb5dd" />
+
+  <img width="1892" height="946" alt="image" src="https://github.com/user-attachments/assets/bda607fa-e7f1-4e8d-a3a6-b78de0cfd008" />
+
+<p align="center">
+ <img width="1896" height="951" alt="image" src="https://github.com/user-attachments/assets/c2bee4ea-8184-456a-97bc-847009e41936" />
+
+<img width="1919" height="949" alt="image" src="https://github.com/user-attachments/assets/9deaa286-b3e7-403d-b0a2-3be7294a4840" />
 </p>
 
 ### Stocks & Price Alerts
 <p align="center">
-  <img width="900" alt="InvestIND Stocks Page" src="https://github.com/user-attachments/assets/b86976ac-0461-49b6-9f80-9976b773e132" />
-</p>
-<p align="center">
-  <img width="900" alt="InvestIND Alerts Page" src="https://github.com/user-attachments/assets/3cbe85c1-2235-4335-a822-9489a6471519" />
+ <img width="1887" height="945" alt="image" src="https://github.com/user-attachments/assets/1bb4dd46-6947-4bdb-a198-84ea0af03e82" />
+
+<img width="1896" height="944" alt="image" src="https://github.com/user-attachments/assets/7b7c1a1f-2f69-4efc-ab29-4c0912033ea5" />
+
+<img width="1919" height="948" alt="image" src="https://github.com/user-attachments/assets/27b15480-ba28-405c-9c6a-849617751d16" />
+
 </p>
 
-### Authentication
+### Admin Research Management
 <p align="center">
-  <img width="900" alt="InvestIND Login Page" src="https://github.com/user-attachments/assets/68783a80-58d7-44b5-b3d0-7baa0868b3e9" />
+  <img width="1892" height="898" alt="image" src="https://github.com/user-attachments/assets/9aec33ab-da2a-4ee2-9c74-68ee74a446e7" />
 </p>
-
 ---
 
 ## Project Status
