@@ -639,7 +639,9 @@ Real-Time-Stock-Portfolio/
   <img width="1887" height="896" alt="image" src="https://github.com/user-attachments/assets/53d55252-6c2a-481d-b077-0ea4f935886b" />
 
 </p>
+
 ### Stocks & Price Alerts
+
 <p align="center">
  <img width="1887" height="945" alt="image" src="https://github.com/user-attachments/assets/1bb4dd46-6947-4bdb-a198-84ea0af03e82" />
 
