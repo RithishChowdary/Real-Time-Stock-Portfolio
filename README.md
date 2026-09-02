@@ -1,14 +1,10 @@
 # InvestIND — Real-Time Stock Portfolio & Quantitative Analytics Platform
 
-[![Java](https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.5-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
-[![Spring Security](https://img.shields.io/badge/Spring%20Security-6-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white)](https://spring.io/projects/spring-security)
-[![TA4J](https://img.shields.io/badge/TA4J-0.18-00599C?style=for-the-badge)](https://github.com/ta4j/ta4j)
-[![React](https://img.shields.io/badge/React-18-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev)
-[![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![React](https://img.shields.io/badge/React-19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev)
 [![MySQL](https://img.shields.io/badge/MySQL-8-003B57?style=for-the-badge&logo=mysql&logoColor=F29111)](https://www.mysql.com)
-[![JWT](https://img.shields.io/badge/JWT-Stateless_Auth-FF6F00?style=for-the-badge&logo=jsonwebtokens&logoColor=white)](https://jwt.io)
+[![JWT](https://img.shields.io/badge/JWT-Auth-FF6F00?style=for-the-badge&logo=jsonwebtokens&logoColor=white)](https://jwt.io)
+[![Docker](https://img.shields.io/badge/Docker-Ready-0db7ed?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com)
 
 **InvestIND** is a full-stack Indian stock paper-trading, portfolio management, and quantitative analytics platform. It pairs a robust Spring Boot 3 backend and modern React 18 frontend with algorithmic backtesting powered by [TA4J](https://github.com/ta4j/ta4j), Walk-Forward out-of-sample optimization, and AI-assisted quantitative performance analysis.
 
