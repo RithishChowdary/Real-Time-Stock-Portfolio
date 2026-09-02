@@ -632,7 +632,13 @@ Real-Time-Stock-Portfolio/
 
 <img width="1919" height="949" alt="image" src="https://github.com/user-attachments/assets/9deaa286-b3e7-403d-b0a2-3be7294a4840" />
 </p>
+### Srategy Lab
+<p align="center">
+<img width="1882" height="898" alt="image" src="https://github.com/user-attachments/assets/c6eb8071-4138-4036-b47e-d54c45c66b18" />
 
+  <img width="1887" height="896" alt="image" src="https://github.com/user-attachments/assets/53d55252-6c2a-481d-b077-0ea4f935886b" />
+
+</p>
 ### Stocks & Price Alerts
 <p align="center">
  <img width="1887" height="945" alt="image" src="https://github.com/user-attachments/assets/1bb4dd46-6947-4bdb-a198-84ea0af03e82" />
