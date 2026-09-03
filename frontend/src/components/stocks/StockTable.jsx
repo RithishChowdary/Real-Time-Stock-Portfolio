@@ -66,17 +66,17 @@ export default function StockTable({
   }
 
   return (
-    <Card className="overflow-hidden p-0 border border-slate-800/80 bg-slate-900/60">
-      <div className="border-b border-slate-800/80 px-5 py-3.5 flex items-center justify-between">
+    <Card className="overflow-hidden p-0 border border-slate-200 dark:border-[#2A2E32] bg-white dark:bg-[#181B1D]">
+      <div className="border-b border-slate-200 dark:border-[#2A2E32] px-5 py-3.5 flex items-center justify-between">
         <div>
-          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200">
+          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-[#F1F3F5]">
             Market Equities Watchlist
           </h2>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500 dark:text-[#9AA1A9]">
             Live prices, exchange symbols, and attached institutional research
           </p>
         </div>
-        <span className="rounded bg-slate-800/90 border border-slate-700 px-2 py-0.5 font-mono text-xs text-slate-300">
+        <span className="rounded-lg bg-slate-100 dark:bg-[#141719] border border-slate-200 dark:border-[#2A2E32] px-2.5 py-1 font-mono text-xs font-semibold text-slate-700 dark:text-[#9AA1A9]">
           {stocks.length} Listed
         </span>
       </div>
@@ -84,7 +84,7 @@ export default function StockTable({
       <div className="overflow-x-auto">
         <table className="w-full min-w-[780px] text-left text-sm border-collapse">
           <thead>
-            <tr className="border-b border-slate-800 bg-slate-950/40 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            <tr className="border-b border-slate-200 dark:border-[#2A2E32] bg-slate-50 dark:bg-[#141719] text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-[#9AA1A9]">
               <th className="py-3 px-5">Equity</th>
               <th className="py-3 px-4">Current Price</th>
               <th className="py-3 px-4">Research & Notes</th>
@@ -93,7 +93,7 @@ export default function StockTable({
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-slate-800/60">
+          <tbody className="divide-y divide-slate-100 dark:divide-[#2A2E32]">
             {stocks.map((stock) => {
               const isRefreshing = refreshingSymbol === stock.symbol;
               const researchList = researchMap[stock.id] || [];
@@ -102,25 +102,25 @@ export default function StockTable({
               return (
                 <tr
                   key={stock.id}
-                  className="transition-colors hover:bg-slate-800/30 group"
+                  className="transition-colors hover:bg-slate-50 dark:hover:bg-[#1D2023] group"
                 >
                   {/* Symbol & Company Name */}
                   <td className="py-3.5 px-5">
                     <div className="flex items-center gap-2.5">
-                      <span className="font-mono font-bold text-xs text-white bg-slate-800 border border-slate-700/80 px-2 py-0.5 rounded">
+                      <span className="font-mono font-bold text-xs text-slate-900 dark:text-[#F1F3F5] bg-slate-100 dark:bg-[#141719] border border-slate-200 dark:border-[#2A2E32] px-2 py-0.5 rounded-lg">
                         {stock.symbol}
                       </span>
                       <div className="min-w-0">
-                        <span className="block text-xs font-medium text-slate-300 truncate max-w-[200px]">
+                        <span className="block text-xs font-medium text-slate-900 dark:text-[#F1F3F5] truncate max-w-[200px]">
                           {stock.companyName}
                         </span>
-                        <span className="text-[10px] text-slate-500">NSE / BSE</span>
+                        <span className="text-[10px] text-slate-500 dark:text-[#6F7780]">NSE / BSE</span>
                       </div>
                     </div>
                   </td>
 
                   {/* Current Price */}
-                  <td className="py-3.5 px-4 font-mono font-bold text-sm text-slate-100">
+                  <td className="py-3.5 px-4 font-mono font-bold text-sm text-slate-900 dark:text-[#F1F3F5]">
                     {formatCurrency(stock.currentPrice)}
                   </td>
 
@@ -132,18 +132,18 @@ export default function StockTable({
                         <Skeleton className="h-3 w-48" />
                       </div>
                     ) : topResearch ? (
-                      <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-2 max-w-xs">
+                      <div className="rounded-lg border border-slate-200 dark:border-[#2A2E32] bg-slate-50 dark:bg-[#141719] p-2 max-w-xs">
                         <div className="flex items-start gap-2">
                           <FileText
                             size={14}
-                            className="mt-0.5 shrink-0 text-blue-400"
+                            className="mt-0.5 shrink-0 text-[#3B82F6]"
                           />
                           <div className="min-w-0 flex-1">
-                            <p className="truncate text-xs font-semibold text-slate-200">
+                            <p className="truncate text-xs font-semibold text-slate-900 dark:text-[#F1F3F5]">
                               {topResearch.title || "Research Note"}
                             </p>
                             {topResearch.summary && (
-                              <p className="mt-0.5 truncate text-[11px] text-slate-400">
+                              <p className="mt-0.5 truncate text-[11px] text-slate-500 dark:text-[#9AA1A9]">
                                 {topResearch.summary}
                               </p>
                             )}
@@ -152,7 +152,7 @@ export default function StockTable({
                                 href={getResearchDownloadUrl(topResearch.pdfUrl)}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-400 hover:text-blue-300 hover:underline"
+                                className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#3B82F6] hover:text-blue-400 hover:underline"
                               >
                                 <Download size={12} />
                                 PDF
@@ -162,7 +162,7 @@ export default function StockTable({
                                   href={topResearch.sourceUrl}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-slate-200"
+                                  className="inline-flex items-center gap-1 text-[11px] text-slate-500 dark:text-[#9AA1A9] hover:text-slate-900 dark:hover:text-[#F1F3F5]"
                                 >
                                   <ExternalLink size={11} />
                                   Source
@@ -173,12 +173,12 @@ export default function StockTable({
                         </div>
                       </div>
                     ) : (
-                      <span className="text-xs text-slate-500 font-mono">—</span>
+                      <span className="text-xs text-slate-400 dark:text-[#6F7780] font-mono">—</span>
                     )}
                   </td>
 
                   {/* Last Updated */}
-                  <td className="py-3.5 px-4 font-mono text-xs text-slate-400">
+                  <td className="py-3.5 px-4 font-mono text-xs text-slate-500 dark:text-[#9AA1A9]">
                     {formatDateTime(stock.lastUpdated)}
                   </td>
 
@@ -192,7 +192,7 @@ export default function StockTable({
                     >
                       <RefreshCcw
                         size={13}
-                        className={isRefreshing ? "animate-spin text-blue-400" : ""}
+                        className={isRefreshing ? "animate-spin text-[#3B82F6]" : ""}
                       />
                       <span>{isRefreshing ? "Refreshing..." : "Refresh"}</span>
                     </Button>

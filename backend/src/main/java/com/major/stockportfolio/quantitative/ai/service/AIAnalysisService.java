@@ -4,6 +4,8 @@ import com.major.stockportfolio.exception.BadRequestException;
 import com.major.stockportfolio.quantitative.ai.contracts.AIAnalysisProvider;
 import com.major.stockportfolio.quantitative.ai.dto.AIAnalysisRequest;
 import com.major.stockportfolio.quantitative.ai.dto.AIAnalysisResponse;
+import com.major.stockportfolio.quantitative.risk.dto.PortfolioRiskAIResponse;
+import com.major.stockportfolio.quantitative.risk.dto.PortfolioRiskMetrics;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,5 +34,16 @@ public class AIAnalysisService {
                 request.getSymbol(), request.getStrategy());
 
         return aiAnalysisProvider.analyze(request);
+    }
+
+    public PortfolioRiskAIResponse analyzePortfolioRisk(PortfolioRiskMetrics metrics) {
+        if (metrics == null) {
+            throw new BadRequestException("Portfolio risk metrics must not be null for AI interpretation");
+        }
+
+        log.info("Executing AI portfolio risk interpretation. Total Value: ₹{}, Holdings: {}, Risk Score: {}",
+                metrics.getTotalPortfolioValue(), metrics.getNumberOfHoldings(), metrics.getRiskScore());
+
+        return aiAnalysisProvider.analyzePortfolioRisk(metrics);
     }
 }

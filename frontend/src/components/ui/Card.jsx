@@ -10,14 +10,13 @@ export default function Card({
         rounded-2xl
         border
         border-slate-200
-        bg-[var(--card-bg)]
-        shadow-[var(--shadow-color)]
-        backdrop-blur-sm
+        bg-white
+        shadow-sm
         p-6
         transition-all
-        duration-300
-        dark:border-slate-800
-        dark:bg-slate-950/80
+        duration-200
+        dark:border-[#2A2E32]
+        dark:bg-[#181B1D]
         dark:shadow-none
         ${className}
       `}

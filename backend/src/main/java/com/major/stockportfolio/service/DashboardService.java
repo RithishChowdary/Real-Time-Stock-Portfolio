@@ -290,42 +290,46 @@ public List<NotificationResponse> getNotifications() {
             List<Transaction> txList = entry.getValue();
             Transaction firstTx = txList.get(0);
 
-            int quantity = 0;
-            BigDecimal totalInvestment = BigDecimal.ZERO;
+            int totalBuyQty = 0;
+            int totalSellQty = 0;
+            BigDecimal totalBuyValue = BigDecimal.ZERO;
 
             for (Transaction tx : txList) {
-
-                BigDecimal transactionValue = tx.getPrice()
-                        .multiply(BigDecimal.valueOf(tx.getQuantity()));
-
                 if ("BUY".equalsIgnoreCase(tx.getTransactionType())) {
-                    quantity += tx.getQuantity();
-                    totalInvestment = totalInvestment.add(transactionValue);
+                    totalBuyQty += tx.getQuantity();
+                    totalBuyValue = totalBuyValue.add(
+                            tx.getPrice().multiply(BigDecimal.valueOf(tx.getQuantity()))
+                    );
                 } else if ("SELL".equalsIgnoreCase(tx.getTransactionType())) {
-                    quantity -= tx.getQuantity();
+                    totalSellQty += tx.getQuantity();
                 }
             }
 
+            int netQty = totalBuyQty - totalSellQty;
+
             // Skip fully sold stocks
-            if (quantity <= 0) {
+            if (netQty <= 0) {
                 continue;
             }
 
-            BigDecimal averageBuyPrice = totalInvestment.divide(
-                    BigDecimal.valueOf(quantity),
-                    2,
-                    RoundingMode.HALF_UP
-            );
+            BigDecimal averageBuyPrice = totalBuyQty > 0
+                    ? totalBuyValue.divide(
+                            BigDecimal.valueOf(totalBuyQty),
+                            4,
+                            RoundingMode.HALF_UP
+                    )
+                    : BigDecimal.ZERO;
 
-            BigDecimal currentPrice =
-                    firstTx.getStock().getCurrentPrice();
+            BigDecimal currentPrice = firstTx.getStock().getCurrentPrice() != null
+                    ? firstTx.getStock().getCurrentPrice()
+                    : averageBuyPrice;
 
             BigDecimal investedValue = averageBuyPrice.multiply(
-                    BigDecimal.valueOf(quantity)
+                    BigDecimal.valueOf(netQty)
             );
 
             BigDecimal currentValue = currentPrice.multiply(
-                    BigDecimal.valueOf(quantity)
+                    BigDecimal.valueOf(netQty)
             );
 
             BigDecimal profitLoss =
@@ -348,12 +352,12 @@ public List<NotificationResponse> getNotifications() {
                     HoldingResponse.builder()
                             .symbol(firstTx.getStock().getSymbol())
                             .companyName(firstTx.getStock().getCompanyName())
-                            .quantity(quantity)
-                            .averagePrice(averageBuyPrice.doubleValue())
-                            .currentPrice(currentPrice.doubleValue())
-                            .investedValue(investedValue.doubleValue())
-                            .currentValue(currentValue.doubleValue())
-                            .profitLoss(profitLoss.doubleValue())
+                            .quantity(netQty)
+                            .averagePrice(averageBuyPrice.setScale(2, RoundingMode.HALF_UP).doubleValue())
+                            .currentPrice(currentPrice.setScale(2, RoundingMode.HALF_UP).doubleValue())
+                            .investedValue(investedValue.setScale(2, RoundingMode.HALF_UP).doubleValue())
+                            .currentValue(currentValue.setScale(2, RoundingMode.HALF_UP).doubleValue())
+                            .profitLoss(profitLoss.setScale(2, RoundingMode.HALF_UP).doubleValue())
                             .profitLossPercentage(profitLossPercentage)
                             .build()
             );

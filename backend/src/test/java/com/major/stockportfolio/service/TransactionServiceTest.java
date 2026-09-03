@@ -432,4 +432,49 @@ class TransactionServiceTest {
         assertEquals(17.725, summary.getReturnPercentage(), 0.001);
         assertEquals(103545.0, summary.getTotalPortfolioValue()); // 80,000 + 23,545
     }
+
+    // 14. Portfolio Summary with Partial Sell
+    @Test
+    void testPortfolioSummary_WithPartialSell() {
+        Transaction buyTx = Transaction.builder()
+                .id(1L)
+                .portfolio(testPortfolio)
+                .stock(testStock)
+                .quantity(10)
+                .price(new BigDecimal("2000.00")) // Total Buy = 20,000.00 (Avg buy = 2000.00)
+                .transactionType("BUY")
+                .transactionDate(LocalDateTime.now().minusDays(2))
+                .build();
+
+        Transaction sellTx = Transaction.builder()
+                .id(2L)
+                .portfolio(testPortfolio)
+                .stock(testStock)
+                .quantity(4)
+                .price(new BigDecimal("2500.00")) // Sell 4 @ 2500 = 10,000.00 proceeds
+                .transactionType("SELL")
+                .transactionDate(LocalDateTime.now().minusDays(1))
+                .build();
+
+        // Remaining Qty = 6.
+        // Remaining Invested Cost = 6 * 2000.00 = 12,000.00.
+        // Current Price of testStock = 2354.50 -> Current Value = 6 * 2354.50 = 14,127.00.
+        // Unrealized P&L = 14,127.00 - 12,000.00 = 2,127.00.
+        // Cash = 80,000 + 10,000 = 90,000.00.
+        testAccount.setAvailableCash(new BigDecimal("90000.00"));
+
+        when(userRepository.findByEmail(testUser.getEmail())).thenReturn(Optional.of(testUser));
+        when(portfolioRepository.findById(100L)).thenReturn(Optional.of(testPortfolio));
+        when(transactionRepository.findByPortfolioId(100L)).thenReturn(List.of(buyTx, sellTx));
+        when(paperTradingAccountRepository.findByUserId(testUser.getId())).thenReturn(Optional.of(testAccount));
+
+        var summary = transactionService.getPortfolioSummary(100L);
+
+        assertNotNull(summary);
+        assertEquals(90000.0, summary.getAvailableCash());
+        assertEquals(12000.0, summary.getTotalInvestment());
+        assertEquals(14127.0, summary.getCurrentValue());
+        assertEquals(2127.0, summary.getTotalProfitLoss());
+        assertEquals(104127.0, summary.getTotalPortfolioValue());
+    }
 }

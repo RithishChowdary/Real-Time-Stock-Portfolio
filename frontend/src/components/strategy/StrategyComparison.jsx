@@ -2,7 +2,6 @@ import Card from "../ui/Card";
 import { formatCurrency, formatPercentage } from "../../utils/formatters";
 
 export default function StrategyComparison({ comparisonData }) {
-  // Available strategies in system
   const strategies = [
     { id: "EMA_RSI", label: "EMA + RSI" },
     { id: "EMA_CROSSOVER", label: "EMA Crossover" },
@@ -17,12 +16,12 @@ export default function StrategyComparison({ comparisonData }) {
   ];
 
   return (
-    <Card className="border border-slate-200 dark:border-slate-800">
-      <div className="border-b border-slate-200 pb-3 dark:border-slate-800">
-        <h2 className="text-base font-bold text-slate-900 dark:text-white">
+    <Card className="border border-slate-200 dark:border-[#2A2E32] bg-white dark:bg-[#181B1D]">
+      <div className="border-b border-slate-200 pb-3 dark:border-[#2A2E32]">
+        <h2 className="text-base font-bold text-slate-900 dark:text-[#F1F3F5]">
           Strategy Comparison
         </h2>
-        <p className="text-xs text-slate-500 dark:text-slate-400">
+        <p className="text-xs text-slate-500 dark:text-[#9AA1A9]">
           Side-by-side performance benchmarks for quantitative strategies on the selected asset.
         </p>
       </div>
@@ -30,7 +29,7 @@ export default function StrategyComparison({ comparisonData }) {
       <div className="mt-4 overflow-x-auto">
         <table className="w-full min-w-[500px] text-left text-xs">
           <thead>
-            <tr className="border-b border-slate-200 text-slate-500 dark:border-slate-800">
+            <tr className="border-b border-slate-200 dark:border-[#2A2E32] text-slate-500 dark:text-[#9AA1A9]">
               <th className="py-2.5 font-semibold uppercase tracking-wider">Benchmark Metric</th>
               {strategies.map((strat) => (
                 <th key={strat.id} className="py-2.5 font-semibold uppercase tracking-wider">
@@ -39,10 +38,10 @@ export default function StrategyComparison({ comparisonData }) {
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+          <tbody className="divide-y divide-slate-100 dark:divide-[#2A2E32]">
             {metricsList.map((metric) => (
-              <tr key={metric.key} className="hover:bg-slate-50 dark:hover:bg-slate-900/40">
-                <td className="py-3 font-medium text-slate-700 dark:text-slate-300">
+              <tr key={metric.key} className="hover:bg-slate-50 dark:hover:bg-[#1D2023]">
+                <td className="py-3 font-medium text-slate-700 dark:text-[#9AA1A9]">
                   {metric.label}
                 </td>
                 {strategies.map((strat) => {
@@ -51,7 +50,7 @@ export default function StrategyComparison({ comparisonData }) {
                   const formattedValue = stratMetrics ? metric.format(rawValue) : "--";
 
                   return (
-                    <td key={strat.id} className="py-3 font-semibold text-slate-900 dark:text-slate-100">
+                    <td key={strat.id} className="py-3 font-semibold font-mono text-slate-900 dark:text-[#F1F3F5]">
                       {formattedValue}
                     </td>
                   );

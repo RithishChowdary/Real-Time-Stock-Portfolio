@@ -15,7 +15,7 @@ import { formatCurrency, formatPercentage } from "../../utils/formatters";
 export default function BacktestSummary({ results, symbol, strategyName }) {
   if (!results) {
     return (
-      <Card className="border border-slate-200 dark:border-slate-800">
+      <Card className="border border-slate-200 dark:border-[#2A2E32] bg-white dark:bg-[#181B1D]">
         <EmptyState
           title="No backtest results yet"
           message="Select an Indian stock and run a quantitative strategy backtest to view execution metrics."
@@ -32,11 +32,11 @@ export default function BacktestSummary({ results, symbol, strategyName }) {
   const cards = [
     {
       title: "Total Earnings",
-      value: totalEarningsNum !== null ? formatCurrency(totalEarningsNum) : "--",
+      value: totalEarningsNum !== null ? (isProfit && totalEarningsNum > 0 ? "+" : "") + formatCurrency(totalEarningsNum) : "--",
       icon: isProfit ? TrendingUp : TrendingDown,
       color: isProfit
-        ? "bg-green-50 text-green-600 dark:bg-green-950/30 dark:text-green-400"
-        : "bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400",
+        ? "bg-[#00C896]/10 text-[#00C896] border border-[#00C896]/20"
+        : "bg-[#FF4D5A]/10 text-[#FF4D5A] border border-[#FF4D5A]/20",
       highlight: true,
       isProfit,
     },
@@ -44,55 +44,55 @@ export default function BacktestSummary({ results, symbol, strategyName }) {
       title: "Win Rate",
       value: metrics.winRate !== undefined ? formatPercentage(metrics.winRate) : "--",
       icon: Percent,
-      color: "bg-blue-50 text-blue-600 dark:bg-blue-950/30 dark:text-blue-400",
+      color: "bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/20",
     },
     {
       title: "Total Trades",
       value: metrics.totalTrades !== undefined ? metrics.totalTrades : "--",
       icon: Activity,
-      color: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300",
+      color: "bg-slate-100 dark:bg-[#141719] text-slate-700 dark:text-[#9AA1A9] border border-slate-200 dark:border-[#2A2E32]",
     },
     {
       title: "Winning Trades",
       value: metrics.winningTrades !== undefined ? metrics.winningTrades : "--",
       icon: Award,
-      color: "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400",
+      color: "bg-[#00C896]/10 text-[#00C896] border border-[#00C896]/20",
     },
     {
       title: "Losing Trades",
       value: metrics.losingTrades !== undefined ? metrics.losingTrades : "--",
       icon: Target,
-      color: "bg-rose-50 text-rose-600 dark:bg-rose-950/30 dark:text-rose-400",
+      color: "bg-[#FF4D5A]/10 text-[#FF4D5A] border border-[#FF4D5A]/20",
     },
     {
       title: "Average Profit",
       value: metrics.averageProfit !== undefined ? formatCurrency(metrics.averageProfit) : "--",
       icon: BarChart2,
-      color: "bg-indigo-50 text-indigo-600 dark:bg-indigo-950/30 dark:text-indigo-400",
+      color: "bg-slate-100 dark:bg-[#141719] text-slate-700 dark:text-[#9AA1A9] border border-slate-200 dark:border-[#2A2E32]",
     },
     {
       title: "Maximum Drawdown",
       value: metrics.maximumDrawdown !== undefined ? formatPercentage(metrics.maximumDrawdown) : "--",
       icon: ShieldAlert,
-      color: "bg-amber-50 text-amber-600 dark:bg-amber-950/30 dark:text-amber-400",
+      color: "bg-amber-500/10 text-amber-400 border border-amber-500/20",
     },
     {
       title: "Profit Factor",
       value: metrics.profitFactor !== undefined ? Number(metrics.profitFactor).toFixed(2) : "--",
       icon: Target,
-      color: "bg-purple-50 text-purple-600 dark:bg-purple-950/30 dark:text-purple-400",
+      color: "bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/20",
     },
   ];
 
   return (
-    <Card className="border border-slate-200 dark:border-slate-800">
-      <div className="border-b border-slate-200 pb-3 dark:border-slate-800">
+    <Card className="border border-slate-200 dark:border-[#2A2E32] bg-white dark:bg-[#181B1D]">
+      <div className="border-b border-slate-200 pb-3 dark:border-[#2A2E32]">
         <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
           <div>
-            <h2 className="text-base font-bold text-slate-900 dark:text-white">
+            <h2 className="text-base font-bold text-slate-900 dark:text-[#F1F3F5]">
               Backtest Performance Metrics
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-slate-500 dark:text-[#9AA1A9]">
               {symbol ? `Historical evaluation for ${symbol}` : "Strategy evaluation metrics"}
               {strategyName ? ` · ${strategyName}` : ""}
             </p>
@@ -107,27 +107,27 @@ export default function BacktestSummary({ results, symbol, strategyName }) {
           return (
             <div
               key={card.title}
-              className="rounded-lg border border-slate-200 bg-slate-50/50 p-3.5 dark:border-slate-800 dark:bg-slate-900/40"
+              className="rounded-xl border border-slate-200 bg-slate-50 p-3.5 dark:border-[#2A2E32] dark:bg-[#141719]"
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-[#9AA1A9]">
                     {card.title}
                   </p>
                   <p
-                    className={`mt-1.5 text-xl font-bold ${
+                    className={`mt-1.5 text-xl font-bold font-mono ${
                       card.highlight && card.isProfit !== undefined
                         ? card.isProfit
-                          ? "text-green-600 dark:text-green-400"
-                          : "text-red-600 dark:text-red-400"
-                        : "text-slate-900 dark:text-white"
+                          ? "text-[#00C896]"
+                          : "text-[#FF4D5A]"
+                        : "text-slate-900 dark:text-[#F1F3F5]"
                     }`}
                   >
                     {card.value}
                   </p>
                 </div>
 
-                <div className={`rounded-lg p-2 ${card.color}`}>
+                <div className={`rounded-xl p-2 ${card.color}`}>
                   <Icon size={16} />
                 </div>
               </div>

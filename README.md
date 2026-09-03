@@ -10,10 +10,10 @@
 [![MySQL](https://img.shields.io/badge/MySQL-8-003B57?style=for-the-badge&logo=mysql&logoColor=F29111)](https://www.mysql.com)
 [![JWT](https://img.shields.io/badge/JWT-Stateless_Auth-FF6F00?style=for-the-badge&logo=jsonwebtokens&logoColor=white)](https://jwt.io)
 
-**InvestIND** is a full-stack Indian stock paper-trading, portfolio management, and quantitative analytics platform. It pairs a robust Spring Boot 3 backend and modern React 18 frontend with algorithmic backtesting powered by [TA4J](https://github.com/ta4j/ta4j), Walk-Forward out-of-sample optimization, and AI-assisted quantitative performance analysis.
+**InvestIND** is a full-stack Indian stock paper-trading, portfolio management, and quantitative analytics platform. It pairs a robust Spring Boot 3 backend and modern React 18 frontend with algorithmic backtesting powered by [TA4J](https://github.com/ta4j/ta4j), Walk-Forward out-of-sample optimization, grounded AI quantitative backtest analysis, and backend-authoritative AI Portfolio Risk Analysis.
 
 > [!IMPORTANT]
-> **Educational & Portfolio Purpose**: InvestIND is built for educational, quantitative research, and portfolio demonstration purposes. All backtest metrics and walk-forward analyses are historical simulations and do not represent financial advice or guarantee future returns. Paper-trading trades and cash balances are simulated.
+> **Educational & Portfolio Purpose**: InvestIND is built for educational, quantitative research, and portfolio demonstration purposes. All trading executions and cash balances are simulated within a paper-trading environment. Backtest metrics and AI-assisted interpretations do not constitute financial advice, certified risk ratings, or guarantees of future performance.
 
 ---
 
@@ -23,9 +23,7 @@
   <a href="https://stock-portfolio-frontend-omn1.onrender.com"><b>🚀 Live Demo</b></a> |
   <a href="https://real-time-stock-portfolio.onrender.com/swagger-ui/index.html"><b>📄 API Docs</b></a> |
   <a href="https://github.com/RithishChowdary/Real-Time-Stock-Portfolio"><b>💻 GitHub</b></a>
-
 </p>
-
 
 ---
 
@@ -36,10 +34,12 @@
 - [System Architecture](#system-architecture)
 - [Quantitative Trading Engine & Strategy Lab](#quantitative-trading-engine--strategy-lab)
 - [AI Quantitative Analysis](#ai-quantitative-analysis)
+- [AI Portfolio Risk Analysis](#ai-portfolio-risk-analysis)
 - [Portfolio & Paper Trading Engine](#portfolio--paper-trading-engine)
 - [Alerts & Notifications](#alerts--notifications)
 - [Research Management (Admin-Only)](#research-management-admin-only)
 - [Authentication & Security](#authentication--security)
+- [Frontend Design System & UI](#frontend-design-system--ui)
 - [Technology Stack](#technology-stack)
 - [API Overview](#api-overview)
 - [Environment Configuration](#environment-configuration)
@@ -56,37 +56,40 @@
 
 ## Overview
 
-InvestIND provides a unified environment for stock market tracking, simulated trading execution, and algorithmic strategy validation:
+InvestIND provides a unified environment for Indian stock market tracking, simulated trading execution, algorithmic strategy validation, and grounded portfolio risk evaluation:
 
-1. **Portfolio & Paper-Trading Account**: Every user receives a backend-managed paper-trading cash account seeded with ₹1,00,000 initial capital. Buy/Sell transactions execute with pessimistic database locking and authoritative balance validation.
+1. **Portfolio & Paper-Trading Account**: Every user receives a backend-managed paper-trading cash account seeded with ₹1,00,000 initial virtual capital. Buy and Sell transactions execute with pessimistic database locking and authoritative weighted-average cost accounting.
 2. **Strategy Lab & TA4J Backtesting**: Run quantitative algorithmic strategies (`EMA + RSI Momentum` and `EMA Dual Crossover`) against historical daily OHLCV market datasets with full trade statistics (Win Rate, Total Earnings, Profit Factor, Max Drawdown).
 3. **Walk-Forward Optimization**: Evaluate strategy robustness across rolling in-sample parameter optimization and out-of-sample testing windows to reduce overfitting.
-4. **AI-Assisted Quantitative Interpretation**: Grounded AI analysis interprets verifiable TA4J metrics (strengths, risk factors, market regime suitability) through a backend provider architecture without hallucinating trades or prices.
-5. **Admin Research Portal**: Dedicated administrative portal for publishing and managing stock research reports, executive summaries, and PDF filings with role-based route protection.
+4. **AI Quantitative Analysis**: Grounded AI interpretation converts verifiable TA4J metrics into actionable performance explanations without hallucinating trades or prices.
+5. **AI Portfolio Risk Analysis**: On-demand portfolio risk assessment where Java computes authoritative exposure, concentration, and liquidity metrics, and Google Gemini provides educational interpretation strictly grounded in those numbers.
+6. **Admin Research Portal**: Dedicated administrative portal for publishing and managing stock research reports, executive summaries, and PDF filings with role-based route protection.
 
 ---
 
 ## Key Features
 
-- **Authoritative Cash & Position Management**:
-  - `PaperTradingAccount` is the single source of truth for cash balances.
+- **Authoritative Cash & Position Accounting**:
+  - `PaperTradingAccount` is the sole source of truth for cash balances.
   - Pessimistic write locking prevents race conditions and balance discrepancies.
+  - Weighted-average acquisition cost basis accounting properly handles partial and full SELL orders.
   - Insufficient funds strictly reject BUY orders; insufficient holdings reject SELL orders.
-  - Authoritative calculation of invested value, holdings value, realized P/L, and return percentage.
 - **Quantitative Strategy Lab**:
   - Discrete execution of selectable algorithms (`EMA_RSI` and `EMA_CROSSOVER`).
   - True multi-metric backtest evaluation (Total Trades, Winning/Losing Trades, Win Rate, Profit Factor, Drawdown).
-  - Isolated side-by-side strategy comparison.
-  - Walk-Forward rolling train/test evaluation for out-of-sample validation.
+  - Isolated side-by-side strategy comparison and rolling Walk-Forward out-of-sample optimization.
+- **AI Portfolio Risk Analysis**:
+  - Embedded directly into the Portfolio management interface.
+  - Deterministic Java-calculated portfolio risk metrics (score 0–100, risk tier, single-stock concentration, cash liquidity buffer).
+  - Structured Gemini AI interpretation grounded strictly in backend metrics without hallucination.
 - **AI-Powered Quantitative Reporting**:
   - Grounded interpretation using Google Gemini through an extensible backend provider abstraction (`AIAnalysisProvider`).
   - Generates structured executive summaries, risk breakdowns, and market regime analysis based exclusively on actual TA4J backtest outputs.
 - **Stock Analytics & Market Data Fallback**:
   - Searchable Indian equity database.
-  - Hybrid historical market data loader: fetches from Alpha Vantage and automatically falls back to bundled classpath CSV historical datasets (`TCS`, `INFY`, `RELIANCE`, `HDFCBANK`) with thread-safe in-memory caching.
+  - Hybrid historical market data loader: integrates with Twelve Data and Alpha Vantage, automatically falling back to bundled classpath CSV historical datasets (`TCS`, `INFY`, `RELIANCE`, `HDFCBANK`) with thread-safe in-memory caching.
 - **Configurable Price & Percentage Alerts**:
   - Set target price, stop-loss, profit percentage, and loss percentage thresholds.
-  - Authoritative backend and responsive frontend input validation.
   - Real-time notification feed for triggered events.
 - **Role-Based Research Management**:
   - Admin-only PDF research document uploads (max 10MB) with stock linking.
@@ -94,8 +97,7 @@ InvestIND provides a unified environment for stock market tracking, simulated tr
   - Strict route protection (`AdminRoute`) and method-level `@PreAuthorize("hasRole('ADMIN')")`.
 - **Stateless Security**:
   - JWT access tokens (7-day validity) and refresh tokens (30-day validity).
-  - Google OAuth2 Single Sign-On.
-  - BCrypt password hashing and user isolation.
+  - Google OAuth2 Single Sign-On and BCrypt password hashing.
 
 ---
 
@@ -123,8 +125,8 @@ InvestIND provides a unified environment for stock market tracking, simulated tr
 |  Business Core   |           | Quantitative Lab  |           | AI Provider Layer |
 |  - AuthService   |           |  - MarketDataLoader|          |  - AIAnalysisServ |
 |  - AccountService|           |  - TA4J Engine    |           |  - GeminiAIProvider|
-|  - TransactServ  |           |  - Walk-Forward   |           +-------------------+
-|  - ResearchServ  |           +-------------------+                     |
+|  - TransactServ  |           |  - Walk-Forward   |           |  - PortRiskService|
+|  - ResearchServ  |           +-------------------+           +-------------------+
 +------------------+                     |                               |
          |                               v                               v
          |                     +-------------------+           +-------------------+
@@ -137,44 +139,11 @@ InvestIND provides a unified environment for stock market tracking, simulated tr
 +------------------+
 ```
 
-### Quantitative Engine Architecture
-
-```text
-Historical Market Data (Alpha Vantage / CSV Fallback)
-         |
-         v
-FallbackMarketDataLoader (In-Memory ConcurrentHashMap Cache)
-         |
-         v
-TA4J BarSeries (Daily OHLCV Candles)
-         |
-         +---------------------------------------+
-         |                                       |
-         v                                       v
-EMA + RSI Strategy                     EMA Dual Crossover Strategy
-(Short EMA, Long EMA, RSI)             (Fast EMA, Slow EMA)
-         |                                       |
-         +-------------------+-------------------+
-                             |
-                             v
-                    BacktestEngine (TA4J)
-                             |
-                             v
-                 PerformanceMetrics DTO
-  (Win Rate, Total Trades, Profit Factor, Max Drawdown)
-                             |
-              +--------------+--------------+
-              |                             |
-              v                             v
-   Strategy Comparison /          AI Quantitative Analysis
-   Walk-Forward Optimization      (AIAnalysisProvider -> Gemini)
-```
-
 ---
 
 ## Quantitative Trading Engine & Strategy Lab
 
-The Strategy Lab provides automated strategy evaluation on Indian equities using real historical OHLCV bar series.
+The Strategy Lab provides automated strategy evaluation on Indian equities using historical OHLCV bar series.
 
 ### 1. Implemented Strategies
 - **EMA + RSI Momentum (`EMA_RSI`)**: Combines Exponential Moving Averages (trend direction) with the Relative Strength Index (overbought/oversold momentum triggers).
@@ -205,12 +174,7 @@ The engine calculates comprehensive trading statistics via TA4J:
 > [!NOTE]
 > **Zero-Trade Backtest Outcomes**: A backtest returning 0 trades (e.g., EMA + RSI over a non-trending consolidation dataset) is a **valid quantitative result** indicating no signal conditions were met. It represents realistic quantitative evaluation, not an application error.
 
-### 4. Independent Strategy Comparison
-- Comparison metrics are populated exclusively for the strategy that was executed.
-- Unexecuted strategies display `--`.
-- Changing the selected stock automatically resets comparison metrics to prevent cross-asset data pollution.
-
-### 5. Walk-Forward Optimization
+### 4. Walk-Forward Optimization
 Walk-forward analysis tests whether strategy parameters retain predictive value outside their training window.
 
 ```json
@@ -220,13 +184,7 @@ POST /api/backtest/walk-forward
 }
 ```
 
-The system splits historical bars into sequential training (in-sample optimization) and testing (out-of-sample validation) windows. The UI displays:
-- Window number
-- Training & testing bar counts
-- Optimized indicator parameters
-- Number of out-of-sample trades
-- Testing window profit
-- Cumulative out-of-sample profit
+The system splits historical bars into sequential training (in-sample optimization) and testing (out-of-sample validation) windows.
 
 ---
 
@@ -245,7 +203,7 @@ BacktestController ──> AIAnalysisService ──> AIAnalysisProvider (Interfa
                                             Google Gemini API
 ```
 
-- **Loose Coupling**: The `AIAnalysisProvider` interface allows swapping underlying LLM providers (e.g., Anthropic, OpenAI, or local models) without modifying the quantitative core.
+- **Loose Coupling**: The `AIAnalysisProvider` interface allows swapping underlying LLM providers without modifying the quantitative core.
 - **Strict Grounding**: The AI is supplied with authoritative TA4J `performanceMetrics` (trades, win rate, profit factor, drawdown) and strictly instructed to interpret the numbers without inventing trades, returns, or stock prices.
 - **Structured Sections**:
   - **Executive Summary**: High-level strategy outcome.
@@ -255,17 +213,54 @@ BacktestController ──> AIAnalysisService ──> AIAnalysisProvider (Interfa
   - **Market Regime Suitability**: Performance in trending vs ranging markets.
   - **Quantitative Takeaway**: Practical algorithmic insights.
 
-### Backend-Only Configuration
-The Gemini API key is configured **exclusively on the backend** through environment variables:
+---
 
-```properties
-ai.provider=${AI_PROVIDER:gemini}
-ai.gemini.api-key=${GEMINI_API_KEY:}
-ai.gemini.model=${GEMINI_MODEL:gemini-1.5-flash}
-ai.gemini.base-url=${GEMINI_BASE_URL:https://generativelanguage.googleapis.com/v1beta/models/}
+## AI Portfolio Risk Analysis
+
+InvestIND features an on-demand AI Portfolio Risk Analysis system embedded directly into the existing Portfolio page.
+
+### Architectural Principle
+> **JAVA CALCULATES. GEMINI INTERPRETS.**
+> 
+> All financial arithmetic, position valuations, weights, liquidity ratios, and risk scores are calculated authoritatively in Java. Gemini AI receives verified numerical facts and produces structured educational interpretations without altering or inventing metrics.
+
+### Architecture Flow
+```text
+Portfolio / Holdings / Transactions / PaperTradingAccount
+                         ↓
+              PortfolioRiskService (Java Source of Truth)
+                         ↓
+              PortfolioRiskMetrics (Authoritative DTO)
+                         ↓
+              AIAnalysisService
+                         ↓
+              AIAnalysisProvider
+                         ↓
+              GeminiAIProvider (Prompt Grounding & Schema)
+                         ↓
+              Structured AI Risk Analysis (Response)
+                         ↓
+              Portfolio UI (Embedded Dashboard Card)
 ```
 
-If `GEMINI_API_KEY` is not set, the application returns a clean advisory notice without crashing or exposing stack traces.
+### Authoritative Backend Risk Metrics Supported
+- **Total Portfolio Value**: Available Cash + Current Market Value of Holdings.
+- **Available Cash**: Unallocated virtual trading capital.
+- **Holdings Value**: Current market valuation of active equity positions.
+- **Total Investment**: Cost basis of remaining open positions.
+- **Unrealized P&L**: Current Holdings Value minus Total Investment.
+- **Return Percentage**: Percentage return on remaining invested capital.
+- **Number of Active Holdings**: Count of distinct equity positions owned.
+- **Largest Holding & Percentage**: Symbol, value, and portfolio weight of the largest position.
+- **Position Exposure Breakdown**: Individual stock weights, market values, and unit prices.
+- **Cash Allocation Percentage**: Available Cash as a proportion of total portfolio value.
+- **Deterministic Risk Score**: An educational platform-level score ($0–100$) derived from concentration, position count, liquidity buffer, and unrealized return.
+- **Risk Level**: Qualitative classification (`LOW`, `MODERATE`, `HIGH`, `VERY HIGH`).
+
+### Anti-Hallucination Constraints & Grounding
+- Gemini is explicitly instructed **never** to alter numbers, fabricate hypothetical trades, create artificial market prices, or guess unverified sector classifications.
+- Gemini is strictly forbidden from describing current unrealized position losses as "realized losses" or as "drawdowns" (which require historical peak-to-trough equity curves).
+- All AI observations are presented as educational review areas rather than automated trade triggers or certified financial advice.
 
 ---
 
@@ -275,62 +270,61 @@ If `GEMINI_API_KEY` is not set, the application returns a clean advisory notice 
 - Fresh paper-trading accounts start with an initial cash balance of **₹1,00,000.00**.
 - The `PaperTradingAccount` database entity is the **sole source of truth** for available cash. Frontend balance states are never trusted for order execution.
 
-### 2. Transaction Atomicity & Concurrency Control
-- **Pessimistic Locking**: `PaperTradingAccountRepository` uses `@Lock(LockModeType.PESSIMISTIC_WRITE)` when reading account balances during buy and sell transactions.
-- **BUY Order Flow**:
-  1. Validates quantity $> 0$ and price $> 0$.
-  2. Acquires pessimistic lock on `PaperTradingAccount`.
-  3. Verifies `availableCash >= totalCost`. If insufficient, throws `BadRequestException("Insufficient funds")`.
-  4. Deducts `totalCost` from cash balance, updates holdings, and records a `BUY` transaction.
-- **SELL Order Flow**:
-  1. Validates quantity $> 0$ and price $> 0$.
-  2. Verifies current net holding quantity $\ge$ sell quantity. If insufficient, throws `BadRequestException("Insufficient holdings")`.
-  3. Acquires pessimistic lock on `PaperTradingAccount`.
-  4. Credits `proceeds` to cash balance, updates/closes position, and records a `SELL` transaction.
-- **Negative Cash Prevention**: Enforces database and service invariants ensuring cash balances cannot become negative.
+### 2. Transaction Atomicity & Weighted-Average Accounting
+- **Pessimistic Locking**: `PaperTradingAccountRepository` uses `@Lock(LockModeType.PESSIMISTIC_WRITE)` when reading account balances during buy and sell transactions to prevent concurrency race conditions.
+- **Core Valuation Identity**:
+  $$\text{Total Portfolio Value} = \text{Available Cash} + \sum_{\text{holdings}} (\text{Remaining Quantity} \times \text{Current Market Price})$$
+- **Weighted-Average Acquisition Price**:
+  $$\text{Average Buy Price} = \frac{\sum (\text{buyQty} \times \text{buyPrice})}{\sum \text{buyQty}}$$
+- **Partial and Full SELL Accounting**:
+  - When shares are partially sold, the remaining quantity is decremented, while the **Average Buy Price** of the remaining shares remains invariant.
+  - **Remaining Cost Basis**: $\text{Remaining Quantity} \times \text{Average Buy Price}$.
+  - **SELL Execution Proceeds**: Credited atomically to `availableCash` at $\text{sellQty} \times \text{sellPrice}$.
+  - **Realized P&L**: Calculated on the sold portion at $\text{sellQty} \times (\text{sellPrice} - \text{Average Buy Price})$.
+  - **Unrealized P&L**: Calculated exclusively on remaining shares:
+    $$\text{Unrealized P\&L} = (\text{Remaining Quantity} \times \text{Current Market Price}) - \text{Remaining Cost Basis}$$
+  - Full position sales ($\text{Remaining Quantity} = 0$) close the holding, removing it from active valuation with zero residual unrealized P&L.
 
 ---
 
 ## Alerts & Notifications
 
-- **Price & Percentage Trigger Rules**:
-  - Target price (upper threshold)
-  - Stop-loss (lower threshold)
-  - Profit percentage gain
-  - Loss percentage drop
-- **Input Validation**:
-  - Rejects zero and negative price/percentage inputs.
-  - Requires at least one valid trigger condition per alert.
-- **Lifecycle & Notifications**:
-  - Evaluated against incoming stock price updates.
-  - Creates persistent notification records when triggered.
-  - Provides mark-as-read state management.
+- **Price & Percentage Trigger Rules**: Target price (upper threshold), stop-loss (lower threshold), profit percentage gain, and loss percentage drop.
+- **Input Validation**: Rejects non-positive prices and invalid percentages; requires at least one condition per alert.
+- **Lifecycle & Notifications**: Evaluated against live price updates, persisting unread notifications with mark-as-read management.
 
 ---
 
 ## Research Management (Admin-Only)
 
-InvestIND includes a dedicated research document publication system restricted strictly to platform administrators (`ROLE_ADMIN`).
+InvestIND includes a research document management system restricted strictly to platform administrators (`ROLE_ADMIN`).
 
-- **Capabilities**:
-  - Upload fundamental research and institutional PDF documents (up to 10MB).
-  - Searchable stock autocomplete linking reports to specific assets.
-  - Structured metadata (Title, Summary, Source Reference URL).
-  - Secure file streaming download and document deletion.
-- **Security & Authorization**:
-  - Backend: Endpoints protected with `@PreAuthorize("hasRole('ADMIN')")`.
-  - Frontend: `AdminRoute` guard automatically redirects non-admin users attempting to access `/admin/research`.
-  - Navigation: Sidebar dynamically filters out the Research Management link for normal `USER` accounts.
+- **Capabilities**: Upload PDF documents (up to 10MB), link research to specific equity tickers, structured metadata, and secure file streaming downloads.
+- **Security & Authorization**: Backend endpoints protected with `@PreAuthorize("hasRole('ADMIN')")`; frontend protected via `AdminRoute` guard.
 
 ---
 
 ## Authentication & Security
 
-- **Stateless JWT**: Access tokens and refresh tokens signed with HMAC-SHA256 (`JWT_SECRET`).
-- **Role-Based Access Control (RBAC)**: Supports `ROLE_USER` and `ROLE_ADMIN` mapped via `CustomUserDetailsService`.
-- **Google OAuth2 Single Sign-On**: Automated account provisioning and OAuth success handling with JWT issuance.
-- **Password Security**: BCrypt password hashing.
-- **Centralized Exception Handling**: `@RestControllerAdvice` (`GlobalExceptionHandler`) returns uniform API error responses.
+- **Stateless JWT**: HMAC-SHA256 signed access tokens (7-day validity) and refresh tokens (30-day validity).
+- **Role-Based Access Control (RBAC)**: `ROLE_USER` and `ROLE_ADMIN` mapped via `CustomUserDetailsService`.
+- **Google OAuth2 Single Sign-On**: Automated account provisioning and token issuance.
+- **Password Security**: BCrypt password hashing and centralized `@RestControllerAdvice` error responses.
+
+---
+
+## Frontend Design System & UI
+
+InvestIND features a professional **Graphite / Charcoal** financial trading theme designed for clarity, high data density, and reduced visual fatigue:
+
+- **Surface Palette**: Deep neutral charcoal backgrounds (`#0F1112`, `#141719`), dark card containers (`#181B1D`), elevated surfaces (`#1D2023`), and subtle borders (`#2A2E32`).
+- **Semantic Financial Colors**:
+  - **Positive Returns & Gains**: Green (`#00C896` / Emerald).
+  - **Negative Losses & Alerts**: Red (`#FF4D5A` / Rose).
+  - **Interactive Accents & Badges**: Restrained Blue (`#3B82F6`).
+- **Clean Authentication**: Distraction-free charcoal login and registration cards with subtle borders (no artificial glowing AI gradients or particle effects).
+- **Explicit Terminology**: Tables and summaries clearly distinguish *Avg Buy Price*, *Current Price*, *Invested Cost*, *Current Value*, and *Unrealized P&L*.
+- **Integrated Risk Workflow**: AI Portfolio Risk Analysis is embedded directly within the existing Portfolio page without cluttering primary navigation.
 
 ---
 
@@ -349,7 +343,7 @@ InvestIND includes a dedicated research document publication system restricted s
 | **Frontend Framework** | React | 18 |
 | **Build Tool** | Vite | 8 |
 | **Routing** | React Router | 6 (ProtectedRoute, AdminRoute) |
-| **Styling** | Tailwind CSS | 3.4 (Responsive Light/Dark theme support) |
+| **Styling** | Tailwind CSS | 3.4 (Graphite / Charcoal Theme Tokens) |
 | **Icons & UI** | Lucide React | Modern vector icon suite |
 | **HTTP Client** | Axios | Interceptors for JWT authorization headers |
 
@@ -365,7 +359,7 @@ InvestIND includes a dedicated research document publication system restricted s
 | `POST` | `/api/auth/refresh` | Refresh expired access token | Public |
 | `GET` | `/api/auth/me` | Fetch authenticated user profile | User / Admin |
 
-### Dashboard & Portfolio (`/api/dashboard`, `/api/portfolios`)
+### Dashboard & Portfolio (`/api/dashboard`, `/api/portfolios`, `/api/portfolio/risk`)
 | Method | Endpoint | Description | Auth Required |
 |---|---|---|---|
 | `GET` | `/api/dashboard/summary` | Portfolio summary (cash, holdings, P/L, return %) | User / Admin |
@@ -374,6 +368,8 @@ InvestIND includes a dedicated research document publication system restricted s
 | `GET` | `/api/dashboard/performance` | Historical performance breakdown | User / Admin |
 | `GET` | `/api/portfolios` | List user portfolios | User / Admin |
 | `POST` | `/api/portfolios` | Create portfolio | User / Admin |
+| `GET` | `/api/portfolio/risk` | Authoritative Java-calculated portfolio risk metrics | User / Admin |
+| `POST` | `/api/portfolio/risk/analysis` | Current risk metrics + Gemini AI interpretation | User / Admin |
 
 ### Transactions (`/api/transactions`)
 | Method | Endpoint | Description | Auth Required |
@@ -389,7 +385,7 @@ InvestIND includes a dedicated research document publication system restricted s
 |---|---|---|---|
 | `POST` | `/api/backtest` | Run TA4J backtest (`symbol`, `strategy`) | User / Admin |
 | `POST` | `/api/backtest/walk-forward` | Execute rolling Walk-Forward optimization | User / Admin |
-| `POST` | `/api/backtest/ai-analysis` | Generate AI interpretation of metrics | User / Admin |
+| `POST` | `/api/backtest/analysis` | Generate AI interpretation of backtest metrics | User / Admin |
 
 ### Alerts & Notifications (`/api/alerts`, `/api/notifications`)
 | Method | Endpoint | Description | Auth Required |
@@ -470,7 +466,6 @@ CREATE DATABASE stock_portfolio;
 
 Seed base equity data using the provided scripts:
 ```bash
-# Optional initial seeds
 mysql -u your_user -p stock_portfolio < database/queries.sql
 mysql -u your_user -p stock_portfolio < database/seedData.sql
 ```
@@ -479,7 +474,7 @@ mysql -u your_user -p stock_portfolio < database/seedData.sql
 ```bash
 cd backend
 
-# Set Gemini API Key (optional for AI analysis)
+# Set Gemini API Key (optional for AI features)
 # On Windows PowerShell:
 $env:GEMINI_API_KEY="your_api_key_here"
 
@@ -487,10 +482,10 @@ $env:GEMINI_API_KEY="your_api_key_here"
 export GEMINI_API_KEY="your_api_key_here"
 
 # Run tests
-mvn clean test
+./mvnw.cmd clean test
 
 # Launch backend server
-mvn spring-boot:run
+./mvnw.cmd spring-boot:run
 ```
 *Backend runs on `http://localhost:8080` (Swagger UI: `http://localhost:8080/swagger-ui/index.html`).*
 
@@ -513,36 +508,51 @@ npm run build
 
 ## Testing & Verification
 
-The project includes an automated test suite covering quantitative analysis, backtest routing, cash atomicity, alert validation, and administrative research.
+The project includes an automated backend test suite and production build verification covering quantitative analysis, paper-trading atomicity, risk metrics, alert rules, and research operations.
 
-### Automated Test Suite Status
+### Automated Test Suite Status (`./mvnw.cmd clean test`)
 ```text
 Results:
-Tests run: 44, Failures: 0, Errors: 0, Skipped: 1
+Tests run: 57, Failures: 0, Errors: 0, Skipped: 1
 
 Breakdown:
 - StockResearchServiceTest:          8 passed
-- TransactionServiceTest:           13 passed
+- TransactionServiceTest:           14 passed
 - AlertServiceTest:                  8 passed
 - AIAnalysisServiceTest:             7 passed
+- PortfolioRiskServiceTest:          6 passed
+- PortfolioRiskControllerTest:       2 passed
+- GeminiPortfolioRiskProviderTest:   2 passed
+- DashboardServiceTest:              3 passed
 - PaperTradingAccountServiceTest:    3 passed
 - BacktestApiServiceTest:            3 passed
-- DashboardServiceTest:              1 passed
 - StockportfolioApplicationTests:    1 skipped (live database bootstrap test intentionally disabled)
 
-Status: BUILD SUCCESS (mvn clean test)
+Status: BUILD SUCCESS (Total time: ~45s)
 ```
 
-### Frontend Production Build
+### Frontend Production Build (`npm run build`)
 ```text
 vite v8.0.14 building client environment for production...
-transforming... 1936 modules transformed.
+transforming... 1938 modules transformed.
 rendering chunks...
-dist/index.html                     0.50 kB
-dist/assets/index-CsLffLE3.css     50.85 kB
-dist/assets/index-DaMfnwU9.js     512.35 kB
-built in 3.00s (0 errors)
+computing gzip size...
+dist/index.html                       0.50 kB │ gzip:   0.32 kB
+dist/assets/favicon-qYxO9eex.png    379.93 kB
+dist/assets/logo-Dg8EsIrU.png     1,159.63 kB
+dist/assets/index-CQOQXUlN.css       53.35 kB │ gzip:  10.53 kB
+dist/assets/index-DX02cWy6.js       541.67 kB │ gzip: 156.20 kB
+✓ built in 2.83s (0 errors)
 ```
+
+### Regression Verification Summary
+- **Paper Trading**: BUY/SELL execution, partial SELL weighted-average preservation, full position closures, cash deductions, proceeds credit.
+- **Portfolio & Holdings**: Multi-portfolio management, real-time valuation synchronization, holding aggregation.
+- **Strategy Lab**: `EMA + RSI`, `EMA Crossover`, side-by-side strategy comparison, Walk-Forward rolling window optimizer.
+- **AI Quantitative Analysis**: TA4J trade statistic explanations grounded in verified backtest outputs.
+- **AI Portfolio Risk Analysis**: Deterministic risk metrics, concentration analysis, and grounded Gemini interpretation.
+- **Admin Research & Route Security**: AdminRoute protection, PDF upload/download/deletion, and stock linking.
+- **Market Data & Moving Tickers**: Active stock marquee animation on landing page and headers, CSV fallback cache.
 
 ---
 
@@ -558,7 +568,7 @@ Real-Time-Stock-Portfolio/
 │   │   ├── entity/              # JPA Entities (User, Portfolio, Account, Stock, Transaction)
 │   │   ├── exception/           # Global Exception Handler & Custom Exceptions
 │   │   ├── interfaces/          # Business Service Contracts
-│   │   ├── quantitative/        # Quantitative Algorithmic Backtesting Core
+│   │   ├── quantitative/        # Quantitative Algorithmic Backtesting & Risk Core
 │   │   │   ├── ai/              # AI Quantitative Analysis (Contracts, Service, GeminiProvider)
 │   │   │   ├── config/          # Quantitative Properties
 │   │   │   ├── contracts/       # Engine & Loader Interfaces
@@ -568,6 +578,7 @@ Real-Time-Stock-Portfolio/
 │   │   │   ├── indicator/       # TA4J Technical Indicator Helpers
 │   │   │   ├── loader/          # FallbackMarketDataLoader, CsvMarketDataLoader, AlphaVantage
 │   │   │   ├── optimizer/       # Walk-Forward & Strategy Parameter Optimizers
+│   │   │   ├── risk/            # AI Portfolio Risk Analysis (Service, Controller, DTOs)
 │   │   │   ├── service/         # BacktestApiService & Downloader Services
 │   │   │   └── strategy/        # EMA_RSI & EMA_CROSSOVER Strategy Definitions
 │   │   ├── repository/          # Spring Data JPA Repositories with Pessimistic Locks
@@ -580,12 +591,18 @@ Real-Time-Stock-Portfolio/
 ├── frontend/
 │   ├── src/
 │   │   ├── api/                 # Axios Client & Interceptors
-│   │   ├── components/          # Reusable UI & Layout Components (Sidebar, Navbar, Card, Modal)
+│   │   ├── components/          # Reusable UI & Layout Components (Sidebar, Topbar, Card, Table)
+│   │   │   ├── dashboard/       # DashboardCards, HoldingsTable
+│   │   │   ├── portfolio/       # PortfolioCard, PortfolioForm, PortfolioRiskAnalysis
+│   │   │   ├── stocks/          # StockTable, StockForm
+│   │   │   ├── strategy/        # StrategyLabHeader, BacktestConfig, BacktestSummary, AIAnalysisPanel
+│   │   │   ├── transactions/    # BuySellForm, PortfolioSummaryCards
+│   │   │   └── ui/              # Button, Card, Input, EmptyState, Loader, Skeleton
 │   │   ├── context/             # AuthContext (Role, Tokens, Session)
 │   │   ├── hooks/               # Custom React Hooks
-│   │   ├── pages/               # Dashboard, StrategyLab, Portfolios, Transactions, Research, Alerts
+│   │   ├── pages/               # Dashboard, StrategyLab, Portfolios, Transactions, Research, Stocks, Auth
 │   │   ├── routes/              # AppRoutes, ProtectedRoute, AdminRoute
-│   │   ├── services/            # API Services (Backtest, Auth, Stock, Research, Alerts)
+│   │   ├── services/            # API Services (portfolioRiskService, backtest, auth, stock, research)
 │   │   └── utils/               # Formatters, Validation & Metric Utilities
 │   ├── package.json
 │   └── vite.config.js
@@ -611,67 +628,61 @@ Real-Time-Stock-Portfolio/
 
 ### Dashboard & Analytics 
 <p align="center">
-<img width="1879" height="944" alt="image" src="https://github.com/user-attachments/assets/80f96e8a-f0d5-4223-a2fe-0a35e2ab374c" />
+  <img width="1879" height="944" alt="image" src="https://github.com/user-attachments/assets/80f96e8a-f0d5-4223-a2fe-0a35e2ab374c" />
 </p>
 <p align="center">
- <img width="1888" height="943" alt="image" src="https://github.com/user-attachments/assets/09ec1fd9-1b9a-4ff9-8a66-ec54ea8c6bb2" />
-</p>
+  <img width="1888" height="943" alt="image" src="https://github.com/user-attachments/assets/09ec1fd9-1b9a-4ff9-8a66-ec54ea8c6bb2" />
 </p>
 <p align="center">
-<img width="1873" height="945" alt="image" src="https://github.com/user-attachments/assets/58fbe3f8-7313-45b9-89e1-3d7f7a88d97c" />
+  <img width="1873" height="945" alt="image" src="https://github.com/user-attachments/assets/58fbe3f8-7313-45b9-89e1-3d7f7a88d97c" />
 </p>
 
 ### AI Portfolio Risk Analysis 
 <p align="center">
-<img width="1901" height="944" alt="image" src="https://github.com/user-attachments/assets/3adc7d4c-315d-414b-8880-52143a0e92d7" />
-
-
-<img width="1885" height="946" alt="image" src="https://github.com/user-attachments/assets/af028883-8818-4413-89d4-d4b745c2b835" />
-
-
-   <img width="1897" height="942" alt="image" src="https://github.com/user-attachments/assets/5d2c4584-d6e0-48d3-bb38-6a96507b6984" />
-
-
-<img width="1886" height="947" alt="image" src="https://github.com/user-attachments/assets/d8d4ce23-08f6-4d41-a325-ab4fece8bd81" />
-
-### Transactions & Price Alerts
-
+  <img width="1901" height="944" alt="image" src="https://github.com/user-attachments/assets/3adc7d4c-315d-414b-8880-52143a0e92d7" />
+</p>
 <p align="center">
-  
- <img width="1892" height="947" alt="image" src="https://github.com/user-attachments/assets/8d626b23-cfb1-4422-8094-2f4da5090cd4" />
-
-
-<img width="1889" height="938" alt="image" src="https://github.com/user-attachments/assets/27dd0f79-0a04-4779-9504-08a80ffbc8df" />
-
+  <img width="1885" height="946" alt="image" src="https://github.com/user-attachments/assets/af028883-8818-4413-89d4-d4b745c2b835" />
+</p>
+<p align="center">
+  <img width="1897" height="942" alt="image" src="https://github.com/user-attachments/assets/5d2c4584-d6e0-48d3-bb38-6a96507b6984" />
+</p>
+<p align="center">
+  <img width="1886" height="947" alt="image" src="https://github.com/user-attachments/assets/d8d4ce23-08f6-4d41-a325-ab4fece8bd81" />
 </p>
 
-### Srategy Lab
-
+### Transactions & Price Alerts
 <p align="center">
-<img width="1885" height="947" alt="image" src="https://github.com/user-attachments/assets/12d9cf09-8f80-4cd4-8c32-10b0e300493f" />
+  <img width="1892" height="947" alt="image" src="https://github.com/user-attachments/assets/8d626b23-cfb1-4422-8094-2f4da5090cd4" />
+</p>
+<p align="center">
+  <img width="1889" height="938" alt="image" src="https://github.com/user-attachments/assets/27dd0f79-0a04-4779-9504-08a80ffbc8df" />
+</p>
 
-<img width="1888" height="944" alt="image" src="https://github.com/user-attachments/assets/be35cddd-2c64-442e-a99a-8369d958c498" />
-
+### Strategy Lab
+<p align="center">
+  <img width="1885" height="947" alt="image" src="https://github.com/user-attachments/assets/12d9cf09-8f80-4cd4-8c32-10b0e300493f" />
+</p>
+<p align="center">
+  <img width="1888" height="944" alt="image" src="https://github.com/user-attachments/assets/be35cddd-2c64-442e-a99a-8369d958c498" />
 </p>
 
 ### Stocks & Notifications
-
 <p align="center">
- <img width="1887" height="945" alt="image" src="https://github.com/user-attachments/assets/1bb4dd46-6947-4bdb-a198-84ea0af03e82" />
-
-<img width="1913" height="944" alt="image" src="https://github.com/user-attachments/assets/a33a33ca-400f-4ba3-894c-ca113715a4cf" />
-
+  <img width="1887" height="945" alt="image" src="https://github.com/user-attachments/assets/1bb4dd46-6947-4bdb-a198-84ea0af03e82" />
+</p>
+<p align="center">
+  <img width="1913" height="944" alt="image" src="https://github.com/user-attachments/assets/a33a33ca-400f-4ba3-894c-ca113715a4cf" />
 </p>
 
 ### Admin Research Management
 <p align="center">
   <img width="1892" height="898" alt="image" src="https://github.com/user-attachments/assets/9aec33ab-da2a-4ee2-9c74-68ee74a446e7" />
 </p>
+
 ---
 
 ## Project Status
-
-The project has completed all architectural and stabilization phases:
 
 | Phase | Milestone | Status |
 |---|---|---|
@@ -684,17 +695,20 @@ The project has completed all architectural and stabilization phases:
 | **Phase G** | Strategy Lab Backend API Integration (`/api/backtest`) | **Completed** |
 | **Phase H** | Walk-Forward Optimization Integration (`/api/backtest/walk-forward`) | **Completed** |
 | **Phase I** | AI Quantitative Analysis Integration (`/api/backtest/ai-analysis`) | **Completed** |
-| **Phase J** | Final End-to-End Testing & Verification | **Completed** |
+| **Phase J** | AI Portfolio Risk Analysis Integration (`/api/portfolio/risk/analysis`) | **Completed** |
+| **Phase K** | Paper-Trading SELL Accounting Consistency Fix & Graphite UI Redesign | **Completed** |
+| **Phase L** | Final End-to-End Verification & Documentation | **Completed** |
 
 ---
 
 ## Limitations & Responsible Use
 
-1. **Simulated Environment**: All trading executions, portfolios, and cash balances are simulated. No real financial orders are placed with brokers or exchanges.
-2. **Historical Backtest Simulation**: Past performance simulated by TA4J does not guarantee future results. Backtesting does not account for slippage, liquidity constraints, or live exchange order queues.
-3. **Valid Zero-Trade Outcomes**: Strategies that generate zero trades during a testing period reflect market conditions that did not trigger algorithm parameters, which is a standard quantitative outcome.
-4. **Market Data Quotas**: Live data relies on external third-party API quotas. Classpath CSV historical datasets are provided as fallbacks for supported Indian assets (`TCS`, `INFY`, `RELIANCE`, `HDFCBANK`).
-5. **AI Interpretation**: AI-generated reports are interpretive summaries of backtest statistics and must not be treated as automated trading signals or financial advice.
+1. **Simulated Paper Trading**: All trading executions, portfolios, and cash balances are virtual simulations. No live financial orders are placed with brokers or stock exchanges.
+2. **Historical Backtesting Constraints**: Past backtest performance simulated by TA4J does not guarantee future market returns. Backtesting does not model real-world exchange slippage, market impact, or order queue priorities.
+3. **Sector Metadata Limitation**: Sector breakdown is omitted from current portfolio risk metrics because verified sector master classifications are not stored in the stock master table (strict zero-fabrication principle).
+4. **Historical Portfolio Drawdown**: While TA4J computes true maximum drawdown on historical backtest bars, open paper-trading portfolios evaluate current position returns rather than inferring or fabricating an unrecorded historical equity curve.
+5. **AI Educational Interpretation**: AI-generated reports are educational interpretations grounded in verified metrics and must not be treated as automated trade signals or certified financial advice.
+6. **Market Data Quotas & Fallback**: Real-time quotes depend on external API quotas. Classpath CSV historical datasets provide offline fallback capabilities for supported Indian equities (`TCS`, `INFY`, `RELIANCE`, `HDFCBANK`).
 
 ---
 
@@ -710,4 +724,4 @@ The project has completed all architectural and stabilization phases:
 
 ## Disclaimer
 
-This software is developed strictly for educational and portfolio demonstration purposes. It does not constitute financial, investment, or trading advice. The author and contributors assume no liability for financial decisions or simulated outcomes derived from this application.
+This software is developed strictly for educational, research, and portfolio demonstration purposes. It does not constitute financial, investment, legal, or trading advice. The author and contributors assume no liability for financial decisions, real-world trades, or simulated outcomes derived from using this application.

@@ -38,22 +38,22 @@ export default function Sidebar({ open = false, onClose }) {
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-40 w-64 transform border-r border-slate-200 bg-white transition-transform duration-300 dark:border-slate-800 dark:bg-slate-950 lg:translate-x-0 ${
+      className={`fixed inset-y-0 left-0 z-40 w-64 transform border-r border-slate-200 bg-white transition-transform duration-300 dark:border-[#2A2E32] dark:bg-[#141719] lg:translate-x-0 ${
         open ? "translate-x-0" : "-translate-x-full"
       }`}
     >
-      <div className="flex h-16 items-center justify-between border-b border-slate-200 px-5 dark:border-slate-800">
+      <div className="flex h-16 items-center justify-between border-b border-slate-200 px-5 dark:border-[#2A2E32]">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg">
             <img src={logo} alt="Logo" className="h-full w-full object-contain" />
           </div>
 
           <div>
-            <h1 className="text-sm font-semibold text-slate-900 dark:text-white">
+            <h1 className="text-sm font-semibold text-slate-900 dark:text-[#F1F3F5]">
               InvestIND
             </h1>
 
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 dark:text-[#6F7780]">
               Real-Time Stock Analytics
             </p>
           </div>
@@ -61,7 +61,7 @@ export default function Sidebar({ open = false, onClose }) {
 
         <button
           onClick={onClose}
-          className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-900 lg:hidden"
+          className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:text-[#9AA1A9] dark:hover:bg-[#1D2023] lg:hidden"
         >
           <X size={18} />
         </button>
@@ -75,10 +75,10 @@ export default function Sidebar({ open = false, onClose }) {
               to={to}
               onClick={onClose}
               className={({ isActive }) =>
-                `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                `flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-colors ${
                   isActive
-                    ? "bg-blue-600 text-white"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-900 dark:hover:text-white"
+                    ? "bg-[#3B82F6] text-white shadow-sm shadow-blue-500/20"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-[#9AA1A9] dark:hover:bg-[#1D2023] dark:hover:text-[#F1F3F5]"
                 }`
               }
             >
@@ -90,7 +90,7 @@ export default function Sidebar({ open = false, onClose }) {
       </div>
 
       {isAdmin && (
-        <div className="absolute bottom-4 left-3 right-3 rounded-lg border border-amber-200 bg-amber-50/50 p-2.5 text-xs text-amber-800 dark:border-amber-900/40 dark:bg-amber-950/20 dark:text-amber-300">
+        <div className="absolute bottom-4 left-3 right-3 rounded-xl border border-amber-200 bg-amber-50/50 p-2.5 text-xs text-amber-800 dark:border-amber-900/40 dark:bg-amber-950/20 dark:text-amber-300">
           <div className="flex items-center gap-1.5 font-semibold">
             <ShieldCheck size={14} />
             <span>Admin Mode Active</span>
