@@ -294,7 +294,9 @@ public class TransactionService {
                     : 0;
 
             double investedValue = netQty * avgBuyPrice;
-            double currentPrice = stock.getCurrentPrice().doubleValue();
+            double currentPrice = stock.getCurrentPrice() != null
+                    ? stock.getCurrentPrice().doubleValue()
+                    : avgBuyPrice;
             double currentValue = netQty * currentPrice;
             double profitLoss = currentValue - investedValue;
 

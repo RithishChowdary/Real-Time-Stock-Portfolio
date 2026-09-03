@@ -99,4 +99,110 @@ class DashboardServiceTest {
         assertEquals(0, summary.getActiveAlerts());
         assertEquals(0, summary.getUnreadNotifications());
     }
+
+    @Test
+    void testGetHoldings_PartialSell_CorrectWeightedAverageAndRemainingInvestedValue() {
+        when(userRepository.findByEmail(testUser.getEmail())).thenReturn(Optional.of(testUser));
+
+        com.major.stockportfolio.entity.Stock stock = com.major.stockportfolio.entity.Stock.builder()
+                .id(100L)
+                .symbol("GOKEX")
+                .companyName("Gokaldas Exports")
+                .currentPrice(new BigDecimal("420.00"))
+                .build();
+
+        com.major.stockportfolio.entity.Portfolio portfolio = com.major.stockportfolio.entity.Portfolio.builder()
+                .id(1L)
+                .user(testUser)
+                .build();
+
+        // Buy 100 @ 500 = 50000
+        com.major.stockportfolio.entity.Transaction buyTx = com.major.stockportfolio.entity.Transaction.builder()
+                .id(1L)
+                .portfolio(portfolio)
+                .stock(stock)
+                .transactionType("BUY")
+                .quantity(100)
+                .price(new BigDecimal("500.00"))
+                .transactionDate(java.time.LocalDateTime.now().minusDays(5))
+                .build();
+
+        // Sell 20 @ 420
+        com.major.stockportfolio.entity.Transaction sellTx = com.major.stockportfolio.entity.Transaction.builder()
+                .id(2L)
+                .portfolio(portfolio)
+                .stock(stock)
+                .transactionType("SELL")
+                .quantity(20)
+                .price(new BigDecimal("420.00"))
+                .transactionDate(java.time.LocalDateTime.now().minusDays(1))
+                .build();
+
+        when(transactionRepository.findByPortfolioUserId(testUser.getId())).thenReturn(java.util.List.of(buyTx, sellTx));
+
+        java.util.List<com.major.stockportfolio.dto.HoldingResponse> holdings = dashboardService.getHoldings();
+
+        assertNotNull(holdings);
+        assertEquals(1, holdings.size());
+
+        com.major.stockportfolio.dto.HoldingResponse gokexHolding = holdings.get(0);
+        assertEquals("GOKEX", gokexHolding.getSymbol());
+        assertEquals(80, gokexHolding.getQuantity());
+        // Average buy price MUST remain 500.00 (NOT 50000 / 80 = 625.00)
+        assertEquals(500.00, gokexHolding.getAveragePrice(), 0.01);
+        // Current price = 420.00
+        assertEquals(420.00, gokexHolding.getCurrentPrice(), 0.01);
+        // Remaining Invested Value = 80 * 500 = 40,000.00
+        assertEquals(40000.00, gokexHolding.getInvestedValue(), 0.01);
+        // Remaining Current Value = 80 * 420 = 33,600.00
+        assertEquals(33600.00, gokexHolding.getCurrentValue(), 0.01);
+        // Unrealized P&L = 33,600 - 40,000 = -6,400.00
+        assertEquals(-6400.00, gokexHolding.getProfitLoss(), 0.01);
+        // Return % = (-6400 / 40000) * 100 = -16.0%
+        assertEquals(-16.0, gokexHolding.getProfitLossPercentage(), 0.01);
+    }
+
+    @Test
+    void testGetHoldings_FullSell_Excluded() {
+        when(userRepository.findByEmail(testUser.getEmail())).thenReturn(Optional.of(testUser));
+
+        com.major.stockportfolio.entity.Stock stock = com.major.stockportfolio.entity.Stock.builder()
+                .id(100L)
+                .symbol("TCS")
+                .companyName("Tata Consultancy Services")
+                .currentPrice(new BigDecimal("3500.00"))
+                .build();
+
+        com.major.stockportfolio.entity.Portfolio portfolio = com.major.stockportfolio.entity.Portfolio.builder()
+                .id(1L)
+                .user(testUser)
+                .build();
+
+        // Buy 50 @ 3000
+        com.major.stockportfolio.entity.Transaction buyTx = com.major.stockportfolio.entity.Transaction.builder()
+                .id(1L)
+                .portfolio(portfolio)
+                .stock(stock)
+                .transactionType("BUY")
+                .quantity(50)
+                .price(new BigDecimal("3000.00"))
+                .build();
+
+        // Sell 50 @ 3500
+        com.major.stockportfolio.entity.Transaction sellTx = com.major.stockportfolio.entity.Transaction.builder()
+                .id(2L)
+                .portfolio(portfolio)
+                .stock(stock)
+                .transactionType("SELL")
+                .quantity(50)
+                .price(new BigDecimal("3500.00"))
+                .build();
+
+        when(transactionRepository.findByPortfolioUserId(testUser.getId())).thenReturn(java.util.List.of(buyTx, sellTx));
+
+        java.util.List<com.major.stockportfolio.dto.HoldingResponse> holdings = dashboardService.getHoldings();
+
+        assertNotNull(holdings);
+        assertTrue(holdings.isEmpty(), "Completely sold positions must be excluded from holdings");
+    }
 }

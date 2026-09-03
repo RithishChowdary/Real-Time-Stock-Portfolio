@@ -2,6 +2,7 @@ import { Plus, RotateCcw, Banknote, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import PortfolioCard from "../components/portfolio/PortfolioCard";
 import PortfolioForm from "../components/portfolio/PortfolioForm";
+import PortfolioRiskAnalysis from "../components/portfolio/PortfolioRiskAnalysis";
 import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
 import EmptyState from "../components/ui/EmptyState";
@@ -102,23 +103,23 @@ export default function PortfoliosPage() {
       {/* Header */}
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <p className="mb-0.5 text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+          <p className="mb-0.5 text-xs font-semibold uppercase tracking-wider text-[#3B82F6]">
             Portfolio Management
           </p>
-          <div className="border-b border-slate-200 dark:border-slate-800 pb-1.5">
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+          <div className="border-b border-slate-200 dark:border-[#2A2E32] pb-1.5">
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-[#F1F3F5]">
               Portfolios
             </h1>
           </div>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-1 text-sm text-slate-500 dark:text-[#9AA1A9]">
             Create, manage and monitor dedicated investment portfolios.
           </p>
         </div>
 
         <div className="flex gap-2">
           <Button
+            variant="primary"
             onClick={() => setShowCreate(true)}
-            className="bg-green-500/20 text-green-600 hover:bg-green-500/25 border border-green-500/20 dark:text-green-400"
           >
             <Plus size={16} />
             New Portfolio
@@ -128,35 +129,35 @@ export default function PortfoliosPage() {
 
       {/* Account Cash Overview Banner */}
       {account && (
-        <Card className="border border-emerald-200/60 bg-emerald-50/40 p-4 dark:border-emerald-900/30 dark:bg-emerald-950/20">
+        <Card className="border border-slate-200 dark:border-[#2A2E32] bg-slate-50 dark:bg-[#181B1D] p-4">
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <div className="flex items-center gap-3">
-              <div className="rounded-xl bg-emerald-500/10 p-2.5 text-emerald-600 dark:text-emerald-400">
+              <div className="rounded-xl bg-[#00C896]/10 p-2.5 text-[#00C896] border border-[#00C896]/20">
                 <Banknote size={22} />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-[#9AA1A9]">
                     Paper Trading Capital
                   </span>
-                  <span className="inline-flex items-center gap-1 rounded bg-emerald-100 px-1.5 py-0.2 text-[10px] font-bold text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300">
+                  <span className="inline-flex items-center gap-1 rounded bg-[#00C896]/10 px-1.5 py-0.5 text-[10px] font-bold text-[#00C896] border border-[#00C896]/20">
                     <ShieldCheck size={11} /> Virtual
                   </span>
                 </div>
-                <p className="mt-0.5 text-2xl font-bold text-slate-900 dark:text-white">
+                <p className="mt-0.5 text-2xl font-bold text-slate-900 dark:text-[#F1F3F5]">
                   {formatCurrency(account.availableCash)}
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-3 text-xs">
-              <span className="text-slate-500 dark:text-slate-400">
-                Initial: <strong className="text-slate-700 dark:text-slate-300">{formatCurrency(account.initialBalance)}</strong>
+              <span className="text-slate-500 dark:text-[#9AA1A9]">
+                Initial: <strong className="text-slate-700 dark:text-[#F1F3F5]">{formatCurrency(account.initialBalance)}</strong>
               </span>
               <button
                 type="button"
                 onClick={handleResetCapital}
-                className="inline-flex items-center gap-1 rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+                className="inline-flex items-center gap-1 rounded-xl border border-slate-300 dark:border-[#2A2E32] bg-white dark:bg-[#141719] px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-[#F1F3F5] transition hover:bg-slate-100 dark:hover:bg-[#1D2023] cursor-pointer"
               >
                 <RotateCcw size={12} />
                 Reset Wallet
@@ -167,20 +168,20 @@ export default function PortfoliosPage() {
       )}
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700 dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300">
+        <div className="rounded-xl border border-red-500/30 bg-red-950/40 p-4 text-sm font-medium text-red-300">
           {error}
         </div>
       )}
 
       {success && (
-        <div className="rounded-xl border border-green-200 bg-green-50 p-4 text-sm font-medium text-green-700 dark:border-green-900/50 dark:bg-green-950/40 dark:text-green-300">
+        <div className="rounded-xl border border-[#00C896]/30 bg-[#00C896]/10 p-4 text-sm font-semibold text-[#00C896]">
           {success}
         </div>
       )}
 
       {showCreate && (
         <Card>
-          <h2 className="mb-4 text-lg font-semibold text-slate-900 dark:text-white">
+          <h2 className="mb-4 text-lg font-semibold text-slate-900 dark:text-[#F1F3F5]">
             Create Portfolio
           </h2>
           <PortfolioForm
@@ -193,7 +194,7 @@ export default function PortfoliosPage() {
 
       {editingPortfolio && (
         <Card>
-          <h2 className="mb-4 text-lg font-semibold text-slate-900 dark:text-white">
+          <h2 className="mb-4 text-lg font-semibold text-slate-900 dark:text-[#F1F3F5]">
             Rename Portfolio
           </h2>
           <PortfolioForm
@@ -211,8 +212,8 @@ export default function PortfoliosPage() {
           message="Create a portfolio to start tracking holdings, transactions, investment value, and returns."
           action={
             <Button
+              variant="primary"
               onClick={() => setShowCreate(true)}
-              className="bg-green-500/20 text-green-600 hover:bg-green-500/25 border border-green-500/20 dark:text-green-400"
             >
               <Plus size={16} />
               Create Portfolio
@@ -231,6 +232,9 @@ export default function PortfoliosPage() {
           ))}
         </div>
       )}
+
+      {/* AI Portfolio Risk Analysis Section */}
+      <PortfolioRiskAnalysis />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 # PROJECT PROGRESS & TRACKING
 
 ## Project Overview
-**Real-Time Stock Portfolio**: A professional Indian stock paper-trading and portfolio analytics platform with TA4J quantitative strategy analysis and AI-powered financial explanation.
+**Real-Time Stock Portfolio**: A professional Indian stock paper-trading and portfolio analytics platform with TA4J quantitative strategy analysis, AI-grounded quantitative performance interpretation, and authoritative AI portfolio risk analysis.
 
 ---
 
@@ -19,13 +19,13 @@
 | **Phase H** | Walk-Forward Optimization Integration (`/api/backtest/walk-forward`) | **Completed** |
 | **Phase I** | AI Quantitative Analysis Integration (Backend Service + UI) | **Completed** |
 | **Phase J** | Final End-to-End Testing & Verification | **Completed** |
+| **Phase K** | AI Portfolio Risk Analysis (Authoritative Java Engine + Gemini Interpretation) | **Completed** |
 
 ---
 
 ## Post-Phase-J Stabilization & Production Readiness (Completed)
 
 ### 1. Backtest Historical Data Reliability & Caching
-- **Root Cause Identified**: `FallbackMarketDataLoader` attempted to fallback to `CsvMarketDataLoader` when the external Alpha Vantage API was rate-limited or unconfigured, but no CSV files existed on the classpath at `historical/NSE/`.
 - **Resolution**:
   - Seeded valid historical sorted daily OHLCV datasets on the classpath for primary Indian assets ([`TCS.csv`](backend/src/main/resources/historical/NSE/TCS.csv), [`INFY.csv`](backend/src/main/resources/historical/NSE/INFY.csv), [`RELIANCE.csv`](backend/src/main/resources/historical/NSE/RELIANCE.csv), [`HDFCBANK.csv`](backend/src/main/resources/historical/NSE/HDFCBANK.csv)).
   - Implemented in-memory caching in [`FallbackMarketDataLoader.java`](backend/src/main/java/com/major/stockportfolio/quantitative/loader/FallbackMarketDataLoader.java) to eliminate redundant disk reads and prevent consuming live API quotas.
@@ -48,6 +48,25 @@
 
 ---
 
+## Phase K — AI Portfolio Risk Analysis (Completed)
+
+### 1. Architecture: Java Calculates, Gemini Interprets
+- **Java Risk Calculation Engine**:
+  - Created [`PortfolioRiskService.java`](backend/src/main/java/com/major/stockportfolio/quantitative/risk/service/PortfolioRiskService.java) calculating authoritative portfolio metrics from live user transactions and `PaperTradingAccount` cash balances.
+  - Computes exact total portfolio value, holdings market value, cash allocation %, position exposures, and single-stock concentration.
+  - Evaluates an educational, transparent **Deterministic Risk Score (0–100)** and categorizes it into `LOW`, `MODERATE`, `HIGH`, or `VERY HIGH`.
+- **Gemini Interpretation**:
+  - Reused the existing AI architecture ([`AIAnalysisProvider.java`](backend/src/main/java/com/major/stockportfolio/quantitative/ai/contracts/AIAnalysisProvider.java), [`GeminiAIProvider.java`](backend/src/main/java/com/major/stockportfolio/quantitative/ai/provider/GeminiAIProvider.java), [`AIAnalysisService.java`](backend/src/main/java/com/major/stockportfolio/quantitative/ai/service/AIAnalysisService.java)).
+  - Grounded prompt instructs Gemini to strictly accept Java-calculated numbers as immutable ground truth facts, providing structured executive summaries, exposure breakdowns, and review areas without fabricating financial data.
+- **REST Endpoints**:
+  - `GET /api/portfolio/risk`: Returns verified Java-calculated [`PortfolioRiskMetrics.java`](backend/src/main/java/com/major/stockportfolio/quantitative/risk/dto/PortfolioRiskMetrics.java).
+  - `POST /api/portfolio/risk/analysis`: Returns [`PortfolioRiskAnalysisResponse.java`](backend/src/main/java/com/major/stockportfolio/quantitative/risk/dto/PortfolioRiskAnalysisResponse.java) containing authoritative metrics and Gemini risk assessment.
+- **Frontend Integration**:
+  - Created [`PortfolioRiskAnalysis.jsx`](frontend/src/components/portfolio/PortfolioRiskAnalysis.jsx) integrated seamlessly into the existing [`PortfoliosPage.jsx`](frontend/src/pages/PortfoliosPage.jsx).
+  - Features interactive `[ Analyze Portfolio Risk ]` CTA, live loading indicators, metric cards, position weight progress bars, Java risk factor observations, and grounded Gemini AI assessment.
+
+---
+
 ## Verification & Build Results
-- **Backend Clean Build & Tests (`mvn clean test`)**: **BUILD SUCCESS** (44 tests run, 0 failures, 0 errors, 1 skipped disabled context bootstrap test).
-- **Frontend Production Build (`npm run build`)**: **PASS** (built in 3.00s, 0 errors).
+- **Backend Clean Build & Tests (`mvn clean test`)**: **BUILD SUCCESS** (54 tests run, 0 failures, 0 errors, 1 skipped disabled context bootstrap test).
+- **Frontend Production Build (`npm run build`)**: **PASS** (1938 modules transformed, built in 4.00s, 0 errors).

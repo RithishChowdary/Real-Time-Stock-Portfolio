@@ -11,26 +11,28 @@ export default function PortfolioSummaryCards({ summary, availableCash }) {
       label: "Available Cash",
       value: formatCurrency(availableCash ?? summary?.availableCash ?? 0),
       icon: Banknote,
-      color: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+      color: "bg-[#00C896]/10 text-[#00C896] border border-[#00C896]/20",
     },
     {
-      label: "Invested Value",
+      label: "Invested Cost",
       value: formatCurrency(summary?.totalInvestment || 0),
       icon: Wallet,
-      color: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+      color: "bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/20",
     },
     {
       label: "Current Value",
       value: formatCurrency(summary?.currentValue || 0),
       icon: Wallet,
-      color: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400",
+      color: "bg-slate-100 dark:bg-[#1D2023] text-slate-700 dark:text-[#F1F3F5] border border-slate-200 dark:border-[#2A2E32]",
     },
     {
-      label: "Profit / Loss",
-      value: formatCurrency(summary?.totalProfitLoss || 0),
-      percentage: formatPercentage(summary?.returnPercentage || 0),
+      label: "Unrealized P&L",
+      value: (isProfit && profitLoss > 0 ? "+" : "") + formatCurrency(summary?.totalProfitLoss || 0),
+      percentage: (isProfit ? "+" : "") + formatPercentage(summary?.returnPercentage || 0),
       icon: isProfit ? TrendingUp : TrendingDown,
-      color: isProfit ? "bg-green-500/10 text-green-600 dark:text-green-400" : "bg-red-500/10 text-red-600 dark:text-red-400",
+      color: isProfit
+        ? "bg-[#00C896]/10 text-[#00C896] border border-[#00C896]/20"
+        : "bg-[#FF4D5A]/10 text-[#FF4D5A] border border-[#FF4D5A]/20",
       isProfit,
     },
   ];
@@ -41,19 +43,19 @@ export default function PortfolioSummaryCards({ summary, availableCash }) {
         const Icon = card.icon;
 
         return (
-          <Card key={card.label}>
+          <Card key={card.label} className="border border-slate-200 dark:border-[#2A2E32] bg-white dark:bg-[#181B1D]">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-[#9AA1A9]">
                   {card.label}
                 </p>
-                <p className="mt-2 text-xl font-bold text-slate-900 dark:text-slate-100">
+                <p className="mt-2 text-xl font-bold text-slate-900 dark:text-[#F1F3F5]">
                   {card.value}
                 </p>
                 {card.percentage && (
                   <p
-                    className={`mt-1 text-xs font-semibold ${
-                      card.isProfit ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
+                    className={`mt-1 text-xs font-bold ${
+                      card.isProfit ? "text-[#00C896]" : "text-[#FF4D5A]"
                     }`}
                   >
                     {card.percentage}
@@ -61,8 +63,8 @@ export default function PortfolioSummaryCards({ summary, availableCash }) {
                 )}
               </div>
 
-              <div className={`rounded-lg p-3 ${card.color}`}>
-                <Icon size={20} />
+              <div className={`rounded-xl p-3 ${card.color}`}>
+                <Icon size={18} />
               </div>
             </div>
           </Card>

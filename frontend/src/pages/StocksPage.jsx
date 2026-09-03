@@ -153,22 +153,23 @@ export default function StocksPage() {
       {/* Header */}
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
         <div>
-          <div className="border-b border-slate-200 dark:border-slate-800 pb-1.5 inline-block w-full">
-            <p className="mb-0.5 text-xs font-semibold uppercase tracking-wider text-blue-500">
+          <div className="border-b border-slate-200 dark:border-[#2A2E32] pb-1.5 inline-block w-full">
+            <p className="mb-0.5 text-xs font-semibold uppercase tracking-wider text-[#3B82F6]">
               Market Management
             </p>
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-[#F1F3F5]">
               Stocks & Equities
             </h1>
           </div>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-sm text-slate-500 dark:text-[#9AA1A9]">
             Real-time Indian equities watchlist, live price feeds, and attached institutional research reports.
           </p>
         </div>
 
         <Button
           onClick={() => setShowCreate(true)}
-          className="bg-blue-600 text-white hover:bg-blue-500 border border-blue-500 shadow-sm self-start sm:self-auto h-10 px-4 rounded-xl font-semibold text-xs sm:text-sm"
+          variant="primary"
+          className="self-start sm:self-auto h-10 px-4 text-xs sm:text-sm"
         >
           <Plus size={16} />
           <span>Add Stock</span>
@@ -183,22 +184,22 @@ export default function StocksPage() {
       )}
 
       {success && (
-        <div className="rounded-xl border border-emerald-500/30 bg-emerald-950/40 p-3.5 text-sm text-emerald-300">
+        <div className="rounded-xl border border-[#00C896]/30 bg-[#00C896]/10 p-3.5 text-sm font-semibold text-[#00C896]">
           {success}
         </div>
       )}
 
       {/* Create Form (Admin) */}
       {showCreate && (
-        <Card className="border border-slate-800 bg-slate-900/90">
-          <h2 className="mb-3 text-base font-bold text-slate-200">
+        <Card className="border border-slate-200 dark:border-[#2A2E32] bg-white dark:bg-[#181B1D]">
+          <h2 className="mb-3 text-base font-bold text-slate-900 dark:text-[#F1F3F5]">
             Register New Stock Master Record
           </h2>
           <StockForm
             onSubmit={handleCreate}
             onCancel={() => setShowCreate(false)}
           />
-          <p className="mt-2 text-xs text-slate-500">
+          <p className="mt-2 text-xs text-slate-500 dark:text-[#6F7780]">
             Note: Admin privileges required to commit new ticker symbols.
           </p>
         </Card>
@@ -210,14 +211,14 @@ export default function StocksPage() {
         <div className="relative flex-1 max-w-xl">
           <Search
             size={18}
-            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-[#6F7780]"
           />
           <input
             type="text"
             placeholder="Search by symbol or company name (e.g. TCS, Infosys)..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-11 w-full rounded-xl border-2 border-slate-700 bg-slate-900/90 pl-11 pr-4 text-xs sm:text-sm text-slate-100 placeholder:text-slate-400 hover:border-slate-600 focus:border-blue-500 focus:outline-none transition-colors"
+            className="h-11 w-full rounded-xl border-2 border-slate-300 dark:border-[#2A2E32] bg-white dark:bg-[#141719] pl-11 pr-4 text-xs sm:text-sm text-slate-900 dark:text-[#F1F3F5] placeholder:text-slate-400 dark:placeholder:text-[#6F7780] hover:border-slate-400 dark:hover:border-slate-600 focus:border-[#3B82F6] focus:outline-none transition-colors"
           />
         </div>
 
@@ -230,19 +231,19 @@ export default function StocksPage() {
               onClick={() => setShowFilterDropdown(!showFilterDropdown)}
               className={`inline-flex h-11 items-center gap-2 rounded-xl border-2 px-4 text-xs font-semibold transition-all duration-150 cursor-pointer ${
                 filterMode !== "all" || showFilterDropdown
-                  ? "border-blue-500 bg-blue-600/15 text-blue-400"
-                  : "border-slate-700 bg-slate-900/90 text-slate-200 hover:border-slate-600 hover:bg-slate-800"
+                  ? "border-[#3B82F6] bg-[#3B82F6]/10 text-[#3B82F6]"
+                  : "border-slate-300 dark:border-[#2A2E32] bg-white dark:bg-[#141719] text-slate-700 dark:text-[#F1F3F5] hover:border-slate-400 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-[#1D2023]"
               }`}
             >
               <Filter size={15} />
               <span>Filter</span>
               {filterMode !== "all" && (
-                <span className="h-1.5 w-1.5 rounded-full bg-blue-400"></span>
+                <span className="h-1.5 w-1.5 rounded-full bg-[#3B82F6]"></span>
               )}
             </button>
 
             {showFilterDropdown && (
-              <div className="absolute right-0 top-13 z-30 w-48 rounded-xl border-2 border-slate-700 bg-slate-900 p-1.5 shadow-xl shadow-black/40">
+              <div className="absolute right-0 top-13 z-30 w-48 rounded-xl border-2 border-slate-200 dark:border-[#2A2E32] bg-white dark:bg-[#181B1D] p-1.5 shadow-xl">
                 <button
                   type="button"
                   onClick={() => {
@@ -251,8 +252,8 @@ export default function StocksPage() {
                   }}
                   className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-medium cursor-pointer ${
                     filterMode === "all"
-                      ? "bg-blue-600/20 text-blue-400 font-semibold"
-                      : "text-slate-300 hover:bg-slate-800"
+                      ? "bg-[#3B82F6]/10 text-[#3B82F6] font-semibold"
+                      : "text-slate-700 dark:text-[#9AA1A9] hover:bg-slate-100 dark:hover:bg-[#1D2023]"
                   }`}
                 >
                   <span>All Equities</span>
@@ -267,8 +268,8 @@ export default function StocksPage() {
                   }}
                   className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-medium cursor-pointer ${
                     filterMode === "high"
-                      ? "bg-blue-600/20 text-blue-400 font-semibold"
-                      : "text-slate-300 hover:bg-slate-800"
+                      ? "bg-[#3B82F6]/10 text-[#3B82F6] font-semibold"
+                      : "text-slate-700 dark:text-[#9AA1A9] hover:bg-slate-100 dark:hover:bg-[#1D2023]"
                   }`}
                 >
                   <span>Price &ge; ₹1,000</span>
@@ -283,8 +284,8 @@ export default function StocksPage() {
                   }}
                   className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-xs font-medium cursor-pointer ${
                     filterMode === "low"
-                      ? "bg-blue-600/20 text-blue-400 font-semibold"
-                      : "text-slate-300 hover:bg-slate-800"
+                      ? "bg-[#3B82F6]/10 text-[#3B82F6] font-semibold"
+                      : "text-slate-700 dark:text-[#9AA1A9] hover:bg-slate-100 dark:hover:bg-[#1D2023]"
                   }`}
                 >
                   <span>Price &lt; ₹1,000</span>
@@ -299,7 +300,7 @@ export default function StocksPage() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="h-11 appearance-none rounded-xl border-2 border-slate-700 bg-slate-900/90 pl-4 pr-9 text-xs font-semibold text-slate-200 hover:border-slate-600 focus:border-blue-500 focus:outline-none cursor-pointer"
+              className="h-11 appearance-none rounded-xl border-2 border-slate-300 dark:border-[#2A2E32] bg-white dark:bg-[#141719] pl-4 pr-9 text-xs font-semibold text-slate-700 dark:text-[#F1F3F5] hover:border-slate-400 dark:hover:border-slate-600 focus:border-[#3B82F6] focus:outline-none cursor-pointer"
             >
               <option value="symbol">Sort by Symbol (A-Z)</option>
               <option value="symbol_desc">Sort by Symbol (Z-A)</option>
@@ -308,7 +309,7 @@ export default function StocksPage() {
             </select>
             <ChevronDown
               size={14}
-              className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+              className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-[#6F7780]"
             />
           </div>
         </div>
@@ -322,11 +323,11 @@ export default function StocksPage() {
       />
 
       {/* Pagination */}
-      <div className="flex flex-col justify-between gap-3 rounded-xl border border-slate-800/80 bg-slate-900/60 p-3.5 sm:flex-row sm:items-center">
-        <p className="text-xs text-slate-400 font-mono">
-          Page <span className="font-semibold text-slate-200">{page + 1}</span>
+      <div className="flex flex-col justify-between gap-3 rounded-xl border border-slate-200 dark:border-[#2A2E32] bg-slate-50 dark:bg-[#141719] p-3.5 sm:flex-row sm:items-center">
+        <p className="text-xs text-slate-500 dark:text-[#9AA1A9] font-mono">
+          Page <span className="font-semibold text-slate-900 dark:text-[#F1F3F5]">{page + 1}</span>
           {pageData?.totalPages && (
-            <> of <span className="font-semibold text-slate-200">{pageData.totalPages}</span></>
+            <> of <span className="font-semibold text-slate-900 dark:text-[#F1F3F5]">{pageData.totalPages}</span></>
           )}
         </p>
 
