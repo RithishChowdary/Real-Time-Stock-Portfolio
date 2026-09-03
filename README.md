@@ -270,21 +270,33 @@ Portfolio / Holdings / Transactions / PaperTradingAccount
 - Fresh paper-trading accounts start with an initial cash balance of **₹1,00,000.00**.
 - The `PaperTradingAccount` database entity is the **sole source of truth** for available cash. Frontend balance states are never trusted for order execution.
 
-### 2. Transaction Atomicity & Weighted-Average Accounting
-- **Pessimistic Locking**: `PaperTradingAccountRepository` uses `@Lock(LockModeType.PESSIMISTIC_WRITE)` when reading account balances during buy and sell transactions to prevent concurrency race conditions.
-- **Core Valuation Identity**:
-  $$\text{Total Portfolio Value} = \text{Available Cash} + \sum_{\text{holdings}} (\text{Remaining Quantity} \times \text{Current Market Price})$$
-- **Weighted-Average Acquisition Price**:
-  $$\text{Average Buy Price} = \frac{\sum (\text{buyQty} \times \text{buyPrice})}{\sum \text{buyQty}}$$
-- **Partial and Full SELL Accounting**:
-  - When shares are partially sold, the remaining quantity is decremented, while the **Average Buy Price** of the remaining shares remains invariant.
-  - **Remaining Cost Basis**: $\text{Remaining Quantity} \times \text{Average Buy Price}$.
-  - **SELL Execution Proceeds**: Credited atomically to `availableCash` at $\text{sellQty} \times \text{sellPrice}$.
-  - **Realized P&L**: Calculated on the sold portion at $\text{sellQty} \times (\text{sellPrice} - \text{Average Buy Price})$.
-  - **Unrealized P&L**: Calculated exclusively on remaining shares:
-    $$\text{Unrealized P\&L} = (\text{Remaining Quantity} \times \text{Current Market Price}) - \text{Remaining Cost Basis}$$
-  - Full position sales ($\text{Remaining Quantity} = 0$) close the holding, removing it from active valuation with zero residual unrealized P&L.
+## Portfolio & Paper Trading Engine
 
+### 1. Capital & Cash Authority
+- Fresh paper-trading accounts start with an initial cash balance of **₹1,00,000.00**.
+- The `PaperTradingAccount` database entity is the **sole source of truth** for available cash. Frontend balance states are never trusted for order execution.
+
+### 2. Transaction Atomicity & Weighted-Average Accounting
+- **Pessimistic Locking:** `PaperTradingAccountRepository` uses `@Lock(LockModeType.PESSIMISTIC_WRITE)` when reading account balances during buy and sell transactions to prevent concurrency race conditions.
+
+- **Core Valuation Identity:**
+
+  $$\text{Total Portfolio Value} = \text{Available Cash} + \sum_{\text{holdings}} (\text{Remaining Quantity} \times \text{Current Market Price})$$
+
+- **Weighted-Average Acquisition Price:**
+
+  $$\text{Average Buy Price} = \frac{\sum (\text{buyQty} \times \text{buyPrice})}{\sum \text{buyQty}}$$
+
+- **Partial and Full SELL Accounting:**
+  - When shares are partially sold, the remaining quantity is decremented, while the **Average Buy Price** of the remaining shares remains invariant.
+  - **Remaining Cost Basis:** $\text{Remaining Quantity} \times \text{Average Buy Price}$.
+  - **SELL Execution Proceeds:** Credited atomically to `availableCash` at $\text{sellQty} \times \text{sellPrice}$.
+  - **Realized P&L:** Calculated on the sold portion at $\text{sellQty} \times (\text{sellPrice} - \text{Average Buy Price})$.
+  - **Unrealized P&L:** Calculated exclusively on remaining shares:
+
+    $$\text{Unrealized P/L} = (\text{Remaining Quantity} \times \text{Current Market Price}) - \text{Remaining Cost Basis}$$
+
+  - Full position sales ($\text{Remaining Quantity} = 0$) close the holding, removing it from active valuation with zero residual unrealized P&L.
 ---
 
 ## Alerts & Notifications
