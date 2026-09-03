@@ -606,48 +606,60 @@ Real-Time-Stock-Portfolio/
 </p>
 
 <p align="center">
-  <img width="1919" height="945" alt="image" src="https://github.com/user-attachments/assets/799aa117-6a93-4d44-ad11-683b2fbf657e" />
+  <img width="1919" height="947" alt="image" src="https://github.com/user-attachments/assets/b881d7f9-cd4f-4dc0-99f4-a900d5784798" />
 </p>
 
 ### Dashboard & Analytics 
 <p align="center">
- <img width="1891" height="944" alt="image" src="https://github.com/user-attachments/assets/634c51f8-05d2-461a-a94d-d567ed4aa83b" />
+<img width="1879" height="944" alt="image" src="https://github.com/user-attachments/assets/80f96e8a-f0d5-4223-a2fe-0a35e2ab374c" />
 </p>
 <p align="center">
- <img width="1903" height="948" alt="image" src="https://github.com/user-attachments/assets/4c33cde2-d595-46af-95e1-ba858dc39725" />
+ <img width="1888" height="943" alt="image" src="https://github.com/user-attachments/assets/09ec1fd9-1b9a-4ff9-8a66-ec54ea8c6bb2" />
 </p>
 </p>
 <p align="center">
-<img width="1888" height="945" alt="image" src="https://github.com/user-attachments/assets/50f2e385-57b9-4b4a-a5c0-09dba1a46587" />
+<img width="1873" height="945" alt="image" src="https://github.com/user-attachments/assets/58fbe3f8-7313-45b9-89e1-3d7f7a88d97c" />
 </p>
 
-### Portfolios & Paper Trading 
+### AI Portfolio Risk Analysis 
 <p align="center">
- <img width="1890" height="945" alt="image" src="https://github.com/user-attachments/assets/0f6f694b-01fb-4232-8dc9-30edadbdb5dd" />
+<img width="1901" height="944" alt="image" src="https://github.com/user-attachments/assets/3adc7d4c-315d-414b-8880-52143a0e92d7" />
 
-  <img width="1892" height="946" alt="image" src="https://github.com/user-attachments/assets/bda607fa-e7f1-4e8d-a3a6-b78de0cfd008" />
+
+<img width="1885" height="946" alt="image" src="https://github.com/user-attachments/assets/af028883-8818-4413-89d4-d4b745c2b835" />
+
+
+   <img width="1897" height="942" alt="image" src="https://github.com/user-attachments/assets/5d2c4584-d6e0-48d3-bb38-6a96507b6984" />
+
+
+<img width="1886" height="947" alt="image" src="https://github.com/user-attachments/assets/d8d4ce23-08f6-4d41-a325-ab4fece8bd81" />
+
+### Transactions & Price Alerts
 
 <p align="center">
- <img width="1896" height="951" alt="image" src="https://github.com/user-attachments/assets/c2bee4ea-8184-456a-97bc-847009e41936" />
+  
+ <img width="1892" height="947" alt="image" src="https://github.com/user-attachments/assets/8d626b23-cfb1-4422-8094-2f4da5090cd4" />
 
-<img width="1919" height="949" alt="image" src="https://github.com/user-attachments/assets/9deaa286-b3e7-403d-b0a2-3be7294a4840" />
+
+<img width="1889" height="938" alt="image" src="https://github.com/user-attachments/assets/27dd0f79-0a04-4779-9504-08a80ffbc8df" />
+
 </p>
+
 ### Srategy Lab
-<p align="center">
-<img width="1882" height="898" alt="image" src="https://github.com/user-attachments/assets/c6eb8071-4138-4036-b47e-d54c45c66b18" />
 
-  <img width="1887" height="896" alt="image" src="https://github.com/user-attachments/assets/53d55252-6c2a-481d-b077-0ea4f935886b" />
+<p align="center">
+<img width="1885" height="947" alt="image" src="https://github.com/user-attachments/assets/12d9cf09-8f80-4cd4-8c32-10b0e300493f" />
+
+<img width="1888" height="944" alt="image" src="https://github.com/user-attachments/assets/be35cddd-2c64-442e-a99a-8369d958c498" />
 
 </p>
 
-### Stocks & Price Alerts
+### Stocks & Notifications
 
 <p align="center">
  <img width="1887" height="945" alt="image" src="https://github.com/user-attachments/assets/1bb4dd46-6947-4bdb-a198-84ea0af03e82" />
 
-<img width="1896" height="944" alt="image" src="https://github.com/user-attachments/assets/7b7c1a1f-2f69-4efc-ab29-4c0912033ea5" />
-
-<img width="1919" height="948" alt="image" src="https://github.com/user-attachments/assets/27b15480-ba28-405c-9c6a-849617751d16" />
+<img width="1913" height="944" alt="image" src="https://github.com/user-attachments/assets/a33a33ca-400f-4ba3-894c-ca113715a4cf" />
 
 </p>
 
