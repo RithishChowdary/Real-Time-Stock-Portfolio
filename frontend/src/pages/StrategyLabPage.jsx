@@ -10,6 +10,7 @@ import { runBacktest, runWalkForward, analyzeBacktest } from "../services/strate
 export default function StrategyLabPage() {
   const [selectedStock, setSelectedStock] = useState(null);
   const [selectedStrategy, setSelectedStrategy] = useState("EMA_RSI");
+  const [initialCapital, setInitialCapital] = useState("100000");
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState("");
   const [results, setResults] = useState(null);
@@ -22,6 +23,24 @@ export default function StrategyLabPage() {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiAnalysis, setAiAnalysis] = useState(null);
   const [aiError, setAiError] = useState("");
+  const initialCapitalNumber = Number(initialCapital);
+  const initialCapitalError =
+    initialCapital.trim() === "" ||
+    !Number.isFinite(initialCapitalNumber) ||
+    initialCapitalNumber <= 0
+      ? "Enter a valid capital amount greater than ₹0."
+      : "";
+
+  function handleInitialCapitalChange(value) {
+    setInitialCapital(value);
+    setResults(null);
+    setWalkForwardResults(null);
+    setComparisonData(null);
+    setAiAnalysis(null);
+    setAiError("");
+    setError("");
+    setSuccess("");
+  }
 
   // When stock selection changes, purge all previous stock results & comparisons
   function handleSelectStock(stock) {
@@ -70,7 +89,11 @@ export default function StrategyLabPage() {
     setLoadingMessage("Running quantitative strategy backtest...");
 
     try {
-      const data = await runBacktest(selectedStock.symbol, selectedStrategy);
+      const data = await runBacktest(
+        selectedStock.symbol,
+        selectedStrategy,
+        initialCapitalNumber
+      );
 
       setResults(data);
       if (data?.performanceMetrics) {
@@ -112,7 +135,10 @@ export default function StrategyLabPage() {
     setLoadingMessage("Running walk-forward out-of-sample optimization...");
 
     try {
-      const data = await runWalkForward(selectedStock.symbol);
+      const data = await runWalkForward(
+        selectedStock.symbol,
+        initialCapitalNumber
+      );
       setWalkForwardResults(data);
       const windowsCount = data?.windowsEvaluated ?? 0;
       const windowLabel = windowsCount === 1 ? "1 rolling window" : `${windowsCount} rolling windows`;
@@ -203,6 +229,9 @@ export default function StrategyLabPage() {
             onSelectStock={handleSelectStock}
             selectedStrategy={selectedStrategy}
             onSelectStrategy={handleSelectStrategy}
+            initialCapital={initialCapital}
+            onInitialCapitalChange={handleInitialCapitalChange}
+            initialCapitalError={initialCapitalError}
             onRunBacktest={handleRunBacktest}
             onRunWalkForward={handleRunWalkForward}
             loading={loading}
@@ -215,6 +244,7 @@ export default function StrategyLabPage() {
             results={results}
             symbol={selectedStock?.symbol}
             strategyName={selectedStrategy === "EMA_RSI" ? "EMA + RSI Momentum" : "EMA Dual Crossover"}
+            initialCapital={initialCapitalNumber}
           />
 
           {/* Strategy Comparison */}

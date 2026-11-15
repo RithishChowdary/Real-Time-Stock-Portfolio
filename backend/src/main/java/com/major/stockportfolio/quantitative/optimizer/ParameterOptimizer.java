@@ -7,10 +7,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.Strategy;
-import org.ta4j.core.TradingRecord;
 
 import com.major.stockportfolio.quantitative.config.StrategyConfig;
 import com.major.stockportfolio.quantitative.engine.BacktestEngine;
+import com.major.stockportfolio.quantitative.engine.BacktestResult;
 import com.major.stockportfolio.quantitative.model.StrategyType;
 import com.major.stockportfolio.quantitative.report.TradingProfitCalculator;
 import com.major.stockportfolio.quantitative.service.impl.StrategyService;
@@ -76,6 +76,19 @@ public class ParameterOptimizer implements StrategyOptimizer {
      */
     @Override
     public StrategyConfig optimize(BarSeries series) {
+        return optimize(
+                series,
+                BacktestEngine.DEFAULT_INITIAL_CAPITAL
+        );
+    }
+
+    /**
+     * Finds the best parameter combination using the same account capital as
+     * the backtest that will consume the selected configuration.
+     */
+    public StrategyConfig optimize(
+            BarSeries series,
+            double initialCapital) {
 
         Objects.requireNonNull(
                 series,
@@ -87,11 +100,17 @@ public class ParameterOptimizer implements StrategyOptimizer {
                     "BarSeries must contain at least one bar"
             );
         }
+        if (!Double.isFinite(initialCapital) || initialCapital <= 0.0) {
+            throw new IllegalArgumentException(
+                    "Initial capital must be finite and greater than zero"
+            );
+        }
 
         log.info(
-                "Starting parameter optimization. Series: {}, bars: {}",
+                "Starting parameter optimization. Series: {}, bars: {}, initial capital: {}",
                 series.getName(),
-                series.getBarCount()
+                series.getBarCount(),
+                initialCapital
         );
 
         StrategyConfig bestConfig = null;
@@ -172,22 +191,17 @@ public class ParameterOptimizer implements StrategyOptimizer {
                                                 config
                                         );
 
-                                TradingRecord tradingRecord =
-                                        backtestEngine.run(
+                                BacktestResult backtestResult =
+                                        backtestEngine.runWithAccount(
                                                 series,
-                                                strategy
+                                                strategy,
+                                                initialCapital
                                         );
 
-                                /*
-                                 * IMPORTANT:
-                                 *
-                                 * Evaluate both completed and
-                                 * open positions.
-                                 */
                                 double profit =
                                         tradingProfitCalculator.calculate(
-                                                series,
-                                                tradingRecord
+                                                backtestResult,
+                                                initialCapital
                                         );
 
                                 combinations++;
