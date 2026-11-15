@@ -180,8 +180,10 @@ The account-level and trade-level metrics are deliberately distinct:
 - **Return on Investment (ROI %)**:
   $$\text{ROI} = \left( \frac{\text{Final Equity} - \text{Initial Capital}}{\text{Initial Capital}} \right) \times 100$$
 - **Maximum Drawdown (%)**: Peak-to-trough decline calculated from the complete per-bar account equity curve, beginning with initial capital. It is not sourced from TA4J's trade-level drawdown criterion.
-- **Annualized Sharpe Ratio**: Calculated from chronological returns between consecutive account snapshots (the initial-capital-to-first-snapshot transition is not treated as a daily return), using the 6% annual risk-free rate and 252 trading sessions:
-  $$\text{Sharpe} = \left( \frac{\bar{R}_d - R_{f,d}}{\sigma_d} \right) \times \sqrt{252}$$
+- **Annualized Sharpe Ratio:** Calculated from chronological returns between consecutive account snapshots (the initial-capital-to-first-snapshot transition is not treated as a daily return), using the 6% annual risk-free rate and 252 trading sessions.
+  $$
+  \text{Sharpe} = \left( \frac{\bar{R}_d - R_{f,d}}{\sigma_d} \right) \times \sqrt{252}
+  $$
   *(Uses sample standard deviation and returns `null` when fewer than four daily return observations are available or volatility is zero.)*
 - **Completed-Trade Statistics**: Total, winning, and losing trades; win rate; average winning and losing trade; expectancy (average net P&L per completed trade); and profit factor are based on completed sized positions only. An open position affects final equity, earnings, ROI, drawdown, and Sharpe, but is not counted as a completed win or loss.
 - **Profit Factor Availability**: Profit factor is gross completed-trade profit divided by gross completed-trade loss. When gross loss is zero, the API's `profitFactorDefined` indicator identifies whether the ratio is defined; the UI presents unavailable values as `N/A`.
