@@ -2,13 +2,20 @@ package com.major.stockportfolio.quantitative.report;
 
 import java.util.Objects;
 
+import com.major.stockportfolio.quantitative.engine.BacktestEngine;
+import com.major.stockportfolio.quantitative.engine.BacktestResult;
 import org.springframework.stereotype.Component;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.Position;
 import org.ta4j.core.TradingRecord;
 
 /**
- * Calculates the evaluation profit of a trading record.
+ * Calculates account-level earnings or legacy trading-record P&L.
+ *
+ * <p>
+ * The account-result overload reads final equity, which includes realized
+ * profit/loss and any open position marked to market. The legacy overload
+ * calculates P&L from completed positions and the open position.
  *
  * <p>
  * Completed positions contribute realized profit/loss.
@@ -19,6 +26,40 @@ import org.ta4j.core.TradingRecord;
  */
 @Component
 public class TradingProfitCalculator {
+
+    /**
+     * Returns account-level earnings from the capital-aware backtest ledger.
+     * The final equity already includes any open position marked to market.
+     */
+    public double calculate(BacktestResult backtestResult) {
+        return calculate(
+                backtestResult,
+                BacktestEngine.DEFAULT_INITIAL_CAPITAL
+        );
+    }
+
+    /**
+     * Returns final account equity less the starting capital. Do not combine
+     * this value with individual position P&L, which is already reflected in
+     * the final equity.
+     */
+    public double calculate(
+            BacktestResult backtestResult,
+            double initialCapital) {
+
+        Objects.requireNonNull(
+                backtestResult,
+                "BacktestResult must not be null"
+        );
+
+        if (!Double.isFinite(initialCapital) || initialCapital <= 0.0) {
+            throw new IllegalArgumentException(
+                    "Initial capital must be finite and greater than zero"
+            );
+        }
+
+        return backtestResult.getFinalEquity() - initialCapital;
+    }
 
     /**
      * Calculates realized + unrealized profit/loss.

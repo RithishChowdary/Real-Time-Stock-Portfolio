@@ -3,6 +3,12 @@ import Card from "../ui/Card";
 import EmptyState from "../ui/EmptyState";
 import { formatCurrency } from "../../utils/formatters";
 
+function finiteNumber(value) {
+  if (value === undefined || value === null || value === "") return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
 export default function WalkForwardResults({ walkForwardData }) {
   if (!walkForwardData || !walkForwardData.results || walkForwardData.results.length === 0) {
     return (
@@ -30,7 +36,8 @@ export default function WalkForwardResults({ walkForwardData }) {
   }
 
   const { symbol, windowsEvaluated, totalOutOfSampleProfit, results } = walkForwardData;
-  const isProfit = Number(totalOutOfSampleProfit || 0) >= 0;
+  const totalProfit = finiteNumber(totalOutOfSampleProfit);
+  const isProfit = totalProfit !== null && totalProfit >= 0;
 
   return (
     <Card className="border border-slate-200 dark:border-[#2A2E32] bg-white dark:bg-[#181B1D]">
@@ -52,10 +59,16 @@ export default function WalkForwardResults({ walkForwardData }) {
             <span className="text-slate-500 dark:text-[#9AA1A9]">Total OOS Profit:</span>
             <span
               className={`font-bold font-mono ${
-                isProfit ? "text-[#00C896]" : "text-[#FF4D5A]"
+                totalProfit === null
+                  ? "text-slate-500 dark:text-[#9AA1A9]"
+                  : isProfit
+                    ? "text-[#00C896]"
+                    : "text-[#FF4D5A]"
               }`}
             >
-              {isProfit && Number(totalOutOfSampleProfit) > 0 ? "+" : ""}{formatCurrency(totalOutOfSampleProfit)}
+              {totalProfit === null
+                ? "--"
+                : `${totalProfit > 0 ? "+" : ""}${formatCurrency(totalProfit)}`}
             </span>
           </div>
         </div>
@@ -75,8 +88,8 @@ export default function WalkForwardResults({ walkForwardData }) {
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-[#2A2E32]">
             {results.map((win) => {
-              const winProfit = Number(win.testingProfit || 0);
-              const isWinProfit = winProfit >= 0;
+              const winProfit = finiteNumber(win.testingProfit);
+              const isWinProfit = winProfit !== null && winProfit >= 0;
 
               return (
                 <tr key={win.windowNumber} className="hover:bg-slate-50 dark:hover:bg-[#1D2023]">
@@ -100,12 +113,16 @@ export default function WalkForwardResults({ walkForwardData }) {
                   <td className="py-3 text-right">
                     <span
                       className={`font-bold font-mono ${
-                        isWinProfit
-                          ? "text-[#00C896]"
-                          : "text-[#FF4D5A]"
+                        winProfit === null
+                          ? "text-slate-500 dark:text-[#9AA1A9]"
+                          : isWinProfit
+                            ? "text-[#00C896]"
+                            : "text-[#FF4D5A]"
                       }`}
                     >
-                      {isWinProfit && winProfit > 0 ? "+" : ""}{formatCurrency(winProfit)}
+                      {winProfit === null
+                        ? "--"
+                        : `${winProfit > 0 ? "+" : ""}${formatCurrency(winProfit)}`}
                     </span>
                   </td>
                 </tr>

@@ -27,6 +27,9 @@ export default function BacktestConfiguration({
   onSelectStock,
   selectedStrategy,
   onSelectStrategy,
+  initialCapital,
+  onInitialCapitalChange,
+  initialCapitalError,
   onRunBacktest,
   onRunWalkForward,
   loading = false,
@@ -183,6 +186,36 @@ export default function BacktestConfiguration({
           </select>
         </label>
 
+        <label className="block">
+          <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-[#9AA1A9]">
+            Initial Capital (INR)
+          </span>
+          <input
+            type="number"
+            min="0.01"
+            step="0.01"
+            inputMode="decimal"
+            value={initialCapital}
+            onChange={(event) => onInitialCapitalChange(event.target.value)}
+            aria-invalid={Boolean(initialCapitalError)}
+            aria-describedby={initialCapitalError ? "initial-capital-error" : "initial-capital-help"}
+            className={`w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition focus:border-[#3B82F6] dark:bg-[#141719] dark:text-[#F1F3F5] dark:focus:border-[#3B82F6] ${
+              initialCapitalError
+                ? "border-red-500 dark:border-red-500"
+                : "border-slate-300 dark:border-[#2A2E32]"
+            }`}
+          />
+          {initialCapitalError ? (
+            <span id="initial-capital-error" className="mt-1 block text-xs text-red-600 dark:text-red-400">
+              {initialCapitalError}
+            </span>
+          ) : (
+            <span id="initial-capital-help" className="mt-1 block text-xs text-slate-500 dark:text-[#9AA1A9]">
+              Positive starting balance used for sizing and optimization.
+            </span>
+          )}
+        </label>
+
         {/* Strategy Info Box */}
         <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-[#2A2E32] dark:bg-[#141719]">
           <div className="flex items-start gap-2">
@@ -206,7 +239,7 @@ export default function BacktestConfiguration({
           <Button
             type="button"
             onClick={onRunBacktest}
-            disabled={!selectedStock || loading}
+            disabled={!selectedStock || loading || Boolean(initialCapitalError)}
             variant="primary"
             className="w-full py-2.5 text-xs font-bold"
           >
@@ -217,7 +250,7 @@ export default function BacktestConfiguration({
           <Button
             type="button"
             onClick={onRunWalkForward}
-            disabled={!selectedStock || loading}
+            disabled={!selectedStock || loading || Boolean(initialCapitalError)}
             variant="secondary"
             className="w-full py-2.5 text-xs font-bold"
           >

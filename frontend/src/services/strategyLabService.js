@@ -6,10 +6,16 @@ import axiosClient from "../api/axiosClient";
  * @param {string} strategy - Strategy identifier (e.g. 'EMA_RSI', 'EMA_CROSSOVER')
  * @returns {Promise<Object>} BacktestResponse containing performanceMetrics and strategy
  */
-export async function runBacktest(symbol, strategy = "EMA_RSI") {
+export async function runBacktest(symbol, strategy = "EMA_RSI", initialCapital = 100000) {
+  const capital = Number(initialCapital);
+  if (!Number.isFinite(capital) || capital <= 0) {
+    throw new Error("Initial capital must be a positive number.");
+  }
+
   const response = await axiosClient.post("/backtest", {
     symbol: symbol.trim().toUpperCase(),
     strategy: strategy,
+    initialCapital: capital,
   });
   return response.data;
 }
@@ -19,9 +25,15 @@ export async function runBacktest(symbol, strategy = "EMA_RSI") {
  * @param {string} symbol - Stock symbol (e.g. 'TCS', 'RELIANCE', 'INFY')
  * @returns {Promise<Object>} WalkForwardBacktestResponse with evaluated windows
  */
-export async function runWalkForward(symbol) {
+export async function runWalkForward(symbol, initialCapital = 100000) {
+  const capital = Number(initialCapital);
+  if (!Number.isFinite(capital) || capital <= 0) {
+    throw new Error("Initial capital must be a positive number.");
+  }
+
   const response = await axiosClient.post("/backtest/walk-forward", {
     symbol: symbol.trim().toUpperCase(),
+    initialCapital: capital,
   });
   return response.data;
 }

@@ -10,10 +10,10 @@
 [![MySQL](https://img.shields.io/badge/MySQL-8-003B57?style=for-the-badge&logo=mysql&logoColor=F29111)](https://www.mysql.com)
 [![JWT](https://img.shields.io/badge/JWT-Stateless_Auth-FF6F00?style=for-the-badge&logo=jsonwebtokens&logoColor=white)](https://jwt.io)
 
-**InvestIND** is a full-stack Indian stock paper-trading, portfolio management, and quantitative analytics platform. It pairs a robust Spring Boot 3 backend and modern React 18 frontend with algorithmic backtesting powered by [TA4J](https://github.com/ta4j/ta4j), Walk-Forward out-of-sample optimization, grounded AI quantitative backtest analysis, and backend-authoritative AI Portfolio Risk Analysis.
+**InvestIND** is a full-stack Indian stock paper-trading, portfolio management, and quantitative analytics platform. It pairs a robust Spring Boot 3 backend and modern React 18 frontend with capital-aware algorithmic backtesting powered by [TA4J](https://github.com/ta4j/ta4j), Walk-Forward out-of-sample optimization, grounded AI quantitative backtest analysis, and backend-authoritative AI Portfolio Risk Analysis.
 
 > [!IMPORTANT]
-> **Educational & Portfolio Purpose**: InvestIND is built for educational, quantitative research, and portfolio demonstration purposes. All trading executions and cash balances are simulated within a paper-trading environment. Backtest metrics and AI-assisted interpretations do not constitute financial advice, certified risk ratings, or guarantees of future performance.
+> **Educational & Portfolio Purpose**: InvestIND is built for educational, quantitative research, and portfolio demonstration purposes. Paper Trading transactions use a simulated paper-trading account; Strategy Lab backtests use a separate isolated account ledger and do not affect those balances or transactions. Backtest metrics and AI-assisted interpretations do not constitute financial advice, certified risk ratings, or guarantees of future performance.
 
 ---
 
@@ -59,7 +59,7 @@
 InvestIND provides a unified environment for Indian stock market tracking, simulated trading execution, algorithmic strategy validation, and grounded portfolio risk evaluation:
 
 1. **Portfolio & Paper-Trading Account**: Every user receives a backend-managed paper-trading cash account seeded with ₹1,00,000 initial virtual capital. Buy and Sell transactions execute with pessimistic database locking and authoritative weighted-average cost accounting.
-2. **Strategy Lab & TA4J Backtesting**: Run quantitative algorithmic strategies (`EMA + RSI Momentum` and `EMA Dual Crossover`) against historical daily OHLCV market datasets with full trade statistics (Win Rate, Total Earnings, Profit Factor, Max Drawdown).
+2. **Strategy Lab & TA4J Backtesting**: Run quantitative algorithmic strategies (`EMA + RSI Momentum` and `EMA Dual Crossover`) against historical daily OHLCV data with configurable starting capital, affordable whole-share sizing, account-level equity metrics, and completed-trade statistics. Strategy Lab backtests use an isolated virtual ledger and never read or change Paper Trading balances or transactions.
 3. **Walk-Forward Optimization**: Evaluate strategy robustness across rolling in-sample parameter optimization and out-of-sample testing windows to reduce overfitting.
 4. **AI Quantitative Analysis**: Grounded AI interpretation converts verifiable TA4J metrics into actionable performance explanations without hallucinating trades or prices.
 5. **AI Portfolio Risk Analysis**: On-demand portfolio risk assessment where Java computes authoritative exposure, concentration, and liquidity metrics, and Google Gemini provides educational interpretation strictly grounded in those numbers.
@@ -74,10 +74,14 @@ InvestIND provides a unified environment for Indian stock market tracking, simul
   - Pessimistic write locking prevents race conditions and balance discrepancies.
   - Weighted-average acquisition cost basis accounting properly handles partial and full SELL orders.
   - Insufficient funds strictly reject BUY orders; insufficient holdings reject SELL orders.
-- **Quantitative Strategy Lab**:
+- **Quantitative Strategy Lab & Capital-Based Backtesting**:
   - Discrete execution of selectable algorithms (`EMA_RSI` and `EMA_CROSSOVER`).
-  - True multi-metric backtest evaluation (Total Trades, Winning/Losing Trades, Win Rate, Profit Factor, Drawdown).
-  - Isolated side-by-side strategy comparison and rolling Walk-Forward out-of-sample optimization.
+  - Validated initial-capital input (default ₹1,00,000) passed to normal backtests and walk-forward requests.
+  - Long-only whole-share sizing based on available backtest cash; no borrowing or negative cash.
+  - Next-bar-open execution for strategy signals, with per-bar account snapshots and final-close marking of open positions.
+  - Return on Investment (ROI %) and Final Portfolio Value ($\text{Initial Capital} + \text{Total Earnings}$).
+  - Equity-curve maximum drawdown and annualized Sharpe Ratio, plus completed-trade win rate, averages, expectancy, and profit factor.
+  - Isolated side-by-side strategy comparison and capital-aware rolling Walk-Forward optimization with fresh capital for every independent testing window.
 - **AI Portfolio Risk Analysis**:
   - Embedded directly into the Portfolio management interface.
   - Deterministic Java-calculated portfolio risk metrics (score 0–100, risk tier, single-stock concentration, cash liquidity buffer).
@@ -150,41 +154,68 @@ The Strategy Lab provides automated strategy evaluation on Indian equities using
 - **EMA Dual Crossover (`EMA_CROSSOVER`)**: Generates buy signals when a fast EMA crosses above a slow EMA and sell signals on downward crosses.
 
 ### 2. Strategy Execution & Discrete Routing
-The frontend sends the explicitly selected strategy in the backtest payload:
+The frontend sends the selected strategy and configured initial capital in the existing backtest request:
 
 ```json
 POST /api/backtest
 {
   "symbol": "INFY",
-  "strategy": "EMA_CROSSOVER"
+  "strategy": "EMA_CROSSOVER",
+  "initialCapital": 100000.0
 }
 ```
 
-If omitted, the backend defaults to `EMA_RSI` for backward compatibility.
+The Strategy Lab input defaults to ₹100,000 and accepts positive custom amounts. The backend request remains backward-compatible: omitted strategy defaults to `EMA_RSI`, and omitted initial capital resolves to the configured default.
 
-### 3. Quantitative Backtest Metrics
-The engine calculates comprehensive trading statistics via TA4J:
-- **Total Earnings**: Net profit/loss in currency.
-- **Win Rate**: Percentage of profitable trades.
-- **Total Trades / Winning Trades / Losing Trades**: Absolute trade counts.
-- **Average Profit**: Mean return per closed position.
-- **Maximum Drawdown**: Largest peak-to-trough portfolio equity drop during the test period.
-- **Profit Factor**: Ratio of gross profits to gross losses.
+### 3. Capital-Based Backtesting & Quantitative Metrics
+`BacktestEngine` preserves TA4J strategy signal generation and applies capital-aware execution in a separate backtest account. It sizes long positions to affordable whole shares using available cash, does not permit borrowing, and fills queued entry and exit signals at the next bar's open. Available cash, holdings, cost basis, realized and unrealized P&L, and equity are recorded for each bar. Positions still open at the end remain open and are marked to the final bar's close.
+
+The backtest ledger is separate from **Paper Trading**. It does not create, read, or update Paper Trading accounts, cash balances, holdings, or transactions.
+
+The account-level and trade-level metrics are deliberately distinct:
+
+- **Initial Capital**: Defaults to **₹1,00,000.00** and can be overridden with the `initialCapital` request field. The `quantitative.strategy.initial-capital` property supplies the backend default.
+- **Final Portfolio Value**: Final account equity, including any open holdings marked to market.
+- **Total Earnings**: Final account equity minus initial capital.
+- **Return on Investment (ROI %)**:
+  $$\text{ROI} = \left( \frac{\text{Final Equity} - \text{Initial Capital}}{\text{Initial Capital}} \right) \times 100$$
+- **Maximum Drawdown (%)**: Peak-to-trough decline calculated from the complete per-bar account equity curve, beginning with initial capital. It is not sourced from TA4J's trade-level drawdown criterion.
+- **Annualized Sharpe Ratio**: Calculated from chronological returns between consecutive account snapshots (the initial-capital-to-first-snapshot transition is not treated as a daily return), using the 6% annual risk-free rate and 252 trading sessions:
+  $$\text{Sharpe} = \left( \frac{\bar{R}_d - R_{f,d}}{\sigma_d} \right) \times \sqrt{252}$$
+  *(Uses sample standard deviation and returns `null` when fewer than four daily return observations are available or volatility is zero.)*
+- **Completed-Trade Statistics**: Total, winning, and losing trades; win rate; average winning and losing trade; expectancy (average net P&L per completed trade); and profit factor are based on completed sized positions only. An open position affects final equity, earnings, ROI, drawdown, and Sharpe, but is not counted as a completed win or loss.
+- **Profit Factor Availability**: Profit factor is gross completed-trade profit divided by gross completed-trade loss. When gross loss is zero, the API's `profitFactorDefined` indicator identifies whether the ratio is defined; the UI presents unavailable values as `N/A`.
 
 > [!NOTE]
-> **Zero-Trade Backtest Outcomes**: A backtest returning 0 trades (e.g., EMA + RSI over a non-trending consolidation dataset) is a **valid quantitative result** indicating no signal conditions were met. It represents realistic quantitative evaluation, not an application error.
+> **Zero-Trade Backtest Outcomes**: A backtest returning 0 completed trades is a valid result. If no position was opened, final equity remains initial capital and ROI is zero. Sharpe and risk/reward may be unavailable when their required observations are missing; profit factor follows its API value and defined-status indicator.
 
-### 4. Walk-Forward Optimization
+### 4. Quantitative Implementation
+
+| Class | Responsibility |
+|---|---|
+| `BacktestEngine.java` | Evaluates TA4J signals, applies next-open whole-share execution, enforces available-cash limits, and records the account ledger. |
+| `BacktestResult.java` | Returns the TA4J `TradingRecord` together with per-bar account snapshots. |
+| `AccountSnapshot.java` | Holds the per-bar cash, holdings, cost basis, realized/unrealized P&L, market value, and equity. |
+| `PerformanceMetricsCalculator.java` | Computes account-level results from the equity curve and trade statistics from completed sized trades. |
+| `PerformanceMetrics.java` | Exposes the calculated metrics through the backtest response model. |
+| `ParameterOptimizer.java` | Scores candidate strategies through capital-aware backtest results using the selected starting capital. |
+| `WalkForwardOptimizer.java` | Evaluates each testing window with fresh capital and the same sizing and execution assumptions. |
+| `TradingProfitCalculator.java` | Calculates account earnings from final equity for capital-aware results; its legacy overload supports older trading-record callers. |
+
+### 5. Walk-Forward Optimization
 Walk-forward analysis tests whether strategy parameters retain predictive value outside their training window.
 
 ```json
 POST /api/backtest/walk-forward
 {
-  "symbol": "TCS"
+  "symbol": "TCS",
+  "initialCapital": 100000.0
 }
 ```
 
-The system splits historical bars into sequential training (in-sample optimization) and testing (out-of-sample validation) windows.
+The system splits historical bars into sequential training (in-sample optimization) and testing (out-of-sample validation) windows. Each independent testing window starts flat with the requested capital (or the ₹100,000 default); any open position is marked to that window's final testing close and is not counted as a completed trade. Aggregate out-of-sample profit is the sum of each independent window's cash profit. It is not a compounded portfolio return or ROI, and capital or holdings do not carry between windows.
+
+> **Execution cost limitation:** Brokerage, taxes (including STT), other fees, and slippage are not modeled in Strategy Lab backtests or optimizer scores.
 
 ---
 
@@ -270,21 +301,33 @@ Portfolio / Holdings / Transactions / PaperTradingAccount
 - Fresh paper-trading accounts start with an initial cash balance of **₹1,00,000.00**.
 - The `PaperTradingAccount` database entity is the **sole source of truth** for available cash. Frontend balance states are never trusted for order execution.
 
-### 2. Transaction Atomicity & Weighted-Average Accounting
-- **Pessimistic Locking**: `PaperTradingAccountRepository` uses `@Lock(LockModeType.PESSIMISTIC_WRITE)` when reading account balances during buy and sell transactions to prevent concurrency race conditions.
-- **Core Valuation Identity**:
-  $$\text{Total Portfolio Value} = \text{Available Cash} + \sum_{\text{holdings}} (\text{Remaining Quantity} \times \text{Current Market Price})$$
-- **Weighted-Average Acquisition Price**:
-  $$\text{Average Buy Price} = \frac{\sum (\text{buyQty} \times \text{buyPrice})}{\sum \text{buyQty}}$$
-- **Partial and Full SELL Accounting**:
-  - When shares are partially sold, the remaining quantity is decremented, while the **Average Buy Price** of the remaining shares remains invariant.
-  - **Remaining Cost Basis**: $\text{Remaining Quantity} \times \text{Average Buy Price}$.
-  - **SELL Execution Proceeds**: Credited atomically to `availableCash` at $\text{sellQty} \times \text{sellPrice}$.
-  - **Realized P&L**: Calculated on the sold portion at $\text{sellQty} \times (\text{sellPrice} - \text{Average Buy Price})$.
-  - **Unrealized P&L**: Calculated exclusively on remaining shares:
-    $$\text{Unrealized P\&L} = (\text{Remaining Quantity} \times \text{Current Market Price}) - \text{Remaining Cost Basis}$$
-  - Full position sales ($\text{Remaining Quantity} = 0$) close the holding, removing it from active valuation with zero residual unrealized P&L.
+## Portfolio & Paper Trading Engine
 
+### 1. Capital & Cash Authority
+- Fresh paper-trading accounts start with an initial cash balance of **₹1,00,000.00**.
+- The `PaperTradingAccount` database entity is the **sole source of truth** for available cash. Frontend balance states are never trusted for order execution.
+
+### 2. Transaction Atomicity & Weighted-Average Accounting
+- **Pessimistic Locking:** `PaperTradingAccountRepository` uses `@Lock(LockModeType.PESSIMISTIC_WRITE)` when reading account balances during buy and sell transactions to prevent concurrency race conditions.
+
+- **Core Valuation Identity:**
+
+  $$\text{Total Portfolio Value} = \text{Available Cash} + \sum_{\text{holdings}} (\text{Remaining Quantity} \times \text{Current Market Price})$$
+
+- **Weighted-Average Acquisition Price:**
+
+  $$\text{Average Buy Price} = \frac{\sum (\text{buyQty} \times \text{buyPrice})}{\sum \text{buyQty}}$$
+
+- **Partial and Full SELL Accounting:**
+  - When shares are partially sold, the remaining quantity is decremented, while the **Average Buy Price** of the remaining shares remains invariant.
+  - **Remaining Cost Basis:** $\text{Remaining Quantity} \times \text{Average Buy Price}$.
+  - **SELL Execution Proceeds:** Credited atomically to `availableCash` at $\text{sellQty} \times \text{sellPrice}$.
+  - **Realized P&L:** Calculated on the sold portion at $\text{sellQty} \times (\text{sellPrice} - \text{Average Buy Price})$.
+  - **Unrealized P&L:** Calculated exclusively on remaining shares:
+
+    $$\text{Unrealized P/L} = (\text{Remaining Quantity} \times \text{Current Market Price}) - \text{Remaining Cost Basis}$$
+
+  - Full position sales ($\text{Remaining Quantity} = 0$) close the holding, removing it from active valuation with zero residual unrealized P&L.
 ---
 
 ## Alerts & Notifications
@@ -325,6 +368,7 @@ InvestIND features a professional **Graphite / Charcoal** financial trading them
 - **Clean Authentication**: Distraction-free charcoal login and registration cards with subtle borders (no artificial glowing AI gradients or particle effects).
 - **Explicit Terminology**: Tables and summaries clearly distinguish *Avg Buy Price*, *Current Price*, *Invested Cost*, *Current Value*, and *Unrealized P&L*.
 - **Integrated Risk Workflow**: AI Portfolio Risk Analysis is embedded directly within the existing Portfolio page without cluttering primary navigation.
+- **Enhanced Strategy Lab Layout**: Features a validated initial-capital input (default ₹1,00,000), a dedicated *Capital & Return Summary*, completed-trade and account-risk metrics, and a side-by-side strategy benchmark table with dark graphite styling and semantic profit/loss highlights.
 
 ---
 
@@ -336,7 +380,7 @@ InvestIND features a professional **Graphite / Charcoal** financial trading them
 | **Backend Framework** | Spring Boot | 3.2.5 |
 | **Security** | Spring Security & JWT | Spring Security 6, JJWT 0.11.5 |
 | **OAuth2** | Spring Security OAuth2 Client | Google OAuth2 Login |
-| **Quantitative Engine** | TA4J | 0.18 (BarSeries, Indicators, Rules, TradingRecord) |
+| **Quantitative Engine** | TA4J | 0.18 (BarSeries, Indicators, Rules, TradingRecord; capital-aware account ledger) |
 | **Database & ORM** | MySQL & Spring Data JPA | MySQL 8, Hibernate (Pessimistic Locking) |
 | **HTTP Client** | Java 11+ HttpClient | Asynchronous / Synchronous JSON communication |
 | **AI Integration** | Google Gemini API | `gemini-1.5-flash` via REST endpoint |
@@ -383,8 +427,8 @@ InvestIND features a professional **Graphite / Charcoal** financial trading them
 ### Strategy Lab & Quantitative Backtesting (`/api/backtest`)
 | Method | Endpoint | Description | Auth Required |
 |---|---|---|---|
-| `POST` | `/api/backtest` | Run TA4J backtest (`symbol`, `strategy`) | User / Admin |
-| `POST` | `/api/backtest/walk-forward` | Execute rolling Walk-Forward optimization | User / Admin |
+| `POST` | `/api/backtest` | Run TA4J backtest (`symbol`, `strategy`, optional `initialCapital`) | User / Admin |
+| `POST` | `/api/backtest/walk-forward` | Execute rolling Walk-Forward optimization (`symbol`, optional `initialCapital`) | User / Admin |
 | `POST` | `/api/backtest/analysis` | Generate AI interpretation of backtest metrics | User / Admin |
 
 ### Alerts & Notifications (`/api/alerts`, `/api/notifications`)
@@ -510,12 +554,14 @@ npm run build
 
 The project includes an automated backend test suite and production build verification covering quantitative analysis, paper-trading atomicity, risk metrics, alert rules, and research operations.
 
-### Automated Test Suite Status (`./mvnw.cmd clean test`)
+### Automated Test Suite Status (`./mvnw.cmd test`)
 ```text
 Results:
-Tests run: 57, Failures: 0, Errors: 0, Skipped: 1
+Tests run: 79, Failures: 0, Errors: 0, Skipped: 1
 
 Breakdown:
+- PerformanceMetricsCalculatorTest: 21 passed (capital-based ROI, Sharpe ratio, expectancy, risk/reward, edge cases)
+- BacktestApiServiceTest:            4 passed
 - StockResearchServiceTest:          8 passed
 - TransactionServiceTest:           14 passed
 - AlertServiceTest:                  8 passed
@@ -525,10 +571,9 @@ Breakdown:
 - GeminiPortfolioRiskProviderTest:   2 passed
 - DashboardServiceTest:              3 passed
 - PaperTradingAccountServiceTest:    3 passed
-- BacktestApiServiceTest:            3 passed
 - StockportfolioApplicationTests:    1 skipped (live database bootstrap test intentionally disabled)
 
-Status: BUILD SUCCESS (Total time: ~45s)
+Status: BUILD SUCCESS
 ```
 
 ### Frontend Production Build (`npm run build`)
@@ -540,12 +585,13 @@ computing gzip size...
 dist/index.html                       0.50 kB │ gzip:   0.32 kB
 dist/assets/favicon-qYxO9eex.png    379.93 kB
 dist/assets/logo-Dg8EsIrU.png     1,159.63 kB
-dist/assets/index-CQOQXUlN.css       53.35 kB │ gzip:  10.53 kB
-dist/assets/index-DX02cWy6.js       541.67 kB │ gzip: 156.20 kB
-✓ built in 2.83s (0 errors)
+dist/assets/index-Bd0A879U.css       53.88 kB │ gzip:  10.63 kB
+dist/assets/index-DtiDS4s2.js       547.72 kB │ gzip: 157.55 kB
+✓ built in 4.31s (0 errors)
 ```
 
 ### Regression Verification Summary
+- **Quantitative Strategy Lab**: Capital-based backtesting (₹1,00,000 virtual base), ROI %, Final Portfolio Value, Annualized Sharpe Ratio (6.0% Indian risk-free rate), Expectancy Per Trade, Average Win/Loss, Risk/Reward Ratio, open-position mark-to-market valuation, and full TA4J statistics.
 - **Paper Trading**: BUY/SELL execution, partial SELL weighted-average preservation, full position closures, cash deductions, proceeds credit.
 - **Portfolio & Holdings**: Multi-portfolio management, real-time valuation synchronization, holding aggregation.
 - **Strategy Lab**: `EMA + RSI`, `EMA Crossover`, side-by-side strategy comparison, Walk-Forward rolling window optimizer.
@@ -573,11 +619,12 @@ Real-Time-Stock-Portfolio/
 │   │   │   ├── config/          # Quantitative Properties
 │   │   │   ├── contracts/       # Engine & Loader Interfaces
 │   │   │   ├── dto/             # Backtest Requests, Responses, Metrics
-│   │   │   ├── engine/          # TA4J Backtest Execution Engine
+│   │   │   ├── engine/          # BacktestEngine, BacktestResult, AccountSnapshot
 │   │   │   ├── exceptions/      # Quantitative domain exceptions
 │   │   │   ├── indicator/       # TA4J Technical Indicator Helpers
 │   │   │   ├── loader/          # FallbackMarketDataLoader, CsvMarketDataLoader, AlphaVantage
-│   │   │   ├── optimizer/       # Walk-Forward & Strategy Parameter Optimizers
+│   │   │   ├── optimizer/       # ParameterOptimizer, WalkForwardOptimizer
+│   │   │   ├── report/          # PerformanceMetricsCalculator, PerformanceMetrics, TradingProfitCalculator
 │   │   │   ├── risk/            # AI Portfolio Risk Analysis (Service, Controller, DTOs)
 │   │   │   ├── service/         # BacktestApiService & Downloader Services
 │   │   │   └── strategy/        # EMA_RSI & EMA_CROSSOVER Strategy Definitions
@@ -595,7 +642,7 @@ Real-Time-Stock-Portfolio/
 │   │   │   ├── dashboard/       # DashboardCards, HoldingsTable
 │   │   │   ├── portfolio/       # PortfolioCard, PortfolioForm, PortfolioRiskAnalysis
 │   │   │   ├── stocks/          # StockTable, StockForm
-│   │   │   ├── strategy/        # StrategyLabHeader, BacktestConfig, BacktestSummary, AIAnalysisPanel
+│   │   │   ├── strategy/        # StrategyLabHeader, BacktestConfiguration, BacktestSummary, StrategyComparison, WalkForwardResults
 │   │   │   ├── transactions/    # BuySellForm, PortfolioSummaryCards
 │   │   │   └── ui/              # Button, Card, Input, EmptyState, Loader, Skeleton
 │   │   ├── context/             # AuthContext (Role, Tokens, Session)
@@ -698,15 +745,16 @@ Real-Time-Stock-Portfolio/
 | **Phase J** | AI Portfolio Risk Analysis Integration (`/api/portfolio/risk/analysis`) | **Completed** |
 | **Phase K** | Paper-Trading SELL Accounting Consistency Fix & Graphite UI Redesign | **Completed** |
 | **Phase L** | Final End-to-End Verification & Documentation | **Completed** |
+| **Phase M** | Strategy Lab Capital-Aware Execution, Optimization, Metrics & UI Integration | **Completed** |
 
 ---
 
 ## Limitations & Responsible Use
 
 1. **Simulated Paper Trading**: All trading executions, portfolios, and cash balances are virtual simulations. No live financial orders are placed with brokers or stock exchanges.
-2. **Historical Backtesting Constraints**: Past backtest performance simulated by TA4J does not guarantee future market returns. Backtesting does not model real-world exchange slippage, market impact, or order queue priorities.
+2. **Historical Backtesting Constraints**: Past backtest performance does not guarantee future market returns. Strategy Lab currently does not model brokerage, taxes (including STT), fees, slippage, market impact, or order queue priorities; reported results are before these costs.
 3. **Sector Metadata Limitation**: Sector breakdown is omitted from current portfolio risk metrics because verified sector master classifications are not stored in the stock master table (strict zero-fabrication principle).
-4. **Historical Portfolio Drawdown**: While TA4J computes true maximum drawdown on historical backtest bars, open paper-trading portfolios evaluate current position returns rather than inferring or fabricating an unrecorded historical equity curve.
+4. **Separate Backtest and Paper Trading Ledgers**: Strategy Lab uses an isolated simulated account and per-bar equity curve. It does not change Paper Trading accounts, balances, holdings, or transactions; Paper Trading remains a separate execution and accounting system.
 5. **AI Educational Interpretation**: AI-generated reports are educational interpretations grounded in verified metrics and must not be treated as automated trade signals or certified financial advice.
 6. **Market Data Quotas & Fallback**: Real-time quotes depend on external API quotas. Classpath CSV historical datasets provide offline fallback capabilities for supported Indian equities (`TCS`, `INFY`, `RELIANCE`, `HDFCBANK`).
 

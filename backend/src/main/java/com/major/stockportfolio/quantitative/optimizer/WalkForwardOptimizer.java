@@ -8,13 +8,12 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.ta4j.core.BarSeries;
-import org.ta4j.core.Position;
 import org.ta4j.core.Strategy;
 import org.ta4j.core.TradingRecord;
-import org.ta4j.core.backtest.BarSeriesManager;
 
 import com.major.stockportfolio.quantitative.config.StrategyConfig;
 import com.major.stockportfolio.quantitative.engine.BacktestEngine;
+import com.major.stockportfolio.quantitative.engine.BacktestResult;
 import com.major.stockportfolio.quantitative.report.TradingProfitCalculator;
 
 /**
@@ -127,6 +126,19 @@ public class WalkForwardOptimizer {
      */
     public List<WalkForwardResult> optimize(
             BarSeries series) {
+        return optimize(
+                series,
+                BacktestEngine.DEFAULT_INITIAL_CAPITAL
+        );
+    }
+
+    /**
+     * Executes independent walk-forward windows with the requested starting
+     * capital. Each training candidate and each testing window starts flat.
+     */
+    public List<WalkForwardResult> optimize(
+            BarSeries series,
+            double initialCapital) {
 
         Objects.requireNonNull(
                 series,
@@ -136,6 +148,11 @@ public class WalkForwardOptimizer {
         if (series.isEmpty()) {
             throw new IllegalArgumentException(
                     "BarSeries must contain at least one bar"
+            );
+        }
+        if (!Double.isFinite(initialCapital) || initialCapital <= 0.0) {
+            throw new IllegalArgumentException(
+                    "Initial capital must be finite and greater than zero"
             );
         }
 
@@ -155,12 +172,13 @@ public class WalkForwardOptimizer {
         log.info(
                 "Starting walk-forward optimization. "
                         + "Series: {}, bars: {}, training: {}, "
-                        + "testing: {}, step: {}",
+                        + "testing: {}, step: {}, initial capital: {}",
                 series.getName(),
                 series.getBarCount(),
                 trainingWindowSize,
                 testingWindowSize,
-                stepSize
+                stepSize,
+                initialCapital
         );
 
         List<WalkForwardResult> results =
@@ -214,7 +232,8 @@ public class WalkForwardOptimizer {
 
             StrategyConfig bestConfig =
                     parameterOptimizer.optimize(
-                            trainingSeries
+                            trainingSeries,
+                            initialCapital
                     );
 
             log.info(
@@ -269,44 +288,39 @@ public class WalkForwardOptimizer {
              * The first trainingWindowSize bars are used only as
              * indicator warm-up.
              *
-             * Actual strategy evaluation begins at:
+             * The final training bar may generate a signal that is filled
+             * at the first testing bar's open. No account is invested during
+             * warm-up; subsequent signals are evaluated during testing.
              *
-             *     trainingWindowSize
+             * Signal evaluation begins at the final warm-up bar:
              *
-             * and continues through the final testing bar.
+             *     trainingWindowSize - 1
              */
-            BarSeriesManager manager =
-                    new BarSeriesManager(
-                            evaluationSeries
-                    );
+            int firstSignalIndex =
+                    evaluationSeries.getBeginIndex()
+                            + trainingWindowSize
+                            - 1;
 
-            TradingRecord testingRecord =
-                    manager.run(
+            BacktestResult testingResult =
+                    backtestEngine.runWithAccount(
+                            evaluationSeries,
                             testingStrategy,
-                            trainingWindowSize,
-                            evaluationSeries.getEndIndex()
+                            initialCapital,
+                            firstSignalIndex
                     );
+            TradingRecord testingRecord =
+                    testingResult.getTradingRecord();
 
             /*
              * ==========================================================
              * 5. DETERMINE POSITION STATUS
              * ==========================================================
              */
-            int positionCount =
-                    testingRecord.getPositionCount();
-
-            int completedTrades = 0;
-
-            for (Position position :
-                    testingRecord.getPositions()) {
-
-                if (position != null
-                        && position.getEntry() != null
-                        && position.getExit() != null) {
-
-                    completedTrades++;
-                }
-            }
+            int completedTrades = (int) testingRecord.getPositions().stream()
+                    .filter(Objects::nonNull)
+                    .filter(position -> position.getEntry() != null
+                            && position.getExit() != null)
+                    .count();
 
             boolean openPosition =
                     testingRecord.getCurrentPosition() != null
@@ -316,10 +330,9 @@ public class WalkForwardOptimizer {
 
             log.info(
                     "Window {} testing result: "
-                            + "positions={}, completedTrades={}, "
+                            + "completedTrades={}, "
                             + "openPosition={}",
                     windowNumber,
-                    positionCount,
                     completedTrades,
                     openPosition
             );
@@ -329,22 +342,13 @@ public class WalkForwardOptimizer {
              * 6. CALCULATE TESTING PROFIT
              * ==========================================================
              *
-             * TradingProfitCalculator uses:
-             *
-             *   Completed position
-             *       -> realized profit/loss
-             *
-             *   Open position
-             *       -> unrealized profit/loss using final close price
-             *
-             * This makes optimization consistent with the same
-             * profit definition used elsewhere in the quantitative
-             * engine.
+             * Final account equity includes realized P&L and any open
+             * position marked to the final testing bar's close.
              */
             double testingProfit =
                     tradingProfitCalculator.calculate(
-                            evaluationSeries,
-                            testingRecord
+                            testingResult,
+                            initialCapital
                     );
 
             /*

@@ -6,7 +6,6 @@ import java.util.Objects;
 import org.springframework.stereotype.Service;
 import org.ta4j.core.BarSeries;
 import org.ta4j.core.Strategy;
-import org.ta4j.core.TradingRecord;
 
 import com.major.stockportfolio.quantitative.config.StrategyConfig;
 import com.major.stockportfolio.quantitative.contracts.MarketDataLoader;
@@ -15,6 +14,7 @@ import com.major.stockportfolio.quantitative.dto.api.BacktestResponse;
 import com.major.stockportfolio.quantitative.dto.api.WalkForwardBacktestResponse;
 import com.major.stockportfolio.quantitative.dto.api.WalkForwardWindowResponse;
 import com.major.stockportfolio.quantitative.engine.BacktestEngine;
+import com.major.stockportfolio.quantitative.engine.BacktestResult;
 import com.major.stockportfolio.quantitative.indicator.IndicatorRegistry;
 import com.major.stockportfolio.quantitative.optimizer.ParameterOptimizer;
 import com.major.stockportfolio.quantitative.optimizer.WalkForwardOptimizer;
@@ -22,11 +22,15 @@ import com.major.stockportfolio.quantitative.report.PerformanceMetrics;
 import com.major.stockportfolio.quantitative.report.PerformanceMetricsCalculator;
 import com.major.stockportfolio.quantitative.report.TradingProfitCalculator;
 
+import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class BacktestApiService {
+
+    @Value("${quantitative.strategy.initial-capital:100000.0}")
+    private double defaultInitialCapital = 100000.0;
 
     private final MarketDataLoader marketDataLoader;
 
@@ -160,12 +164,15 @@ public class BacktestApiService {
                         symbol
                 );
 
+        double initialCapital = resolveInitialCapital(request);
+
         /*
          * 2. Optimize strategy parameters.
          */
         StrategyConfig bestConfig =
                 parameterOptimizer.optimize(
-                        series
+                        series,
+                        initialCapital
                 );
 
         log.info(
@@ -211,12 +218,13 @@ public class BacktestApiService {
         }
 
         /*
-         * 4. Execute backtest.
+         * 4. Execute backtest with the same capital used for reporting.
          */
-        TradingRecord tradingRecord =
-                backtestEngine.run(
+        BacktestResult backtestResult =
+                backtestEngine.runWithAccount(
                         series,
-                        strategy
+                        strategy,
+                        initialCapital
                 );
 
         /*
@@ -224,8 +232,8 @@ public class BacktestApiService {
          */
         PerformanceMetrics metrics =
                 metricsCalculator.calculate(
-                        series,
-                        tradingRecord
+                        backtestResult,
+                        initialCapital
                 );
 
         /*
@@ -240,10 +248,11 @@ public class BacktestApiService {
 
         log.info(
                 "API backtest completed for {}. "
-                        + "Trades: {}, Earnings: {}",
+                        + "Trades: {}, Earnings: {}, ROI: {}%",
                 symbol,
                 metrics.getTotalTrades(),
-                metrics.getTotalEarnings()
+                metrics.getTotalEarnings(),
+                metrics.getReturnOnInvestment()
         );
 
         return response;
@@ -299,6 +308,8 @@ public class BacktestApiService {
                         symbol
                 );
 
+        double initialCapital = resolveInitialCapital(request);
+
         /*
          * 2. Execute walk-forward optimization.
          *
@@ -309,7 +320,8 @@ public class BacktestApiService {
         List<WalkForwardOptimizer.WalkForwardResult>
                 optimizerResults =
                 walkForwardOptimizer.optimize(
-                        series
+                        series,
+                        initialCapital
                 );
 
         /*
@@ -381,5 +393,14 @@ public class BacktestApiService {
         );
 
         return response;
+    }
+
+    private double resolveInitialCapital(BacktestRequest request) {
+        Double requestedCapital = request.getInitialCapital();
+        return requestedCapital != null
+                && Double.isFinite(requestedCapital)
+                && requestedCapital > 0.0
+                ? requestedCapital
+                : defaultInitialCapital;
     }
 }
